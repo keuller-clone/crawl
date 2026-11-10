@@ -53,7 +53,7 @@ Where the RAM goes: Sakura 41188 B (one table, `sk_cst`, is 24800), voices, part
 Where the pool goes: the reverb and echo lines `pl_buf` 135300 B (float), the 8-bit renderer's two 240 x 240
 buffers and sums 129600, the UI canvas `cv_px` 69120.
 
-## Memory: what the GR!MM parts need (read from `refs/grimm/v2.0.2`, not built)
+## Memory: what the GR!MM parts need (read from `refs/grimm/v2.0.2`)
 
 | Part | Pool | RAM | Flash data | From |
 | --- | --- | --- | --- | --- |
@@ -65,7 +65,9 @@ buffers and sums 129600, the UI canvas `cv_px` 69120.
 | VOICE (formant choir) | none | 28 B a voice | 28800 B choir table | `formant.c`; `grimm_choir.h` `CHOIR_T[2][3][2][5][480]` |
 | TAPE (wow, saturation, hiss) | none | 3076 B curve | small | `tapefx.c`: `tf_curve[2][769]` int16 |
 
-Code size for each part is unknown: it needs a build with the JieLi toolchain (see Open).
+Code sizes are in the CPU section below. GR!MM's own build confirms the buffers: `dl_buf` 154914 B, `ge_buf`
+55126 B, `sp_w` 12336 B (6 voices), `ph_slot` 25776 B of RAM (6 voices, 4296 B each, more than the 2.7 KB read
+from the largest line alone).
 
 As GR!MM has them, DELAY and GRAIN alone want 210 KB of pool. The pool is 344 KB and the screen needs 199 KB of
 it (the renderer and the canvas), so the effects have about 145 KB between them, and ZEN-1's reverb now holds
@@ -107,15 +109,55 @@ host microsecond is about 0.6 % of an FM-1 block (a factor near 35). Scaling the
 These are estimates. The host compiler and the pi32v2 compiler make different code, and GR!MM's rules warn
 that a host count can land in the wrong place. They are good for ranking, not for a limit.
 
-## CPU: the GR!MM parts (not measured)
+## CPU: the GR!MM parts (measured on the host, then estimated for the FM-1)
 
-No CPU figure for VOICE, PHYS, SAMPLE, TAPE, GRAIN or DELAY exists yet. What the source says:
+`tools/budget_grimm.py`, on a scratch checkout of GR!MM v2.0.2 (`build/grimm-ref`, not part of Crawl's build,
+allowed by Steven for measuring). It builds GR!MM's host mode in the same container, plays every factory sound
+with 0, 1 and 4 keys, and reads GR!MM's own per-stage timers. Host mode's clock has 1 us steps; each reading is
+the median of four half-second averages.
 
-- GR!MM runs 6 voices in all (`voices.c`, `NV 6`), against ZEN-1's 12.
-- `formant.c` caps the choir at six singers and says that is the most the FM-1's time has for six voices.
-- DELAY, GRAIN and GR!MM's reverb run at half rate (22.05 kHz) to halve their work.
-- GR!MM ships its own on-device profiler (`tools/fm1_cpu.py`, a per-stage split read over USB), which is the
-  design to copy for Crawl's hardware measurements.
+Sources, per voice, chord off:
+
+| Source | Host, us a voice | Sounds measured | FM-1, estimated |
+| --- | --- | --- | --- |
+| FM (GR!MM's, the same msfa core) | 5.1 (up to 7.0) | 12 | about 3 to 4 % |
+| VOICE (formant choir) | 7.2 (6.8 to 7.6) | 10 | about 4 %, see the caution below |
+| PHYS (physical models) | 18.8 (9.6 to 20.7, by model) | 7 | about 6 to 12 % |
+| SAMPLE (tape loop) | 1.8 (2.1 for the first) | sound 1 with its source set to SAMPLE | about 1 % |
+
+GR!MM's FM voice costs the same on the host as ZEN-1's (5 us), which supports using one scale for both.
+
+Effects, switched on over a four-key pad (each is skipped whole when off):
+
+| Effect | Host, us a block | FM-1, estimated |
+| --- | --- | --- |
+| DELAY (send 127) | 3.3 in its stage, 0.4 in the mix | about 2 % |
+| GRAIN (send 127) | 1.5 in its stage, 0.4 in the mix | about 1 % |
+| TAPE (tile 127, four knobs up) | 1.1 in its stage, 2.1 in the mix | about 2 % |
+| All three | 8.1 over the pad alone | about 5 % |
+| GR!MM's SPACE reverb, for scale (not ported) | 10.1, always | about 6 % |
+
+The estimates use the same factor as ZEN-1's table (0.6 % of an FM-1 block per host microsecond). Caution:
+that factor comes from float code, and GR!MM's code is integer. GR!MM's own source says six choir voices are
+the most the FM-1 has time for (`formant.c`, `VT_SING`), and GR!MM runs 6 voices in all against ZEN-1's 12.
+That fits a hardware cost for VOICE and PHYS two to three times this estimate. Until hardware says otherwise,
+plan with the higher figure.
+
+GRAIN was measured at its default size and density, without FREEZE.
+
+Code and table sizes in GR!MM's FM-1 image (measured: its ELF, built with the same toolchain; GR!MM is one
+compilation unit, so small functions are inlined and counted with their caller):
+
+| Part | Code | Tables |
+| --- | --- | --- |
+| VOICE | 4028 B | 28856 B (the choir waves) |
+| PHYS | 8838 B | 4510 B |
+| SAMPLE engine | 3598 B | 186 B |
+| TAPE | 628 B | none |
+| GRAIN, DELAY | inlined into the 2662 B audio callback | 532 B, 256 B |
+| GR!MM's four factory samples | none | 291676 B in the image, copied to the sample area at boot |
+
+Without samples, everything Crawl ports is under 20 KB of code plus the 29 KB choir table.
 
 ## Recommendation
 
@@ -132,19 +174,19 @@ degrade Mode A to make room. Revisit only if M2 ends with pool and flash to spar
    int16 instead of float (135 KB becomes about 68 KB, to be confirmed by listening), DELAY at 1.5 s (about
    66 KB) instead of 3.5 s, and GRAIN's ring shortened or sharing DELAY's line. As GR!MM sizes them they do not
    fit.
-3. Polyphony: plan for 8 voices in all, not 12, shared across FM, VOICE, PHYS and SAMPLE, with at most 4 of
-   the heavy kinds (VOICE, PHYS) at once, until hardware figures say otherwise. The estimate above leaves about
-   40 % of a block for three new effects and the heavier voices if FM stays near 8 voices, and GR!MM's rules ask
-   for half the block kept free.
-4. SAMPLE: decide in M2 whether samples live in the image (as ZEN-1's recordings do) or in a flash area outside
+3. Polyphony: plan for 8 voices in all, not 12, shared across FM, VOICE, PHYS and SAMPLE, with at most 4
+   VOICE and 2 PHYS at once, until hardware figures say otherwise. A worked case with the estimates: idle 12 %,
+   three effects 5 %, 4 FM 12 %, 2 VOICE 8 to 24 %, 2 PHYS 12 to 36 %: 49 % at the low figures, 89 % at the high
+   ones. GR!MM's rules ask for half the block kept free, so PHYS is the voice to ration, and each PHYS voice
+   also needs 4.3 KB of RAM. SAMPLE voices are nearly free in time.
+4. The effects are cheap in time (about 5 % together). Their cost is pool, as above.
+5. SAMPLE: decide in M2 whether samples live in the image (as ZEN-1's recordings do) or in a flash area outside
    it (as GR!MM's do), since the two layouts collide.
 
 ## Open: what still has to be measured
 
-- **GR!MM CPU and code size.** Needs the GR!MM modules compiled, on the host for timing and with the JieLi
-  toolchain for size. The brief marks the GR!MM checkout as not built, and an attempt to build it in the container
-  was blocked by the session's permissions. Smallest next step: Steven allows building `refs/grimm/v2.0.2` in a
-  scratch folder for measurement only.
+- **GRAIN under FREEZE and at full density, and PHYS by model.** Measured only at defaults and across the
+  factory sounds.
 - **Hardware figures.** Every FM-1 percentage here is an estimate from one upstream reading. Smallest next
   step: with Steven's go-ahead, flash the M0 build and read the HUD's load for the bench's cases, then add a
   per-stage split like GR!MM's.

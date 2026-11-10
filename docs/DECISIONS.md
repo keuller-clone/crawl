@@ -58,8 +58,10 @@ figures of its own.
 
 **M1's method.** Memory is measured from the M0 ELF (`tools/budget_map.py`). ZEN-1's engine CPU is measured on the
 host (`tests/host/budget_bench.c`) and scaled to the FM-1 by the one hardware reading ZEN-1's source records
-(8 koto voices with reverb: 38 %). GR!MM's parts are sized by reading their source; they are not built, as the
-brief says, so their CPU and code size are open. `docs/BUDGET.md` marks each figure measured, read or estimated.
+(8 koto voices with reverb: 38 %). GR!MM's parts were first sized by reading their source. Steven then allowed building GR!MM v2.0.2 in a scratch
+checkout (`build/grimm-ref`, git-ignored) for measuring only: `tools/budget_grimm.py` times its sources and effects
+in its own host mode, and its FM-1 ELF gives code sizes. It adds one printf to the scratch copy's host probe.
+GR!MM stays out of Crawl's build. `docs/BUDGET.md` marks each figure measured, read or estimated.
 
 **Mode B: no go for v1, provisionally**, on measured memory (`docs/BUDGET.md`). Mode A plans for 8 voices and a
 145 KB pool budget for the effects until hardware says otherwise.

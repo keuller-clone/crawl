@@ -62,8 +62,9 @@ SHA-256 of this run's `build/crawl.fwsc`: `cfd35d881ab928eafa0e317662c22bcfa0b0b
 
 **Not done, and why**
 
-- No CPU or code-size figures for VOICE, PHYS, SAMPLE, TAPE, GRAIN, DELAY: that needs GR!MM compiled, which the
-  brief rules out and the session blocked. Needs Steven's decision.
+- GR!MM's parts are now measured on the host (`tools/budget_grimm.py`, with Steven's leave to build GR!MM in a
+  scratch checkout): VOICE 7.2 us a voice, PHYS 10 to 21, SAMPLE 1.8, DELAY 3.7, GRAIN 1.9, TAPE 3.2 a block.
+  All ported code is under 20 KB plus a 29 KB choir table.
 - No hardware measurements: not flashed.
 - Tests: unchanged from M0 (62 pass, `kanji` skipped, `scenario-ambient` fails as accepted). The bench is not
   part of `run_tests.sh`. Guard clean.
