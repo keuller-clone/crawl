@@ -1,0 +1,3 @@
+# The image build needs one file from the tree (Dockerfile); the sources are mounted at run time.
+*
+!tools/get_toolchain.sh
