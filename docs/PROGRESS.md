@@ -68,3 +68,21 @@ SHA-256 of this run's `build/crawl.fwsc`: `cfd35d881ab928eafa0e317662c22bcfa0b0b
 - No hardware measurements: not flashed.
 - Tests: unchanged from M0 (62 pass, `kanji` skipped, `scenario-ambient` fails as accepted). The bench is not
   part of `run_tests.sh`. Guard clean.
+
+## M2 DSP port (in progress)
+
+**TAPE: ported (2026-11-10).** `firmware/src/dsp/tapefx.c`, from GR!MM v2.0.2.
+
+- Unit test `tests/host/tape_test.c` (in `run_tests.sh`): 18 checks pass. Clean tape is bit-exact, saturation
+  rounds a loud sine and leaves a quiet one within 0.03 dB, tone takes 6 kHz down 10.5 dB, hiss is faint and
+  stops when the tape lets go, a knob turn makes no step, wow gives 7 warbles in 40 s within 136 cents.
+- Render to listen to: `build/host/tape.wav` (20 s: a pad for 4 s, 12 s on the tape, 4 s after), written by the
+  test.
+- Cost on the host: 9 us a block with all four knobs up (ZEN-1's old tape: 13.6). Estimated about 5 % of an
+  FM-1 block.
+- Build: image 571908 B, RAM 96936 B of 98304, pool 335560 B of 344064 (8504 B free, 312 B above the limit).
+- Tests: 63 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
+- Not audible yet in the emulator or on a scene: no scene turns the tape up until M3.
+
+**Next:** DELAY and GRAIN need about 120 KB of pool that is not there. The reverb's 135 KB buffer is the place
+to find it, and that changes the reverb's storage, so it needs a listening check.

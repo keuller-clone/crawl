@@ -69,3 +69,26 @@ GR!MM stays out of Crawl's build. `docs/BUDGET.md` marks each figure measured, r
 **`tools/docker_run.ps1` takes its arguments raw.** With a `param` block PowerShell bound the command's own flags
 (`sh -c`) as its parameters, and with `$ErrorActionPreference = "Stop"` Windows PowerShell 5.1 turned docker's
 progress on stderr into a fatal error when redirected.
+
+## 2026-11-10 M2: TAPE
+
+**GR!MM's TAPE replaces ZEN-1's own tape.** ZEN-1 had a small tape stage (`fm_tape`), but every scene set it
+to 0, so nothing audible changes at parity. `firmware/src/dsp/tapefx.c` is GR!MM's `tapefx.c` and `wear.c` with
+Felucca's `softclip` and tanh table, kept in integers. `fm_tape(pct)` is now how far the mix goes through the tape
+(GR!MM's TAPE tile: a crossfade), and `fm_tape_knobs(wow, sat, tone, hiss)` sets its four knobs. At amount 0
+nothing runs.
+
+**On the mix, not per track.** The brief asks for TAPE on the mix. GR!MM v2 has it per track; Crawl has no
+tracks. It sits after the reverb, before Depth and the output level.
+
+**GR!MM's 256-frame period is kept inside Crawl's 32-frame blocks**, so the curve's crossover, the hiss ramp
+and the wow's timing are GR!MM's. The wow bends scene notes through the existing `tape_wow` path (cents), not the
+koto instrument, as ZEN-1's did.
+
+**Half the saturation curve is stored.** The curve is odd, so Crawl keeps x >= 0 and mirrors it: 1540 B of pool
+instead of 3076. With the full curve the build failed ZEN-1's own check that 8 KiB of pool stays free. A negative
+sample can differ from GR!MM's by one step of the last bit.
+
+**No scene removal yet.** M1 suggested removing a scene to make room. TAPE did not need it, and the pool, which
+is what DELAY and GRAIN need, is not held by the scenes but by the reverb and the screen. The reverb's storage is
+the next thing to decide, with Steven listening.
