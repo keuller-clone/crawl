@@ -1,0 +1,4 @@
+# The tree is mounted into a Linux container (Dockerfile): shell scripts and sources keep LF in the
+# working tree on Windows. PowerShell wrappers keep CRLF.
+* text=auto eol=lf
+*.ps1 text eol=crlf
