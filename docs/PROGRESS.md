@@ -43,4 +43,27 @@ SHA-256 of this run's `build/crawl.fwsc`: `cfd35d881ab928eafa0e317662c22bcfa0b0b
 - The image holds the only copy of the JieLi toolchain tarball and the three SDK files. ZEN-1's notes advise
   keeping copies in case the downloads disappear.
 - The site, guide and web installer texts still say ZEN-1 (M5). The splash tagline is ZEN-1's (M3).
-- Nothing is pushed: the commits are local on `main`.
+- Pushed to `origin/main` on 2026-11-10. The emulator was checked in Chrome from a local server: it boots into
+  Sakura with the "Welcome to Crawl" card and no console errors.
+
+## M1 Budget spike (2026-11-10): memory measured, CPU partly, hardware and GR!MM builds open
+
+`docs/BUDGET.md` has the figures and the recommendation.
+
+- **Memory (measured):** Crawl at M0 is full. Free: flash 13684 B, RAM 1512 B, pool 10044 B.
+  `tools/budget_map.py` breaks each region down by owner.
+- **ZEN-1 engine CPU (measured on the host):** `tests/host/budget_bench.c`. About 5 us a block for an FM voice,
+  20 us idle, 113 us with everything on, of a 5805 us block.
+- **FM-1 CPU (estimated):** scaled from ZEN-1's one recorded hardware reading. About 3 % a voice, 12 % idle.
+- **GR!MM parts:** pool, RAM and table sizes read from source. DELAY and GRAIN as GR!MM sizes them need 210 KB
+  of pool; about 145 KB exists for all effects.
+- **Recommendation:** Mode B no go for v1, provisionally. Mode A: 8 voices, a fixed effects pool budget, free
+  ZEN-1 content before porting.
+
+**Not done, and why**
+
+- No CPU or code-size figures for VOICE, PHYS, SAMPLE, TAPE, GRAIN, DELAY: that needs GR!MM compiled, which the
+  brief rules out and the session blocked. Needs Steven's decision.
+- No hardware measurements: not flashed.
+- Tests: unchanged from M0 (62 pass, `kanji` skipped, `scenario-ambient` fails as accepted). The bench is not
+  part of `run_tests.sh`. Guard clean.

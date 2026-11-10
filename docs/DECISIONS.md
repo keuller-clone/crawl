@@ -46,3 +46,24 @@ the tree is mounted into Linux and the shell scripts would not run with CRLF.
 **`tools/publish_pages.sh` commits as the configured git user.** ZEN-1's copy forced its author's name and
 no-reply address on the gh-pages commit; publishing Crawl's site as AceyPrime would be wrong. Publishing itself is
 M5.
+
+## 2026-11-10 M1
+
+**`scenario-ambient`'s `expect race 0` failure is accepted (Steven).** It is inherited from ZEN-1 and fails the
+same way on an untouched ZEN-1 checkout in this container. `tests/run_tests.sh` is unchanged, so the run still
+reports it; a milestone's "passing tests" means every test but this one until it is fixed upstream or here.
+
+**The M0 flash is deferred (Steven).** Steven tests in the browser emulator first. M1 therefore has no hardware
+figures of its own.
+
+**M1's method.** Memory is measured from the M0 ELF (`tools/budget_map.py`). ZEN-1's engine CPU is measured on the
+host (`tests/host/budget_bench.c`) and scaled to the FM-1 by the one hardware reading ZEN-1's source records
+(8 koto voices with reverb: 38 %). GR!MM's parts are sized by reading their source; they are not built, as the
+brief says, so their CPU and code size are open. `docs/BUDGET.md` marks each figure measured, read or estimated.
+
+**Mode B: no go for v1, provisionally**, on measured memory (`docs/BUDGET.md`). Mode A plans for 8 voices and a
+145 KB pool budget for the effects until hardware says otherwise.
+
+**`tools/docker_run.ps1` takes its arguments raw.** With a `param` block PowerShell bound the command's own flags
+(`sh -c`) as its parameters, and with `$ErrorActionPreference = "Stop"` Windows PowerShell 5.1 turned docker's
+progress on stderr into a fatal error when redirected.
