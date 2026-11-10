@@ -111,6 +111,16 @@ int main(void)
     fm_tape(100);
     hold(1, 1, ZN_SOFT_PAD);
     row("tape 100, its four knobs up (with one voice)");
+    bq();
+    fm_fx_send(100);
+    fm_delay(88, 64, 50, 127);
+    hold(1, 1, ZN_SOFT_PAD);
+    row("DELAY (send 100, MIX 127, with one voice)");
+    bq();
+    fm_fx_send(100);
+    fm_grain(80, 80, 30, 127);
+    hold(1, 1, ZN_SOFT_PAD);
+    row("GRAIN (send 100, MIX 127, with one voice)");
     for (i = 0; i < FM_NBED; i++) {
         static const char *const BN[] = {"bed: wind 100", "bed: stream 100", "bed: rain 100"};
         bq();

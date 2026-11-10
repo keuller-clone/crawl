@@ -18,6 +18,7 @@ it, you must give your recipients its complete corresponding source under the sa
 | The pitch core, the instrument (`firmware/src/dsp/{tuning,smooth,bend,fumi}.*`, `fumi_patches.h`), `web/bench/`, `tools/{analyze_ref,syx_dump,fumi_patches,check_no_double}.py`, `tools/koto_search.c`, `tools/guard_platform.sh` | [FuMi-1](https://github.com/cartesive/fumi-1) | GPL-3.0-only |
 | Everything else: the scenes, the conductor, the renderer and UI (`firmware/src/app/`), the nature beds (`firmware/src/dsp/bed.c`, `zen_*.h`), `tools/zen_*`, the site and guide (`web/site/`), `tests/`, `docs/` | ZEN-1 (AceyPrime) | GPL-3.0-only |
 | `firmware/src/dsp/tapefx.c`: the TAPE effect (wow, saturation, tone, hiss), with Felucca's `softclip` and its tanh table | [GR!MM](https://github.com/GRiMMBIENT/grimm) v2.0.2 (`firmware/src/tapefx.c`, `wear.c`, `dsp.c`), Copyright (C) 2026 GR!MM; Felucca's parts Copyright (C) 2026 Leo Kuroshita; adapted to Crawl's mix | GPL-3.0-only |
+| `firmware/src/dsp/echofx.c`: DELAY (a tape echo) and GRAIN (a granular cloud), with Felucca's `soft_knee` | [GR!MM](https://github.com/GRiMMBIENT/grimm) v2.0.2 (`firmware/src/tape.c`, `grain.c`, `wear.c`, `dsp.c`), Copyright (C) 2026 GR!MM; GRAIN from Felucca's `eng_grain.c`, Copyright (C) 2026 Leo Kuroshita; DELAY's design after [X0X](https://github.com/charlesvestal/fm1-x0x)'s TAPE delay; adapted to share one line | GPL-3.0-only |
 | Crawl's own changes: the name, `Dockerfile`, the PowerShell wrappers, `docs/DECISIONS.md`, `docs/PROGRESS.md` | Crawl | GPL-3.0-only |
 
 ## Third-party material

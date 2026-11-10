@@ -10,7 +10,7 @@ named here. Installing custom firmware is at your own risk.
 
 The rest of this page is ZEN-1's README. It still describes what Crawl does today.
 
-Crawl's TAPE effect is ported from [GR!MM](https://github.com/GRiMMBIENT/grimm) (GPL-3.0); more of GR!MM's voices and
+Crawl's TAPE, DELAY and GRAIN effects are ported from [GR!MM](https://github.com/GRiMMBIENT/grimm) (GPL-3.0); more of GR!MM's voices and
 effects follow (`docs/PROGRESS.md`).
 
 ## ZEN-1 (禅)

@@ -26,6 +26,7 @@
 #define BLK_MS (1000.0f * (float)BLK / FM_SR)
 #include "bed.c"                                   /* (needs BLK) */
 #include "tapefx.c"                                /* Crawl: GR!MM's TAPE on the mix (needs FM_POOL) */
+#include "echofx.c"                                /* Crawl: GR!MM's DELAY and GRAIN (needs tapefx.c) */
 
 /* ------------------------------------------------------------- params --- */
 static const fm_param_t PARAMS[P_NPARAMS] = {
@@ -183,6 +184,21 @@ void fm_tape_knobs(int wow, int sat, int tone, int hiss)   /* main loop: the tap
     tapefx_poll();
 }
 void fm_tape_poll(void) { tapefx_poll(); }
+/* main loop: DELAY and GRAIN (echofx.c). The send: how much of the voices goes into the line, 0..100 % */
+void fm_fx_send(int pct) { fx_send_target = (float)(pct < 0 ? 0 : pct > 100 ? 100 : pct) * 0.01f; }
+void fm_delay(int time, int fb, int wear, int mix)
+{
+    td_time = tf_clamp(time, 0, 127), td_fb = tf_clamp(fb, 0, 127);
+    td_wear = tf_clamp(wear, 0, 127), td_mix = tf_clamp(mix, 0, 127);
+}
+void fm_grain(int size, int dens, int scat, int mix)
+{
+    size = tf_clamp(size, 0, 127), dens = tf_clamp(dens, 0, 127);
+    ge_len44 = (uint32_t)(441.0f * fm_exp2f((float)size * (1.0f / 24.0f)));          /* 10 .. 390 ms */
+    ge_iv44 = (uint32_t)(44100.0f * fm_exp2f((float)dens * (-10.0f / 192.0f)));      /* 1 .. 98 a second */
+    ge_size = size, ge_dens = dens, ge_scat = tf_clamp(scat, 0, 127), ge_mix = tf_clamp(mix, 0, 127);
+}
+void fm_grain_freeze(int on) { ge_freeze = on ? 1u : 0u; }
 void fm_depth(int pct) { post(C_DEPTH, 0, pct < 0 ? 0 : pct > 100 ? 100 : pct, 0.0f); }
 void fm_frog(int slot, int seg, int vel, int pan, int rate_pct)
 {
@@ -299,6 +315,8 @@ static float hp_a, hp_s[2], lp_a, lp_s1[2], lp_s2[2], warm_s[2], char_amt, rev_s
 /* tape (Crawl: GR!MM's TAPE, tapefx.c, in place of ZEN-1's own, which no scene turned up): the amount glides, how
  * far the mix goes through the tape; its WOW bends the scene's notes (never the instrument's) */
 static float tape_target, tape_amt, tape_wow;
+/* the send into DELAY's line (echofx.c), 0 .. 1, gliding; its target from the main loop */
+static float fx_send;
 /* depth (after Avonlea's: the scene's sound bright to mellow): two one-pole low-passes, ~16 kHz at 0 down to
  * ~1.2 kHz at 100, the cutoff gliding */
 static float depth_target, depth_amt, depth_a = 1.0f, depth_lp[2][2];
@@ -745,6 +763,8 @@ void fm_init(void)
     bed_init();
     tape_target = tape_amt = tape_wow = 0.0f;
     tapefx_init();
+    echofx_init();
+    fx_send_target = fx_send = 0.0f;
     depth_target = depth_amt = 0.0f;
     depth_a = 1.0f;
     depth_lp[0][0] = depth_lp[0][1] = depth_lp[1][0] = depth_lp[1][1] = 0.0f;
@@ -906,6 +926,12 @@ static void controls_block(void)
             tape_amt = 0.0f;
         tape_wow = tape_control(a0, tape_amt, BLK, ms_count * 31u + (uint32_t)fm_nvoices * 7u);   /* cents */
     }
+    {                                               /* the send into the line: ~0.1 s; at 0 it is 0 */
+        float t = fx_send_target;
+        fx_send += (t - fx_send) * 0.01f;
+        if (t <= 0.0f && fx_send < 0.001f)
+            fx_send = 0.0f;
+    }
     depth_amt += (depth_target - depth_amt) * 0.01f;
     if (depth_amt > 0.001f)                         /* (the cutoff: 16 kHz x (1.2 / 16)^depth) */
         depth_a = 1.0f - fm_expf(-6.2831853f * 16000.0f * fm_exp2f(-3.737f * depth_amt) / FM_SR);
@@ -1042,11 +1068,13 @@ static void render_block(int32_t *out, float gain)
     bed_render(mix[0], mix[1]);
     level_cur = lv1;
     for (k = 0; k < BLK; k++) {
-        float ml = tone(0, mix[0][k]), mr = tone(1, mix[1][k]), wl, wr, l, r;
-        reverb((ml + mr) * 0.5f * rev_send * 0.5f, &wl, &wr);
+        float ml = tone(0, mix[0][k]), mr = tone(1, mix[1][k]), wl, wr, l, r, el = 0.0f, er = 0.0f;
+        if (fx_send > 0.0f || fxp.live)            /* DELAY and GRAIN (echofx.c): their returns; off: nothing */
+            echofx_frame((ml + mr) * 0.5f * fx_send, &el, &er);
+        reverb((ml + mr + el + er) * 0.5f * rev_send * 0.5f, &wl, &wr);   /* (the echoes fall into the reverb) */
         lv += dlv;
-        l = ml + wl;
-        r = mr + wr;
+        l = ml + wl + el;
+        r = mr + wr + er;
         if (tf.live)                               /* tape (tapefx.c): saturated, darker, hiss; off: nothing */
             tape_frame(&l, &r);
         if (depth_amt > 0.001f) {                  /* depth: mellower, the highs gone */

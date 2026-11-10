@@ -76,6 +76,12 @@ void fm_tape(int pct);                           /* how far the mix goes through
 void fm_tape_knobs(int wow, int sat, int tone, int hiss);   /* main loop: the tape's WOW, SATURATION, TONE, HISS,
                                                   * 0..127 each (GR!MM's TAPE, tapefx.c); all 0 at fm_init */
 void fm_tape_poll(void);                         /* main loop, every frame: a new SATURATION curve when one is due */
+/* GR!MM's DELAY (a tape echo) and GRAIN (a cloud), echofx.c: one line, 1.4 s, for both. Knobs 0..127. All off at
+ * fm_init (the send 0, both MIX 0): nothing runs */
+void fm_fx_send(int pct);                        /* how much of the voices goes into the line, 0..100 % */
+void fm_delay(int time, int fb, int wear, int mix);      /* TIME 8 .. 1400 ms, FEEDBACK 0 .. 110 %, WEAR, the return */
+void fm_grain(int size, int dens, int scat, int mix);    /* SIZE 10 .. 390 ms, DENSITY 1 .. 98 a second, SCATTER, the return */
+void fm_grain_freeze(int on);                    /* FREEZE: the line held (the echoes fade), the grains go on from it */
 void fm_depth(int pct);                          /* depth 0..100: the scene's sound bright to mellow */
 void fm_scene_gain(int pct);
 /* frogs (bed.c): slot 0..FM_NSHOT-1 each one call at a time (a new one replaces it): a recorded call (zen_samples.h
