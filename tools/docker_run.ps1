@@ -6,11 +6,13 @@
 #   tools\docker_run.ps1 -Rebuild            rebuild the image (it is also built on first use)
 # Passed through when set: FM_VERSION, OM_CDC, ZN_HUD, OM_JOBS, CC, PYTHON, TESTING_PKG, ZEN_CJK_FONT, SITE_SHA.
 # CRAWL_IMAGE names the image (default crawl-build).
-[CmdletBinding()]
-param(
-    [switch]$Rebuild,
-    [Parameter(ValueFromRemainingArguments = $true)][string[]]$Command
-)
+# No param block: PowerShell would take the command's own flags (sh -c ...) as its parameters.
+$Rebuild = $false
+$Command = @($args)
+if ($Command.Count -gt 0 -and $Command[0] -eq "-Rebuild") {
+    $Rebuild = $true
+    $Command = @($Command | Select-Object -Skip 1)
+}
 # Not "Stop": Windows PowerShell 5.1 turns a native command's stderr (docker's progress) into an error
 # record when the caller redirects it; exit codes are checked instead.
 $ErrorActionPreference = "Continue"
@@ -34,7 +36,7 @@ if ($Rebuild -or -not $have) {
     docker build -t $image $root
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
-if (-not $Command) { exit 0 }
+if ($Command.Count -eq 0) { exit 0 }
 
 $dockerArgs = @("run", "--rm", "-v", "${root}:/work", "-w", "/work")
 foreach ($name in @("FM_VERSION", "OM_CDC", "ZN_HUD", "OM_JOBS", "CC", "PYTHON", "TESTING_PKG", "ZEN_CJK_FONT", "SITE_SHA")) {
