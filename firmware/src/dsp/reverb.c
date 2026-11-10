@@ -3,7 +3,10 @@
  * (Charles Vestal, 2026): a predelay, four input diffusers, then a figure-eight tank of two halves, each a
  * modulated allpass, a delay, a damping lowpass, an allpass and a delay, feeding the other half. Stereo out
  * from seven taps a side. The paper's lengths are for 29761 Hz; DS() scales them to 44.1 kHz. Included by
- * fumi.c (FM_POOL puts the lines in the device's pool RAM). FuMi keeps it subtle: the ST-50 has no reverb. */
+ * fumi.c (FM_POOL puts the lines in the device's pool RAM). FuMi keeps it subtle: the ST-50 has no reverb.
+ * Crawl: the lines hold 16-bit samples (PL_Q: +-2.0 full scale, rounded towards zero so a tail ends in silence)
+ * instead of floats: half the pool, which GR!MM's DELAY and GRAIN need. The arithmetic is still float. */
+#define PL_Q 16384.0f
 #define DS(n) (((n) * 14818 + 5000) / 10000)          /* 44100 / 29761 */
 #define PRE_N 442                                    /* 10 ms */
 #define EXC DS(16)                                   /* the tank allpasses' modulation, samples */
@@ -12,9 +15,9 @@ static const int DL_LEN[L_N] = {PRE_N, DS(142), DS(107), DS(379), DS(277), DS(67
                                 DS(3720), DS(908) + EXC + 2, DS(4217), DS(2656), DS(3163)};
 #define DL_TOTAL (PRE_N + DS(142) + DS(107) + DS(379) + DS(277) + DS(672) + DS(4453) + DS(1800) + DS(3720) + DS(908) + \
                   DS(4217) + DS(2656) + DS(3163) + 2 * (EXC + 2))
-static float pl_buf[DL_TOTAL] FM_POOL;
+static int16_t pl_buf[DL_TOTAL] FM_POOL;
 typedef struct {
-    float *b;
+    int16_t *b;
     int n, i;
 } dl_t;
 static dl_t dl[L_N];
@@ -23,11 +26,12 @@ static float pl_bw, pl_damp_l, pl_damp_r, pl_decay = 0.5f, pl_dd2 = 0.5f, lfo_s,
 static inline float tap(const dl_t *d, int k)          /* the value written k samples ago, 1..n */
 {
     int j = d->i - k;
-    return d->b[j < 0 ? j + d->n : j];
+    return (float)d->b[j < 0 ? j + d->n : j] * (1.0f / PL_Q);
 }
 static inline void push(dl_t *d, float x)
 {
-    d->b[d->i] = x;
+    x *= PL_Q;                                       /* (the cast rounds towards zero) */
+    d->b[d->i] = (int16_t)(x > 32767.0f ? 32767.0f : x < -32767.0f ? -32767.0f : x);
     if (++d->i >= d->n)
         d->i = 0;
 }
@@ -82,7 +86,7 @@ static inline void reverb(float in, float *ol, float *or_)
 
 static void plate_init(void)
 {
-    float *p = pl_buf;
+    int16_t *p = pl_buf;
     int k, i;
     for (k = 0; k < L_N; k++) {
         dl[k].b = p;
@@ -91,7 +95,7 @@ static void plate_init(void)
         p += DL_LEN[k];
     }
     for (i = 0; i < DL_TOTAL; i++)
-        pl_buf[i] = 0.0f;
+        pl_buf[i] = 0;
     pl_bw = pl_damp_l = pl_damp_r = 0.0f;
     lfo_s = 0.0f;
     lfo_c = 1.0f;
