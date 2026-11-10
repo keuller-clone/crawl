@@ -150,7 +150,7 @@ static void fm1_fault(const fm1_crash_t *c)
     uint32_t t0;
     fm1_audio_stop();
     lcd_fill(0, 0, 240, 240, RGB(160, 0, 0));
-    draw_text_box(0, 8, 240, &FONT_S, "ZEN-1 CRASH", C_WHITE, 1);
+    draw_text_box(0, 8, 240, &FONT_S, "CRAWL CRASH", C_WHITE, 1);
     hexs(b, c->vec);
     draw_text_box(10, 40, 220, &FONT_S, b, C_WHITE, 0);
     hexs(b, c->pc);
@@ -187,7 +187,7 @@ static void safe_main(void)
     char b[24];
     uint32_t t0, play;
     lcd_fill(0, 0, 240, 240, C_BLACK);
-    draw_text_box(0, 18, 240, &FONT_B, "ZEN-1 SAFE MODE", C_HI, 1);
+    draw_text_box(0, 18, 240, &FONT_B, "CRAWL SAFE MODE", C_HI, 1);
     draw_text_box(0, 52, 240, &FONT_S, "IT CRASHED TWICE", C_WHITE, 1);
     draw_text_box(0, 72, 240, &FONT_S, "WHILE STARTING.", C_WHITE, 1);
     draw_text_box(0, 102, 240, &FONT_S, "NO SOUND. USB IS ON:", C_WHITE, 1);
@@ -215,9 +215,9 @@ static void safe_main(void)
         if (bootguard.pending && fm1_ms - t0 > 10000u)
             bootguard.pending = 0;                  /* safe mode itself is up: not another failed boot */
         if ((fm1_in.buttons & play) && fm1_ms - t0 > 500u) {
-            bootguard.failed = 0;                   /* try ZEN-1 again, from scratch */
+            bootguard.failed = 0;                   /* try Crawl again, from scratch */
             bootguard.pending = 0;
-            draw_text_box(0, 172, 240, &FONT_S, "STARTING ZEN-1...", C_HI, 1);
+            draw_text_box(0, 172, 240, &FONT_S, "STARTING CRAWL...", C_HI, 1);
             usb_detach();
             fm1_delay_ms(30);
             fm1_reboot();
@@ -238,8 +238,8 @@ static void splash(void)
     lcd_fill(0, 0, 240, 240, RGB(250, 244, 232));
     cv_begin(240, 64, RGB(250, 244, 232));
     {
-        int32_t w = text_w(&FONT_L, "ZEN-1");
-        cv_text((240 - w) / 2, 0, &FONT_L, "ZEN-1", RGB(196, 72, 48));
+        int32_t w = text_w(&FONT_L, "CRAWL");
+        cv_text((240 - w) / 2, 0, &FONT_L, "CRAWL", RGB(196, 72, 48));
         w = text_w(&FONT_S, "Ambient scenes for the FM-1");
         cv_text((240 - w) / 2, 42, &FONT_S, "Ambient scenes for the FM-1", RGB(150, 136, 118));
     }

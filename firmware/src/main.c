@@ -38,7 +38,7 @@ static inline int32_t clamp(int32_t v, int32_t lo, int32_t hi) { return v < lo ?
 #endif
 #define FELUCCA_UAC OM_UAC
 #ifndef FELUCCA_ID
-#define FELUCCA_ID "FM-1_600"     /* package identity (tools/build.py sets it); ZEN-1 is 6xx, FuMi-1 7xx */
+#define FELUCCA_ID "FM-1_500"     /* package identity (tools/build.py sets it); Crawl is 5xx, ZEN-1 6xx, FuMi-1 7xx */
 #endif
 #include "usb.c"
 #ifndef OM_TRS

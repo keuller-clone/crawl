@@ -5,8 +5,8 @@
 
   tools/build.py [--release X.Y[-suffix]]
 
-Outputs in build/: zen1.bin (app), loader/ota.bin (update loader, Felucca's, unchanged),
-zen1.fwsc (package). See BUILDING.md for the toolchain and the SDK.
+Outputs in build/: crawl.bin (app), loader/ota.bin (update loader, Felucca's, unchanged),
+crawl.fwsc (package). See BUILDING.md for the toolchain and the SDK.
 
 The JieLi toolchain is Linux x86-64 only. JIELI_TOOLCHAIN points at it; on
 macOS (or with JIELI_DOCKER=1) each tool runs in a linux/amd64 container.
@@ -51,7 +51,7 @@ SDK_SHA256 = {
     "cfg/eq_cfg_hw.bin": "41167491bffed4651750719c973d2758adeb9021a5670d02d6a53c85ed80ea7d",
 }
 
-PRODUCT = "FM-1_600"                # package identity (ZEN-1: 6xx; FuMi is 7xx); release builds are FM-1_6XXYYZZ
+PRODUCT = "FM-1_500"                # package identity (Crawl: 5xx; ZEN-1 is 6xx, FuMi 7xx); release builds are FM-1_5XXYYZZ
 VERSION = None                      # FM_VERSION for release builds
 
 
@@ -218,7 +218,7 @@ def build_app():
         units.append(("cc", *o2, "-c", FW / "src" / u, "-o", o))
         objs.append(o)
     tc_all(*units)
-    elf = OUT / "zen1.elf"
+    elf = OUT / "crawl.elf"
     # unreferenced functions (each in its own section: -ffunction-sections) are dropped: the DSP keeps
     # mono reference paths for the host tests that the firmware no longer calls
     tc("pi32v2/bin/ld", "--gc-sections", "-e", "_start", "-T", FW / "app.ld", *objs, "-o", elf)
@@ -230,7 +230,7 @@ def build_app():
                                ("common/bin/objdump", "-t", elf),
                                ("common/bin/objdump", "-d", elf),
                                ("common/bin/objdump", "-d", "-j", ".ram_text", elf))
-    (OUT / "zen1.dis").write_text(dis)
+    (OUT / "crawl.dis").write_text(dis)
 
     def symv(name):
         return int(re.search(r"^([0-9a-f]+) .*\s" + name + r"$", syms, re.M).group(1), 16)
@@ -247,7 +247,7 @@ def build_app():
             img += b"\xff" * (load - APP_XIP - len(img))
             img += blob
     img += b"\xff" * (-len(img) % 4)
-    (OUT / "zen1.bin").write_bytes(img)
+    (OUT / "crawl.bin").write_bytes(img)
     return bytes(img), syms, dis, rt
 
 
@@ -340,20 +340,20 @@ def mmio_check():
 def main():
     global PRODUCT, VERSION
     ap = argparse.ArgumentParser()
-    ap.add_argument("--release", metavar="X.Y[.Z]", help="release build: identity FM-1_6XXYYZZ, version string X.Y[.Z]")
+    ap.add_argument("--release", metavar="X.Y[.Z]", help="release build: identity FM-1_5XXYYZZ, version string X.Y[.Z]")
     ap.add_argument("--sdk", type=Path, help="JieLi AC79 SDK checkout (default: $AC79_SDK)")
     a = ap.parse_args()
-    name = "zen1.fwsc"
+    name = "crawl.fwsc"
     if a.release:
-        # identity FM-1_6 + major, minor, patch as two digits each (0.1 -> FM-1_6000100): FM-1 is the
-        # model the update tools match on; the number is ours (FuMi is 7xx, FoMni 8xx, X0X and Felucca 9xx).
+        # identity FM-1_5 + major, minor, patch as two digits each (0.1 -> FM-1_5000100): FM-1 is the
+        # model the update tools match on; the number is ours (ZEN-1 is 6xx, FuMi 7xx, FoMni 8xx, X0X and Felucca 9xx).
         # Digits only after the underscore, as the tools parse it. No public registry exists (Oct 2026).
         m = re.fullmatch(r"(\d{1,2})\.(\d{1,2})(?:\.(\d{1,2}))?(-[A-Za-z0-9]+)?", a.release)
         if not m:
             raise SystemExit(f"--release {a.release}: use X.Y[.Z][-suffix], up to two digits each")
-        PRODUCT = "FM-1_6%02d%02d%02d" % (int(m[1]), int(m[2]), int(m[3] or 0))
+        PRODUCT = "FM-1_5%02d%02d%02d" % (int(m[1]), int(m[2]), int(m[3] or 0))
         VERSION = a.release.upper()                # (a suffix shows as given: 1.1-beta -> "1.1-BETA")
-        name = f"zen-1-{a.release}.fwsc"
+        name = f"crawl-{a.release}.fwsc"
     fm1pkg_make.SDK = a.sdk
     for rel, sha in SDK_SHA256.items():          # fail early without the SDK
         if hashlib.sha256(fm1pkg_make.sdk_file(rel)).hexdigest() != sha:
@@ -377,7 +377,7 @@ def main():
         raise SystemExit("build: checks failed")
     pkg = fm1pkg_make.ufw(fm1pkg_make.flash_image(img, fm1pkg_make.KEY), ota, PRODUCT)
     (OUT / name).write_bytes(pkg)
-    print(f"app      {OUT / 'zen1.bin'}  {len(img)} B")
+    print(f"app      {OUT / 'crawl.bin'}  {len(img)} B")
     print(f"loader   {LDR / 'ota.bin'}  {len(ota)} B")
     print(f"package  {OUT / name}  {len(pkg)} B, identity {PRODUCT}")
     return 0

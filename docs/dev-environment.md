@@ -1,6 +1,16 @@
 # Development environment
 
-What the build scripts expect, set up on macOS (Apple silicon). Linux x86-64 works too, without Docker.
+## Windows (Crawl's host)
+
+Windows 11, VS Code, Docker Desktop, the FM-1 on USB. Nothing in the table below is installed on Windows: `Dockerfile`
+builds one Linux image with all of it, and `build.ps1`, `host/build_host.ps1`, `web/emu/build.ps1`,
+`tests/run_tests.ps1` and `tools/guard_platform.ps1` run the shell scripts inside it (BUILDING.md). For flashing
+from the command line, Windows Python with `pip install mido python-rtmidi` runs `tools/fm1_install.py`; the
+web installer needs only Chrome or Edge.
+
+## macOS or Linux (outside the container)
+
+What the build scripts expect, as ZEN-1 set it up on macOS (Apple silicon). Linux x86-64 works too, without Docker.
 
 | Need | Suggested place | Why |
 |---|---|---|

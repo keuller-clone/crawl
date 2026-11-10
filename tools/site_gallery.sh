@@ -7,6 +7,6 @@ set -e
 cd "$(dirname "$0")/.."
 CC="${CC:-cc} -DZN_HUD=0" sh host/build_host.sh >/dev/null
 mkdir -p docs/img/gallery
-build/host/zen_host tools/gallery.zen docs/img/gallery | tail -1
+build/host/crawl_host tools/gallery.zen docs/img/gallery | tail -1
 rm -f docs/img/gallery/midi_out.txt
 sh host/build_host.sh >/dev/null

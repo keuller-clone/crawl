@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// FuMi-1 audition bench (docs/research/16): FuMi's real engine (zen1.wasm, the same build as the browser
+// FuMi-1 audition bench (docs/research/16): FuMi's real engine (crawl.wasm, the same build as the browser
 // emulator) played from this page, with everything a long voicing session needs: a patch list with instant
 // switching, A/B and blind A/B, a morph between two patches, live sliders for every patch byte and for the
 // voicing stages, FuMi's key layout on the computer keyboard and on screen, Web MIDI, stock phrases,
@@ -10,7 +10,7 @@ import { serialize, deserialize, reattach, derivedFrom, alreadyLoaded } from "./
 
 "use strict";
 const $ = (id) => document.getElementById(id);
-const STORE = "zen1-bench-session";
+const STORE = "crawl-bench-session";
 const WHITE_ROW = "qwertyuiasdfghjk", BLACK_ROW = "1234567890-";
 const BLACK_ORN = [0, 1, 2, 3, -1, 0, 1, 2, 3, -1, -1];     // ornament mode (ui.c BLACK_ORN): vib, trill, damp, strong
 let node = null, ac = null, P = {}, PARAMS = [], ready = false;
@@ -318,7 +318,7 @@ async function exportSession() {
 function exportSyx() {
   const list = S.patches.filter((p) => p.exp && !p.pending);
   if (!list.length) { alert("Tick 'export to .syx' on the patches to take to the FM-1 (up to 32)."); return; }
-  download("zen1-finalists.syx", makeBank(list.slice(0, 32).map((p) => pack(p.voice))), "application/octet-stream");
+  download("crawl-finalists.syx", makeBank(list.slice(0, 32).map((p) => pack(p.voice))), "application/octet-stream");
   log(`exported ${Math.min(32, list.length)} patches as a 32-voice bank`);
 }
 async function loadSyxFiles(files) {
@@ -634,8 +634,8 @@ async function switchOn() {
   go.textContent = "Starting…";
   try {
     ac = new AudioContext({ sampleRate: 44100, latencyHint: "interactive" });
-    const [wasm] = await Promise.all([fetch("zen1.wasm").then((r) => { if (!r.ok) throw new Error(`zen1.wasm: ${r.status}`); return r.arrayBuffer(); }), ac.audioWorklet.addModule("worklet.js")]);
-    node = new AudioWorkletNode(ac, "zen1-bench", { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [2] });
+    const [wasm] = await Promise.all([fetch("crawl.wasm").then((r) => { if (!r.ok) throw new Error(`crawl.wasm: ${r.status}`); return r.arrayBuffer(); }), ac.audioWorklet.addModule("worklet.js")]);
+    node = new AudioWorkletNode(ac, "crawl-bench", { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [2] });
     node.connect(ac.destination);
     const readyP = new Promise((res) => {
       node.port.onmessage = (e) => {

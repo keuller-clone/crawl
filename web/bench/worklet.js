@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// FuMi-1's engine in an AudioWorklet for the audition bench: zen1.wasm is the whole FM-1 app (the same build
+// FuMi-1's engine in an AudioWorklet for the audition bench: crawl.wasm is the whole FM-1 app (the same build
 // as the emulator, web/emu/zen_web.c) plus the bench exports: the patch, every parameter, notes by pitch.
 // Each render quantum asks it for 128 frames, which runs the device's clock forward. About 30 times a
 // second the screen, the lights, the levels and the engine's state go out. FoMni's worklet, extended.
 
 const clock = globalThis.performance ? () => globalThis.performance.now() : () => Date.now();
 
-class Zen1Bench extends AudioWorkletProcessor {
+class CrawlBench extends AudioWorkletProcessor {
   constructor() {
     super();
     this.ex = null;
@@ -134,4 +134,4 @@ class Zen1Bench extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor("zen1-bench", Zen1Bench);
+registerProcessor("crawl-bench", CrawlBench);

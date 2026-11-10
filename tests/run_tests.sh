@@ -45,26 +45,26 @@ else
 fi
 run storage sh -c "$CC -O2 -o $OUT/storage_test tests/storage_test.c && $OUT/storage_test"
 # the update path, against the newest firmware package, a dev build or a release (Felucca's tests; needs
-# ./build.sh). (ZEN-1: release builds are build/zen-1-X.Y.Z.fwsc, so build/zen1.fwsc alone could be stale.)
-PKG=$(ls -t build/zen1.fwsc build/zen-1-*.fwsc 2>/dev/null | head -1)
+# ./build.sh). (Crawl: release builds are build/crawl-X.Y.Z.fwsc, so build/crawl.fwsc alone could be stale.)
+PKG=$(ls -t build/crawl.fwsc build/crawl-*.fwsc 2>/dev/null | head -1)
 if [ -n "$PKG" ]; then
     echo "  (update path: $PKG)"
     run ota-entry sh -c "$CC -o $OUT/ota_test tests/ota_test.c && $OUT/ota_test $PKG"
     if [ -z "${AC79_SDK:-}" ]; then
         echo "  skip update-loader (needs AC79_SDK, as the build)"
     else
-    run update-loader sh -c "head -c 100000 build/zen1.bin > $OUT/old_app.bin && \
+    run update-loader sh -c "head -c 100000 build/crawl.bin > $OUT/old_app.bin && \
         $PY tools/fm1pkg_make.py $OUT/old_app.bin build/loader/ota.bin $OUT/old.fwsc >/dev/null && \
         $CC -o $OUT/ldr_test tests/ldr_test.c && $OUT/ldr_test $OUT/old.fwsc $PKG"
     fi
     run installer $PY tests/install_test.py
 else
-    echo "  skip update-path tests (no build/zen1.fwsc: run ./build.sh)"
+    echo "  skip update-path tests (no build/crawl.fwsc: run ./build.sh)"
 fi
 run host-build sh host/build_host.sh
 if command -v emcc >/dev/null 2>&1; then
-    run emu sh -c "sh web/emu/build.sh >/dev/null && node tests/host/emu_test.mjs build/emu/zen1.wasm"
-    run bench node tests/host/bench_test.mjs build/emu/zen1.wasm
+    run emu sh -c "sh web/emu/build.sh >/dev/null && node tests/host/emu_test.mjs build/emu/crawl.wasm"
+    run bench node tests/host/bench_test.mjs build/emu/crawl.wasm
     run syx-js node tests/host/syx_test.mjs
     run session-js node tests/host/session_test.mjs
 fi
@@ -74,7 +74,7 @@ fi
 for s in tests/scenarios/*.zen; do
     n=$(basename "$s" .zen)
     mkdir -p "build/scenarios/$n"
-    run "scenario-$n" build/host/zen_host "$s" "build/scenarios/$n"
+    run "scenario-$n" build/host/crawl_host "$s" "build/scenarios/$n"
 done
 run syx-dump $PY tools/syx_dump.py --selftest
 run analyze-ref $PY tools/analyze_ref.py --selftest

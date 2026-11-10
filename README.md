@@ -1,4 +1,16 @@
-# ZEN-1 (禅) for the M-VAVE FM-1
+# Crawl for the M-VAVE FM-1
+
+**Crawl** is dark generative ambient firmware for the M-VAVE FM-1, in the making. It is a fork of
+[ZEN-1](https://github.com/aceyprime/zen-1) by AceyPrime (GPL-3.0). At this stage (M0, parity) it is ZEN-1 1.2 under
+Crawl's name: the same scenes, sounds and controls, built from Windows in a Docker container. The brief is
+`CLAUDE.md`, progress is in `docs/PROGRESS.md` and decisions in `docs/DECISIONS.md`.
+
+Crawl is unofficial: it is not affiliated with, endorsed by or supported by M-VAVE or any other trademark holder
+named here. Installing custom firmware is at your own risk.
+
+The rest of this page is ZEN-1's README. It still describes what Crawl does today.
+
+## ZEN-1 (禅)
 
 **ZEN-1** is ambient custom firmware for the M-VAVE FM-1. It turns the little synth into a living window: a
 cherry tree drops petals on a river, koi circle a pond, fireflies blink over a summer stream under a real moon,
@@ -70,14 +82,21 @@ The full list is in the guide (`web/site/guide.html`).
 
 See [BUILDING.md](BUILDING.md) and [docs/dev-environment.md](docs/dev-environment.md).
 
+From Windows (PowerShell, Docker Desktop running), each command runs the matching shell script inside the build
+container, `Dockerfile`:
+
 ```
-tests/run_tests.sh                    # host tests, the simulator scenarios, the browser build, the tools
-./build.sh                            # build/zen1.fwsc (Docker, JieLi toolchain)
-./build.sh --release 1.2         # a release package, build/zen-1-1.2.fwsc
-web/emu/build.sh                      # the browser emulator, and the audition bench for developers (Emscripten)
-build/host/zen_host SCRIPT OUTDIR    # the whole app on a computer, from a script (tests/scenarios/*.zen)
-tools/site_gallery.sh                 # the site's screenshots, from the simulator
+.\tests\run_tests.ps1                  # host tests, the simulator scenarios, the browser build, the tools
+.\build.ps1                            # build/crawl.fwsc (JieLi toolchain)
+.\build.ps1 --release 1.2              # a release package, build/crawl-1.2.fwsc
+.\web\emu\build.ps1                    # the browser emulator, and the audition bench for developers (Emscripten)
+.\host\build_host.ps1                  # the host simulator, build/host/crawl_host
+tools\docker_run.ps1 build/host/crawl_host SCRIPT OUTDIR   # the whole app on a computer, from a script (tests/scenarios/*.zen)
+tools\docker_run.ps1 sh tools/site_gallery.sh             # the site's screenshots, from the simulator
 ```
+
+Inside the container, or on Linux or macOS with the tools installed (`docs/dev-environment.md`), the shell scripts
+run directly: `tests/run_tests.sh`, `./build.sh`, `web/emu/build.sh`, `host/build_host.sh`.
 
 The host simulator runs the same app code as the FM-1, writing audio and screenshots, so nearly everything can
 be developed and tested without the hardware.

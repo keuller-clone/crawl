@@ -1,9 +1,11 @@
 # Upstream and reference commits
 
-ZEN-1 is built on FuMi-1, itself a fork of FoMni.
+Crawl is built on ZEN-1, which is built on FuMi-1, itself a fork of FoMni.
 
 | Repository | Role | Commit | Date |
 |---|---|---|---|
+| https://github.com/aceyprime/zen-1 (ZEN-1) | **Crawl's base.** ZEN-1 1.2, merged with its full history (remote `upstream-zen1`); the rows below are ZEN-1's own record | `ec9295233ea64ddac224b58b4d07216706c1b8ee` | 2026-10-21 |
+| https://github.com/GRiMMBIENT/grimm (GR!MM) | **DSP donor.** Tag v2.0.2, kept as `refs/grimm/v2.0.2` (remote `upstream-grimm`), read-only and not built: VOICE, PHYS, SAMPLE, TAPE, GRAIN and DELAY are ported from it in M2 | `b519acbee7dbdb3e0fb82b15b86a913898c6f8f5` | 2026-11-03 |
 | https://github.com/cartesive/fumi-1 (FuMi-1) | **Base.** ZEN-1 started from FuMi-1 1.0.3; its instrument is kept as a mode | `8282ef9ac1bfd6307727780abf2835ee9927585d` | 2026-10-10 |
 | https://github.com/charlesvestal/fm1-fomni (FoMni) | **Platform.** Platform code is kept byte-for-byte (see `tools/guard_platform.sh`) | `b81eb6b661c35948ec2d1059664d4e5790999305` | 2026-10-08 |
 | https://github.com/charlesvestal/fm1-fomni (FoMni) | **The installers** (`tools/fm1_install.py`, `web/fm1ota.js`): back to stock from M-VAVE's FM1 Open firmware | `6c326230af03c66a77ba68e1af72cf3341e34208` | 2026-10-14 |

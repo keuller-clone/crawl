@@ -57,7 +57,7 @@ PAD = 2
 
 
 def large_chars():
-    """the only characters drawn in L (the rest keep their advance and get no bitmap, ~11 KB of flash): ZEN-1's
+    """the only characters drawn in L (the rest keep their advance and get no bitmap, ~11 KB of flash): Crawl's
     name, the calibration screen's labels (panel.c), 本数 (tuning.c's TN_HON_ASCII) and the instruments' names
     (read from fumi_patches.h, so a new instrument brings its letters; ui.c falls back to M for a name sent from
     outside that needs another)"""
@@ -66,7 +66,7 @@ def large_chars():
     names = re.search(r"FM_PATCH_NAME\[FM_NPATCH\] = \{([^}]*)\}", (root / "firmware/src/dsp/fumi_patches.h").read_text())
     panel = (root / "firmware/src/app/panel.c").read_text()
     labels = re.findall(r'"([^"]*)"', panel[panel.index("B_NAME"):panel.index("PANEL_MAGIC")])
-    return set(" ZEN-1S0123456789" + "".join(labels) + "".join(re.findall(r'"([^"]*)"', names.group(1))))
+    return set(" CRAWLS0123456789" + "".join(labels) + "".join(re.findall(r'"([^"]*)"', names.group(1))))
 
 
 KEEP = {"L": large_chars()}

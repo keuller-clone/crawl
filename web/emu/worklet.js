@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// FuMi-1 in an AudioWorklet: zen1.wasm is the whole FM-1 app (web/emu/zen_web.c). FoMni's, from X0X's. Each render
+// FuMi-1 in an AudioWorklet: crawl.wasm is the whole FM-1 app (web/emu/zen_web.c). FoMni's, from X0X's. Each render
 // quantum asks it for 128 frames, which runs the device's clock forward; between quanta the page's
 // input goes in and, about 30 times a second, the screen, the lights and any saved objects go out.
 
 const clock = globalThis.performance ? () => globalThis.performance.now() : () => Date.now();
 
-class Zen1 extends AudioWorkletProcessor {
+class Crawl extends AudioWorkletProcessor {
   constructor() {
     super();
     this.ex = null;
@@ -102,4 +102,4 @@ class Zen1 extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor("zen1", Zen1);
+registerProcessor("crawl", Crawl);

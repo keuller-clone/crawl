@@ -1,9 +1,9 @@
-# ZEN-1 licensing
+# Crawl licensing
 
-ZEN-1 is free software under the GNU General Public License, version 3 only (`GPL-3.0-only`, full text
-in `LICENSE`). It is built on FuMi-1, which is built on FoMni and Felucca's platform layer (through X0X), and
-keeps their license. If you distribute ZEN-1, or firmware derived from it, you must give your recipients its
-complete corresponding source under the same license.
+Crawl is free software under the GNU General Public License, version 3 only (`GPL-3.0-only`, full text
+in `LICENSE`). It is built on [ZEN-1](https://github.com/aceyprime/zen-1), which is built on FuMi-1, FoMni and
+Felucca's platform layer (through X0X), and keeps their license. If you distribute Crawl, or firmware derived from
+it, you must give your recipients its complete corresponding source under the same license.
 
 ## Where the code comes from
 
@@ -16,7 +16,8 @@ complete corresponding source under the same license.
 | `firmware/src/dsp/fm6_patch.c` (patch formats), `tools/gen_fm6_tables.py` and the generated `fm6_tables.h`, the helpers in `tools/fumi_patches.py` | Felucca's `eng_fm6.c`, `tools/gen_tables.py`, `tools/gen_fm6_patches.py` | GPL-3.0-only |
 | `firmware/src/dsp/fastmath.h` | Felucca, via FoMni | GPL-3.0-only |
 | The pitch core, the instrument (`firmware/src/dsp/{tuning,smooth,bend,fumi}.*`, `fumi_patches.h`), `web/bench/`, `tools/{analyze_ref,syx_dump,fumi_patches,check_no_double}.py`, `tools/koto_search.c`, `tools/guard_platform.sh` | [FuMi-1](https://github.com/cartesive/fumi-1) | GPL-3.0-only |
-| Everything else: the scenes, the conductor, the renderer and UI (`firmware/src/app/`), the nature beds (`firmware/src/dsp/bed.c`, `zen_*.h`), `tools/zen_*`, the site and guide (`web/site/`), `tests/`, `docs/` | ZEN-1 | GPL-3.0-only |
+| Everything else: the scenes, the conductor, the renderer and UI (`firmware/src/app/`), the nature beds (`firmware/src/dsp/bed.c`, `zen_*.h`), `tools/zen_*`, the site and guide (`web/site/`), `tests/`, `docs/` | ZEN-1 (AceyPrime) | GPL-3.0-only |
+| Crawl's own changes: the name, `Dockerfile`, the PowerShell wrappers, `docs/DECISIONS.md`, `docs/PROGRESS.md` | Crawl | GPL-3.0-only |
 
 ## Third-party material
 
@@ -41,9 +42,9 @@ complete corresponding source under the same license.
 
 Suiko, 水光トレーナー and ST-50 are names of 水光社 (Suikohsha), used here only to say what inspired FuMi-1, whose instrument ZEN-1 keeps.
 "Felucca" and "Hügelton Instruments" are names of Hügelton Instruments. "M-VAVE" and "FM-1" are trademarks
-of their respective owners. DX7 is a trademark of Yamaha. ZEN-1 is independent firmware; it is not
-affiliated with, endorsed by or supported by any of them.
+of their respective owners. DX7 is a trademark of Yamaha. Crawl is independent, unofficial firmware; it is not
+affiliated with, endorsed by or supported by any of them, nor by ZEN-1's author.
 
 ## Radio
 
-ZEN-1 never enables the Bluetooth / Wi-Fi radio of the hardware.
+Crawl never enables the Bluetooth / Wi-Fi radio of the hardware.

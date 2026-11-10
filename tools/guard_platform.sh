@@ -22,7 +22,7 @@ if ! git cat-file -e "$UPSTREAM^{commit}" 2>/dev/null || ! git cat-file -e "$INS
     exit 1
 fi
 fail=0
-# the one line allowed to differ: the USB product name (usb.c STR2: "ZEN-1 FM-1", FoMni's "FoMni FM-1"; the same
+# the one line allowed to differ: the USB product name (usb.c STR2: "Crawl FM-1", FoMni's "FoMni FM-1"; the same
 # length, so nothing else moves). Nothing else in the platform may change.
 ALLOW='^static const uint8_t STR2\[\] = \{22, 3, '
 # shellcheck disable=SC2086

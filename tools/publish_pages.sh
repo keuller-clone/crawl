@@ -8,7 +8,7 @@
 set -e
 cd "$(dirname "$0")/.."
 V="${1:?usage: tools/publish_pages.sh VERSION}"
-PKG="build/zen-1-$V.fwsc"
+PKG="build/crawl-$V.fwsc"
 [ -f "$PKG" ] || { echo "no $PKG: run ./build.sh --release $V first"; exit 1; }
 if grep -q '^REPO = .*OWNER' tools/make_pages.py; then
     echo "set REPO in tools/make_pages.py to the public repository first"; exit 1
@@ -21,11 +21,10 @@ cd build/pages
 rm -rf .git
 git init -q -b gh-pages
 git add -A
-N="24679932+aceyprime@users.noreply.github.com"     # (AceyPrime and the GitHub no-reply address, as publish_public.sh)
-GIT_AUTHOR_NAME=AceyPrime GIT_COMMITTER_NAME=AceyPrime GIT_AUTHOR_EMAIL="$N" GIT_COMMITTER_EMAIL="$N" git commit -q -m "Site for ZEN-1 $V (from $SHA)"
+git commit -q -m "Site for Crawl $V (from $SHA)"
 git push -q -f "$REMOTE" gh-pages
 rm -rf .git
 # ask GitHub Pages to build it now: a push alone has left a first deploy stuck on "building"
 REPO="$(printf %s "$REMOTE" | sed -E 's#(git@github.com:|https://github.com/)##; s#\.git$##')"
 gh api -X POST "repos/$REPO/pages/builds" >/dev/null 2>&1 || echo "(could not ask GitHub Pages to build: check the repository's Pages settings)"
-echo "pushed the site for ZEN-1 $V to gh-pages"
+echo "pushed the site for Crawl $V to gh-pages"

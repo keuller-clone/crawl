@@ -6,7 +6,7 @@
  * engine every 256 samples (the I2S half buffer) and the UI every 16 ms, as on the FM-1. The page
  * sends input, and reads the screen, the lights and the saved objects back through these exports.
  *
- *   web/emu/build.sh   ->  build/emu/zen1.wasm (+ the page) */
+ *   web/emu/build.sh   ->  build/emu/crawl.wasm (+ the page) */
 #include <stdint.h>
 
 static void web_audio(const int32_t *blk, uint32_t n);

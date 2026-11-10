@@ -535,7 +535,7 @@ static void draw_header(void)
         hud_draw();                            /* in place of the title and the tags (the button lights show those) */
         on[0] = on[1] = on[2] = on[3] = 0;
 #else
-        cv_text(x, 6, &FONT_B, ui.view == V_HOME ? "ZEN-1" : VIEW_NAME[ui.view], K_TEXT);
+        cv_text(x, 6, &FONT_B, ui.view == V_HOME ? "CRAWL" : VIEW_NAME[ui.view], K_TEXT);
 #endif
         x = 232;
         for (i = 3; i >= 0; i--) {
@@ -1621,7 +1621,7 @@ static void amb_overlay(int32_t sy, int32_t sh)
                                             {"FX", "the knobs"}};
         int i;
         cv_round(4, 128, 232, 108, 6, K_PANEL);
-        text_c(120, 134, &FONT_B, "Welcome to ZEN-1", K_TEXT);
+        text_c(120, 134, &FONT_B, "Welcome to Crawl", K_TEXT);
         for (i = 0; i < 4; i++) {
             cv_text(116 - text_w(&FONT_S, W[i][0]), 158 + 19 * i, &FONT_S, W[i][0], K_TEXT);
             cv_text(126, 158 + 19 * i, &FONT_S, W[i][1], K_KOTO);
