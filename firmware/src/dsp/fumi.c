@@ -25,6 +25,7 @@
  * resets the phases, a short 余韻 gates the note. Never defined in a real build. */
 #define BLK_MS (1000.0f * (float)BLK / FM_SR)
 #include "bed.c"                                   /* (needs BLK) */
+#include "tapefx.c"                                /* Crawl: GR!MM's TAPE on the mix (needs FM_POOL) */
 
 /* ------------------------------------------------------------- params --- */
 static const fm_param_t PARAMS[P_NPARAMS] = {
@@ -175,6 +176,13 @@ void fm_bed_mod(int which, int pct) { post(C_BED_MOD, which, pct, 0.0f); }
 void fm_bed_style(int which, int style) { post(C_BED_STYLE, which, style, 0.0f); }
 void fm_voice_all_off(void) { post(C_VOICE_ALL_OFF, 0, 0, 0.0f); }
 void fm_tape(int pct) { post(C_TAPE, 0, pct < 0 ? 0 : pct > 100 ? 100 : pct, 0.0f); }
+void fm_tape_knobs(int wow, int sat, int tone, int hiss)   /* main loop: the tape's four, 0..127 (tapefx.c) */
+{
+    tf_wow = tf_clamp(wow, 0, 127), tf_sat = tf_clamp(sat, 0, 127);
+    tf_tone = tf_clamp(tone, 0, 127), tf_hiss = tf_clamp(hiss, 0, 127);
+    tapefx_poll();
+}
+void fm_tape_poll(void) { tapefx_poll(); }
 void fm_depth(int pct) { post(C_DEPTH, 0, pct < 0 ? 0 : pct > 100 ? 100 : pct, 0.0f); }
 void fm_frog(int slot, int seg, int vel, int pan, int rate_pct)
 {
@@ -288,14 +296,12 @@ static float yo_mult;                             /* 余韻: the multiplier per 
 static float k_fast, k_slide;                     /* the voice smoother's coefficients: 12 ms, the slide time */
 static float a4_cents;                            /* the A reference as an offset: 1200 log2(A / 440) */
 static float hp_a, hp_s[2], lp_a, lp_s1[2], lp_s2[2], warm_s[2], char_amt, rev_send;
-/* tape (ZEN-1's scenes, after ambalek's "fall": its bits and ducked hiss): the amount glides; a gentle high cut
- * and a soft saturation on the way out, hiss above ~3 kHz that ducks under the music, and wow (a slow pitch waver)
- * on the scene's notes (never the instrument's) */
-static float tape_target, tape_amt, tape_lp[2], tape_hp[2], tape_env, tape_wow, tape_ph1, tape_ph2;
+/* tape (Crawl: GR!MM's TAPE, tapefx.c, in place of ZEN-1's own, which no scene turned up): the amount glides, how
+ * far the mix goes through the tape; its WOW bends the scene's notes (never the instrument's) */
+static float tape_target, tape_amt, tape_wow;
 /* depth (after Avonlea's: the scene's sound bright to mellow): two one-pole low-passes, ~16 kHz at 0 down to
  * ~1.2 kHz at 100, the cutoff gliding */
 static float depth_target, depth_amt, depth_a = 1.0f, depth_lp[2][2];
-static uint32_t tape_rnd = 0x3C6EF372u;
 static float mix[2][BLK];                         /* left, right */
 
 static float frand(void)                          /* -1 .. 1 */
@@ -737,8 +743,8 @@ void fm_init(void)
     bend_init(&bend);
     plate_init();
     bed_init();
-    tape_target = tape_amt = tape_env = tape_wow = 0.0f;
-    tape_lp[0] = tape_lp[1] = tape_hp[0] = tape_hp[1] = 0.0f;
+    tape_target = tape_amt = tape_wow = 0.0f;
+    tapefx_init();
     depth_target = depth_amt = 0.0f;
     depth_a = 1.0f;
     depth_lp[0][0] = depth_lp[0][1] = depth_lp[1][0] = depth_lp[1][1] = 0.0f;
@@ -893,17 +899,16 @@ static void controls_block(void)
     if (vib_ph >= 1.0f)
         vib_ph -= 1.0f;
     vib_cur += ((vib_on ? vib_depth : 0.0f) - vib_cur) * 0.03f;
-    tape_amt += (tape_target - tape_amt) * 0.01f;   /* (~0.1 s) */
+    {                                               /* (~0.1 s; at 0 it is 0: the tape lets go) */
+        float a0 = tape_amt;
+        tape_amt += (tape_target - tape_amt) * 0.01f;
+        if (tape_target <= 0.0f && tape_amt < 0.001f)
+            tape_amt = 0.0f;
+        tape_wow = tape_control(a0, tape_amt, BLK, ms_count * 31u + (uint32_t)fm_nvoices * 7u);   /* cents */
+    }
     depth_amt += (depth_target - depth_amt) * 0.01f;
     if (depth_amt > 0.001f)                         /* (the cutoff: 16 kHz x (1.2 / 16)^depth) */
         depth_a = 1.0f - fm_expf(-6.2831853f * 16000.0f * fm_exp2f(-3.737f * depth_amt) / FM_SR);
-    tape_ph1 += 0.33f * (float)BLK / FM_SR;         /* wow 0.33 Hz, flutter 4.7 Hz */
-    tape_ph2 += 4.7f * (float)BLK / FM_SR;
-    if (tape_ph1 >= 1.0f)
-        tape_ph1 -= 1.0f;
-    if (tape_ph2 >= 1.0f)
-        tape_ph2 -= 1.0f;
-    tape_wow = tape_amt * (6.0f * fm_sin_turns(tape_ph1) + 1.2f * fm_sin_turns(tape_ph2));   /* cents */
     /* trill: the most recent held key re-plucked at the rate, each repeat a little early or late */
     if (trill_on && nheld > 0) {
         trill_left -= (float)BLK;
@@ -1042,24 +1047,8 @@ static void render_block(int32_t *out, float gain)
         lv += dlv;
         l = ml + wl;
         r = mr + wr;
-        if (tape_amt > 0.001f) {                   /* tape: softened, a little saturated, and a ducked hiss */
-            float a = 1.0f - 0.72f * tape_amt, drive = 1.0f + 1.5f * tape_amt, h, n, duck;
-            tape_lp[0] += a * (l - tape_lp[0]);    /* ~16 kHz down to ~4 kHz */
-            tape_lp[1] += a * (r - tape_lp[1]);
-            l = fm_tanhf(tape_lp[0] * drive) / drive;
-            r = fm_tanhf(tape_lp[1] * drive) / drive;
-            tape_env += (fm_fabsf(l) + fm_fabsf(r) - tape_env) * 0.0005f;
-            duck = 1.0f / (1.0f + tape_env * 60.0f);
-            tape_rnd = tape_rnd * 1664525u + 1013904223u;
-            n = (float)(int32_t)tape_rnd * (1.0f / 2147483648.0f);
-            tape_hp[0] += 0.35f * (n - tape_hp[0]);  /* the noise less its lows: a hiss */
-            h = (n - tape_hp[0]) * 0.007f * tape_amt * duck;
-            tape_rnd = tape_rnd * 1664525u + 1013904223u;
-            n = (float)(int32_t)tape_rnd * (1.0f / 2147483648.0f);
-            tape_hp[1] += 0.35f * (n - tape_hp[1]);
-            l += h;
-            r += (n - tape_hp[1]) * 0.007f * tape_amt * duck;
-        }
+        if (tf.live)                               /* tape (tapefx.c): saturated, darker, hiss; off: nothing */
+            tape_frame(&l, &r);
         if (depth_amt > 0.001f) {                  /* depth: mellower, the highs gone */
             depth_lp[0][0] += depth_a * (l - depth_lp[0][0]);
             depth_lp[0][1] += depth_a * (depth_lp[0][0] - depth_lp[0][1]);

@@ -340,17 +340,19 @@ static void parts_test(void)
         run(0, 44032);
         run_lr(22016);
         quiet = rms_lr[0];
+        fm_tape_knobs(0, 0, 0, 127);               /* (Crawl: GR!MM's TAPE; HISS all the way up) */
         fm_tape(100);
         run(0, 22016);
         run_lr(22016);
         hiss = rms_lr[0];
         printf("  tape: silence %.1f dB, with tape 100 %.1f dB\n", db(quiet), db(hiss));
         CHECK("tape off: silence", quiet < 1e-6f);
-        CHECK("tape on: a faint hiss", hiss > 1e-6f && hiss < 0.001f);
+        CHECK("tape on: a faint hiss", hiss > 1e-6f && hiss < 0.02f);
         fm_tape(0);
         run(0, 22016);
         run_lr(22016);
         CHECK("tape back to 0: silence again", rms_lr[0] < 1e-6f);
+        fm_tape_knobs(0, 0, 0, 0);
     }
 
     /* cost: a layered scene, eight voices across three parts, with the reverb */

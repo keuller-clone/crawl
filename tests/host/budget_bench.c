@@ -107,9 +107,10 @@ int main(void)
     hold(1, 1, ZN_SOFT_PAD);
     row("reverb 100 (with one voice feeding it)");
     bq();
+    fm_tape_knobs(64, 110, 90, 127);
     fm_tape(100);
     hold(1, 1, ZN_SOFT_PAD);
-    row("tape 100 (ZEN-1's own, with one voice)");
+    row("tape 100, its four knobs up (with one voice)");
     for (i = 0; i < FM_NBED; i++) {
         static const char *const BN[] = {"bed: wind 100", "bed: stream 100", "bed: rain 100"};
         bq();
@@ -126,6 +127,7 @@ int main(void)
     row("bed: air, the recorded insects (ADPCM loop)");
     bq();
     fm_set(P_REVERB, 100);
+    fm_tape_knobs(64, 110, 90, 127);
     fm_tape(100);
     for (i = 0; i < FM_NBED; i++)
         fm_bed(i, 100);

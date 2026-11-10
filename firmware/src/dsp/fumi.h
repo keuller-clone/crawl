@@ -72,7 +72,10 @@ void fm_part_keep(int part, int on);             /* 1: the part's held notes are
 void fm_voice(int id, int part, float cents, int vel, int pan, int dur_ms);
 void fm_voice_off(int id);
 void fm_voice_all_off(void);                     /* every scene note lets go: one command (a scene's leave) */
-void fm_tape(int pct);                           /* tape warmth 0..100: softer highs, a ducked hiss, wow (scenes) */
+void fm_tape(int pct);                           /* how far the mix goes through the tape, 0..100 % (scenes) */
+void fm_tape_knobs(int wow, int sat, int tone, int hiss);   /* main loop: the tape's WOW, SATURATION, TONE, HISS,
+                                                  * 0..127 each (GR!MM's TAPE, tapefx.c); all 0 at fm_init */
+void fm_tape_poll(void);                         /* main loop, every frame: a new SATURATION curve when one is due */
 void fm_depth(int pct);                          /* depth 0..100: the scene's sound bright to mellow */
 void fm_scene_gain(int pct);
 /* frogs (bed.c): slot 0..FM_NSHOT-1 each one call at a time (a new one replaces it): a recorded call (zen_samples.h

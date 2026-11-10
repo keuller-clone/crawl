@@ -10,6 +10,9 @@ named here. Installing custom firmware is at your own risk.
 
 The rest of this page is ZEN-1's README. It still describes what Crawl does today.
 
+Crawl's TAPE effect is ported from [GR!MM](https://github.com/GRiMMBIENT/grimm) (GPL-3.0); more of GR!MM's voices and
+effects follow (`docs/PROGRESS.md`).
+
 ## ZEN-1 (禅)
 
 **ZEN-1** is ambient custom firmware for the M-VAVE FM-1. It turns the little synth into a living window: a

@@ -1869,6 +1869,7 @@ void ui_init(void)
 
 void ui_frame(void)
 {
+    fm_tape_poll();                                /* (Crawl: the tape's curve, when its knob moved) */
 #if ZN_HUD
     hud_tick();
 #endif
