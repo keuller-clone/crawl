@@ -70,17 +70,21 @@ Nature/texture layer: CC0 recordings matched to scenes (wind, crows, fire crackl
 
 ## 5. Development environment
 
-- Windows 11, VS Code with Claude Code, Docker Desktop on the WSL2 backend, FM-1 on USB.
-- `build.sh` and tools are bash: run them inside WSL2 (Ubuntu). Keep the clone on the WSL filesystem (`~/src/crawl`), not `/mnt/c`, for build speed and correct permissions.
-- Add `.gitattributes` with `* text=auto eol=lf` so scripts keep LF endings.
-- Flashing from Windows: browser installer in Chrome/Edge, or `tools/fm1_install.py` (confirm whether WSL can see the USB MIDI device; if not, run the Python tool on Windows).
+- **Windows 11 is the host. This is a Windows project.** VS Code with Claude Code, repo cloned on the Windows filesystem, FM-1 on USB to Windows.
+- Do not require a user-installed WSL Linux distribution or a WSL-side clone.
+- The JieLi firmware toolchain is Linux x86_64 only, so the firmware build runs inside a **Docker container launched from Windows** (Docker Desktop). This is ZEN-1's own non-Linux path. Linux is a container detail, not a workspace.
+- Every build entry point must be runnable from PowerShell. If `build.sh`, `host/build_host.sh`, or `web/emu/build.sh` cannot run from Windows as-is, add thin PowerShell wrappers (`build.ps1`, etc.) that invoke the same Docker image and commands. Do not fork the build logic.
+- Host sim and Emscripten emulator: build them in the same Docker image unless a native Windows build is simpler and verified.
+- Flashing and USB stay on Windows: browser installer in Chrome/Edge, or `tools/fm1_install.py` run with Windows Python. USB never needs to reach Linux.
+- Add `.gitattributes` with `* text=auto eol=lf` (and `*.ps1 text eol=crlf`) so shell scripts keep LF endings when mounted into the container.
+- Never install system software (Docker, WSL distros, drivers, Python) yourself. Check what is present, and if something is missing, stop and give Steven the install command.
 - When any step depends on the environment, give each command in its own code block.
 
 ## 6. Milestones
 
 Each milestone ends with a passing build, passing tests, guard script clean, a host-sim audio render, and a short note in `docs/PROGRESS.md`. Stop at the end of each milestone for Steven's review.
 
-- **M0 Parity.** Rename to Crawl (binary `crawl.fwsc`, strings, splash), keep behavior identical to ZEN-1. Firmware, host sim, and emulator all build. Steven flashes once to confirm install and restore.
+- **M0 Parity.** Rename to Crawl (binary `crawl.fwsc`, strings, splash), keep behavior identical to ZEN-1. Firmware, host sim, and emulator all build from PowerShell via Docker. Steven flashes once to confirm install and restore.
 - **M1 Budget spike.** Identify the MCU and audio callback budget. Measure CPU per voice for FM, VOICE, PHYS, SAMPLE, and per effect (TAPE, GRAIN, DELAY, reverb); measure RAM and flash headroom. Output `docs/BUDGET.md` with a go/no-go recommendation for Mode B and a max-polyphony plan for Mode A.
 - **M2 DSP port.** Port one engine or effect at a time, with a unit test and a host-sim render for each. Integrate into the voice allocator and mixer.
 - **M3 Scenes.** Build the four scenes, moods, scales, nature layer, Long Night mode, and art. Tune by rendering 10-minute host-sim sessions per mood and listening for loops, clipping, and dead air.
