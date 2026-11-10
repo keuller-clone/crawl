@@ -86,3 +86,24 @@ SHA-256 of this run's `build/crawl.fwsc`: `cfd35d881ab928eafa0e317662c22bcfa0b0b
 
 **Next:** DELAY and GRAIN need about 120 KB of pool that is not there. The reverb's 135 KB buffer is the place
 to find it, and that changes the reverb's storage, so it needs a listening check.
+
+**The reverb's storage, DELAY, GRAIN: done (2026-11-10).** `firmware/src/dsp/reverb.c`, `echofx.c`.
+
+- The reverb's lines are 16-bit: 68 KB of pool freed. It costs about 8 us a block more on the host.
+- DELAY and GRAIN are GR!MM's, on one shared 1.4 s line (`docs/DECISIONS.md` says why). API: `fm_fx_send`,
+  `fm_delay`, `fm_grain`, `fm_grain_freeze`.
+- Unit test `tests/host/echo_test.c` (in `run_tests.sh`): 19 checks pass. The echo returns at TIME (298 ms
+  measured for a 286 ms setting plus the burst and a period), repeats 5.3 dB down at FEEDBACK 64, stays bounded at
+  full FEEDBACK (peak 1.34), ends in exact silence and stops; the cloud sounds and is panned; FREEZE holds it for
+  6 s and more, and letting go writes it over; echoes fade without a step when frozen.
+- Render to listen to: `build/host/echo.wav` (32 s: dry, DELAY from 8 s, GRAIN from 16 s, FREEZE at 24 s,
+  let go at 30 s).
+- Cost on the host, over one voice: DELAY 4.4 us a block, GRAIN 5.6. Estimated about 3 % of an FM-1 block each.
+- Build: image 576212 B (5352 B of flash left), RAM 96984 B of 98304, pool 335596 B of 344064 (8468 B free,
+  276 B above the limit).
+- Tests: 64 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
+- Not audible yet in a scene: nothing turns the send up until M3.
+
+**Left in M2:** VOICE, PHYS, SAMPLE. All three memory regions are at their limits again: flash 5 KB, RAM 1.3 KB,
+pool 0.3 KB above its floor. VOICE needs 33 KB of flash, PHYS 13 KB of flash and 4.3 KB of RAM a voice. They do
+not fit until ZEN-1 content goes (a scene, its recordings, or the koto instrument).

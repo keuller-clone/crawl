@@ -92,3 +92,28 @@ sample can differ from GR!MM's by one step of the last bit.
 **No scene removal yet.** M1 suggested removing a scene to make room. TAPE did not need it, and the pool, which
 is what DELAY and GRAIN need, is not held by the scenes but by the reverb and the screen. The reverb's storage is
 the next thing to decide, with Steven listening.
+
+## 2026-11-10 M2: the reverb's storage, DELAY, GRAIN
+
+**The reverb's lines hold 16-bit samples (Steven).** `reverb.c` stored floats, 135 KB of pool. It now stores
+int16 at +-2.0 full scale, rounded towards zero so a tail ends in silence: 68 KB. The arithmetic is still float. No
+before and after render, at Steven's word. It costs time: each tap converts, about 8 us a block more on the host
+(the idle floor went from 20 to 28 us), an estimated 5 % of an FM-1 block.
+
+**DELAY and GRAIN share one line of 1.4 s.** Steven agreed to a shorter delay, 1.5 s proposed. After the reverb
+change the pool has 68 KB to give. GR!MM's delay line at 1.5 s is 67 KB, which leaves nothing for GRAIN's ring
+(GR!MM: 55 KB) or the working buffers. So `echofx.c` has one line, 1.4 s (62 KB): DELAY writes it and GRAIN
+reads it as its ring. Consequences: TIME's table is scaled by 0.4 (8 to 1400 ms); the cloud is made of the send
+and of its echoes; the line records while either effect is up; FREEZE holds the line for both, so the echoes fade
+out over 6 ms while it is held and return when it is let go. The alternative, two separate buffers, gave a 1.0 s
+delay and a 0.4 s ring, too short for grains of up to 390 ms.
+
+**GR!MM's 256-frame blocks are kept, one period late.** fumi.c's 32-frame blocks fill a period's send and play
+the last period's returns, so echoes and grains arrive 5.8 ms late. The code inside is GR!MM's, generated from
+its source with the changes listed at the top of `echofx.c`.
+
+**One send for both** (`fm_fx_send`), from the voices after the tone stage. The returns go to the output and into
+the reverb (GR!MM: its REV bus), and through the tape. All off at `fm_init`: nothing runs, parity holds.
+
+**GRAIN's lengths come from the main loop in float** (`fm_grain`), not from GR!MM's pitch table, which Crawl does
+not carry.
