@@ -112,10 +112,25 @@ static void knob_set(int p, int v);
 #include "scene.h"
 #include "../dsp/zen_patches.h"                 /* ZEN-1's own patch ids (ZN_SOFT_PAD ...) */
 #include "conductor.c"
+/* Crawl (M2): Sakura is left out of the FM-1 image, to make room for GR!MM's voices until M3 replaces the scenes.
+ * The host simulator and the browser build keep it (their tests are written around it). CRAWL_SAKURA=1 puts it back. */
+#ifndef CRAWL_SAKURA
+#ifdef OM_HOST
+#define CRAWL_SAKURA 1
+#else
+#define CRAWL_SAKURA 0
+#endif
+#endif
+#if CRAWL_SAKURA
 #include "scene_sakura.c"
+#endif
 #include "scene_koi.c"
 #include "scene_hotaru.c"
-static const scene_t *const SCENES[] = {&SCENE_SAKURA, &SCENE_KOI, &SCENE_HOTARU};   /* (the Bench load test went:
+static const scene_t *const SCENES[] = {
+#if CRAWL_SAKURA
+    &SCENE_SAKURA,
+#endif
+    &SCENE_KOI, &SCENE_HOTARU};   /* (the Bench load test went:
                                                                                      * "jarring" between scenes; its slot 1 is free) */
 #define NSCENES ((int)(sizeof SCENES / sizeof SCENES[0]))
 

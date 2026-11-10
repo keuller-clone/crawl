@@ -163,11 +163,17 @@ static int shot_seg(int set, int seg, const uint8_t **data, int32_t *len)
         *len = ZN_FROG_TAB[seg].len;
         return 0;
     case FM_SHOT_BIRD:
+#ifdef FM_HOST                                     /* (Crawl: the bush warbler is Sakura's, and Sakura is not in the
+                                                   * FM-1 image, ui.c CRAWL_SAKURA: unreferenced there, so not in it) */
         if (seg < 0 || seg >= ZN_BIRD_N)
             return -1;
         *data = ZN_BIRD_TAB[seg].data;
         *len = ZN_BIRD_TAB[seg].len;
         return 0;
+#else
+        (void)ZN_BIRD_TAB;
+        return -1;
+#endif
     case FM_SHOT_KNOCK:
         if (seg < 0 || seg >= ZN_KNOCK_N)
             return -1;

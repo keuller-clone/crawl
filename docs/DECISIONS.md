@@ -117,3 +117,14 @@ the reverb (GR!MM: its REV bus), and through the tape. All off at `fm_init`: not
 
 **GRAIN's lengths come from the main loop in float** (`fm_grain`), not from GR!MM's pitch table, which Crawl does
 not carry.
+
+## 2026-11-10 M2: Sakura out of the FM-1 image
+
+**Sakura is left out of the firmware build only (Steven chose to remove a scene; the way it is done is a
+deviation).** `ui.c` `CRAWL_SAKURA` is 0 for the FM-1 image and 1 for the host simulator and the browser build.
+With it out the image is 489876 B (91688 B of flash free) and RAM is 54616 B of 98304 (43688 B free); its bush
+warbler recordings drop out too (`bed.c`). Removing it everywhere was tried first: 12 of the 23 scenario scripts
+failed, about 140 expectations, because the scripts are written around Sakura's own defaults and its place as
+the first scene. Rewriting them would be thrown away in M3, when every scene is replaced. The cost: until M3 the
+simulator and the emulator are not the same scene list as the firmware (three scenes against two). The engine,
+the effects and the two remaining scenes are the same code in both.
