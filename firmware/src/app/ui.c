@@ -137,11 +137,14 @@ static void knob_set(int p, int v);
 #endif
 #include "scene_hotaru.c"
 #include "scene_crypt.c"
+#include "scene_forest.c"
 /* Crawl's scenes come first in the FM-1 image; in the simulator they follow ZEN-1's, whose scripts count on their
- * places (docs/DECISIONS.md, "M3: plan"). Crypt has project slot 1 (ZEN-1's Bench scene's, free) */
+ * places (docs/DECISIONS.md, "M3: plan"). Crypt has project slot 1 (ZEN-1's Bench scene's, free); Forest Ruins
+ * slot 2, Koi's, which is out of the FM-1 image (in the simulator the two share it until the ZEN-1 scenes go) */
 static const scene_t *const SCENES[] = {
 #if !CRAWL_SAKURA && !CRAWL_KOI
     &SCENE_CRYPT,
+    &SCENE_FOREST,
 #endif
 #if CRAWL_SAKURA
     &SCENE_SAKURA,
@@ -152,6 +155,7 @@ static const scene_t *const SCENES[] = {
     &SCENE_HOTARU,
 #if CRAWL_SAKURA || CRAWL_KOI
     &SCENE_CRYPT,
+    &SCENE_FOREST,
 #endif
 };
 #define NSCENES ((int)(sizeof SCENES / sizeof SCENES[0]))

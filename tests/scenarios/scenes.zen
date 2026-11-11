@@ -53,7 +53,7 @@ wait 1000
 reboot
 wait 800
 expect scene 1
-# PRESETS goes round: Koi -> Hotaru -> Sakura (no Bench); the last one used starts at power-on
+# PRESETS goes round: Koi -> Hotaru -> (Crypt, Forest Ruins) -> Sakura (no Bench); the last one used starts at power-on
 spin PRESET 1
 wait 1000
 expect scene 2
@@ -61,6 +61,8 @@ wait 4000
 reboot
 wait 800
 expect scene 2
+spin PRESET 1
+wait 150
 spin PRESET 1
 wait 150
 spin PRESET 1

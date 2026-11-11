@@ -1,0 +1,50 @@
+# Forest Ruins, each mood for two and a half minutes: a render and a picture of each, to listen to and look at
+# (not a test; the 10-minute tuning renders of M3 come later). The files are 24 dB louder than the simulator's
+# output (wavgain): a scene is about -55 dBFS there, too near 16 bits' own noise to listen to. The peak checks
+# are on the output itself: under -27 dBFS, so nothing clips in the file.
+#   tools\docker_run.ps1 build/host/crawl_host tools/forest_moods.zen build/host
+wait 800
+wavgain 24
+spin PRESET -1
+wait 1500
+peakreset
+wav forest-longnight.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot forest-longnight.png
+spin K1 1
+wait 2000
+peakreset
+wav forest-dawn.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot forest-dawn.png
+spin K1 1
+wait 2000
+peakreset
+wav forest-overgrown.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot forest-overgrown.png
+spin K1 1
+wait 2000
+peakreset
+wav forest-storm.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot forest-storm.png
+spin K1 1
+wait 2000
+peakreset
+wav forest-moon.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot forest-moon.png
+expect scnotes >40
+expect caws >4
+expect nvoices <13

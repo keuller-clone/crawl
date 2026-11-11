@@ -633,10 +633,52 @@ static int expect(const char *what, const char *val)
         got = (int)(cr.light * 100.0f + 0.5f);
     else if (!strcmp(what, "crnote"))             /* Crypt: the note the last key played (a bell key: 0..4) */
         got = cr.key_note;
+    else if (!strcmp(what, "frleaves"))           /* Forest Ruins: leaves landed; crows' calls; the flock's bursts; gusts;
+                                                  * arches sung; the fog's swells; thunders; bolts; stones fallen; the
+                                                  * owl's calls; bats across the moon */
+        got = (int)fr.leaves;
+    else if (!strcmp(what, "caws"))
+        got = (int)fr.caws;
+    else if (!strcmp(what, "flocks"))
+        got = (int)fr.flocks;
+    else if (!strcmp(what, "gusts"))
+        got = (int)fr.gusts;
+    else if (!strcmp(what, "harps"))
+        got = (int)fr.harps;
+    else if (!strcmp(what, "swells"))
+        got = (int)fr.swells;
+    else if (!strcmp(what, "thunders"))
+        got = (int)fr.thunders;
+    else if (!strcmp(what, "bolts"))
+        got = (int)fr.bolts;
+    else if (!strcmp(what, "stones"))
+        got = (int)fr.stones;
+    else if (!strcmp(what, "frowls"))
+        got = (int)fr.owls;
+    else if (!strcmp(what, "batmoon"))
+        got = (int)fr.batmoon;
+    else if (!strcmp(what, "frcrows")) {          /* Forest Ruins: crows here (on the wall or in the air); the fog's
+                                                  * thickness, the wind, the rain, %; the moon and the sun up; the
+                                                  * note the last key played */
+        int i;
+        for (got = 0, i = 0; i < FR_NCROW; i++)
+            got += fr_c[i].on != 0;
+    } else if (!strcmp(what, "frfog"))
+        got = (int)(fr.fogamt * 100.0f + 0.5f);
+    else if (!strcmp(what, "frwind"))
+        got = (int)(fr.wind * 100.0f + 0.5f);
+    else if (!strcmp(what, "frrain"))
+        got = (int)(fr.rain * 100.0f + 0.5f);
+    else if (!strcmp(what, "moonup"))
+        got = fr.moonamt > 0.5f;
+    else if (!strcmp(what, "sunup"))
+        got = fr.sunamt > 0.5f;
+    else if (!strcmp(what, "frnote"))
+        got = fr.key_note;
     else if (!strcmp(what, "textfit")) {          /* every knob's name and every value it can show, in this
                                                   * scene, fit its quarter of the bar (56 px): the ones that don't */
         const int16_t (*kt)[4] = amb.sc == &SCENE_SAKURA ? SK_KNOB : amb.sc == &SCENE_KOI ? KP_KNOB :
-                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : HT_KNOB;
+                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : amb.sc == &SCENE_FOREST ? FR_KNOB : HT_KNOB;
         int i, v;
         got = 0;
         if (!amb.sc) {

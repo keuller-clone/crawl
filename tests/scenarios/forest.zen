@@ -1,0 +1,130 @@
+# Forest Ruins ("Ruins" on the panel; Crawl's second scene): leaves fall and land (a note each), crows call (recordings), the wind sings
+# the arches (bowed strings), fog banks through the arches are swells, lightning and thunder, stones fall, an owl
+# and bats by night; black keys call a crow, sing an arch, send a gust, a fog bank, a stone, lightning; each mood its
+# own sound and picture: Dawn Mist fog and a pale sun, Overgrown ivy and leaves thick, Storm rain and the arches
+# singing, Owl Moon the moon and bats
+# (the simulator boots into Sakura; Forest Ruins is the last scene there: PRESETS one back)
+wait 800
+spin PRESET -1
+wait 1500
+expect scene 4
+expect knob0 0
+expect knob1 25
+expect knob8 0
+expect knob9 40
+expect textfit 0
+peakreset
+wavgain 24
+wav forest.wav
+wait 60000
+wavstop
+expect frleaves >2
+expect scnotes >3
+expect gusts >0
+expect drones >0
+expect nvoices <13
+expect peak_db_max -27
+expect peak_db_min -40
+shot forest.png
+# black keys: the first four a crow each (one not here calls far off)
+tapkey b0
+wait 100
+expect caws >0
+expect frnote 0
+# the next three an arch each; then a gust, a fog bank, a stone, lightning (its thunder after)
+tapkey b4
+wait 100
+expect harps >0
+expect frnote 4
+tapkey b7
+wait 2000
+expect frwind >40
+tapkey b8
+wait 3000
+expect frfog >80
+tapkey b9
+wait 3000
+expect stones 1
+tapkey b10
+wait 100
+expect bolts 1
+wait 4000
+expect thunders 1
+# white keys: sixteen notes rising from 2; a leaf lets go above each
+tapkey w0
+wait 100
+expect frnote 2
+expect lastkey 2
+tapkey w15
+wait 100
+expect frnote 17
+# Mood (KNOB 1): Dawn Mist, Aeolian: a pale sun, thick fog, one crow far off, the bell
+spin K1 1
+wait 500
+expect knob0 1
+expect scalenow 3
+expect keyoff 0
+expect knob2 2
+expect knob8 0
+expect frcrows 1
+wait 8000
+expect sunup 1
+expect frfog >80
+shot forest-dawn.png
+# Overgrown, Dorian: three crows on the wall, the cathedral choir, leaves thick
+spin K1 1
+wait 20000
+expect knob0 2
+expect scalenow 4
+expect knob2 1
+expect knob8 4
+expect frcrows 3
+expect sunup 0
+expect frfog <30
+shot forest-overgrown.png
+# Storm, In (Phrygian) a fifth down: rain, wind, the arches singing, four crows
+spin K1 1
+wait 30000
+expect knob0 3
+expect scalenow 0
+expect keyoff -700
+expect frrain >50
+expect frwind >25
+expect frcrows 4
+expect harps >1
+shot forest-storm.png
+# Owl Moon, Min'yo a fourth down: the moon, no crows, no rain, one voice
+spin K1 1
+wait 15000
+expect knob0 4
+expect scalenow 2
+expect keyoff -500
+expect knob8 1
+expect moonup 1
+expect frcrows 0
+expect frrain <5
+shot forest-moon.png
+# round to Long Night again
+spin K1 1
+wait 500
+expect knob0 0
+# pixel art, and a new ruin (other arches, another wall)
+tap GLO
+wait 1500
+expect style 1
+shot forest-pixel.png
+tap GLO
+wait 1500
+tap PLAY
+wait 2500
+expect regrows 1
+shot forest-regrown.png
+# back to the instrument: everything lets go, the instrument's own scale again
+press HOME
+wait 800
+release HOME
+wait 9000
+expect mode 0
+expect nvoices 0
+expect par1 0
+expect stale 0
