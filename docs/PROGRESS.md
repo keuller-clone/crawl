@@ -135,11 +135,52 @@ not fit until ZEN-1 content goes (a scene, its recordings, or the koto instrumen
 - Cost on the host, a voice a block: MODAL and MEMBRANE 23 us, bowed MODAL 25, SYMPATH 14, STRING 9.5 (an FM voice
   in the same run: 8.5). Estimated about 3 to 9 % of an FM-1 block a voice.
 - Build: image 538840 B (42724 B of flash free), RAM 74440 B of 98304 (23864 B free), pool 335596 B of 344064.
-- Tests: 66 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
+- Tests: 53 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds. (53 is the
+  count of `ok` lines in a full run. The counts in the notes above, 62 to 65, were made another way and do not
+  match it; the run itself was the same: everything passes but the two named.)
 - Not audible yet in a scene: no scene uses PHYS until M3.
 - Open: the plucked string reads 10 to 12 cents sharp at A3 (221.4 Hz), and more when bowed (223 Hz). The
   model files are unchanged and MODAL reads 220.0 Hz from the same phase increment, so it is taken to be the string
   model's own; it was not compared with GR!MM's build. Listen for it against FM notes in M3. The audio path's stack is about 1 KB deeper
   with PHYS; it is not measured (ZEN-1 has no stack check, GR!MM has `tools/stack_check.py`).
 
-**Left in M2:** SAMPLE. It needs pool for its windows and a decision on where samples live in flash.
+**SAMPLE: ported (2026-11-10).** `firmware/src/dsp/samplefx.c`, from GR!MM's `sampler.c`.
+
+- The samples are in the image and the windows in RAM (`docs/DECISIONS.md` says why). `tools/crawl_samples.py`
+  makes `crawl_samples.h` from `assets/samples/`; `assets/SAMPLES.md` logs each sample. One so far, M-SOFT (1.5 s,
+  CC0, GR!MM's), a stand-in until M3.
+- API: `fm_part_patch(part, FM_ENG_SAMPLE + n)`, `fm_part_knobs` (START, LENGTH, REVERSE). Four SAMPLE notes at
+  once (`FM_NSAMPLE`).
+- Unit test `tests/host/sample_test.c` (in `run_tests.sh`): 20 checks pass. Against the sample decoded in the
+  test: at its root it plays as recorded (correlation 0.994), an octave down at half the speed (0.981), an octave
+  up at twice, START and REVERSE place the loop (0.994, 0.995), a short loop repeats at its length less its
+  crossing, its seam and a turned knob make no step, a part with no sample is silent, four notes at once beside
+  four PHYS notes and an FM note, the release frees the voice.
+- Render to listen to: `build/host/sample.wav` (36 s: at the root, an octave down from 6 s, two octaves down and
+  backward from 12 s, a short loop with START moving from 18 s, three notes from 26 s).
+- Cost on the host: 6 us a block for one note, 16.5 for four (an FM voice in the same run: 8.8). Estimated about
+  2 % of an FM-1 block a note.
+- Build: image 560300 B (21264 B of flash free), RAM 83080 B of 98304 (15224 B free), pool 335596 B of 344064.
+- Tests: 54 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
+
+## M2 DSP port (2026-11-10): done on the host, not heard on hardware
+
+TAPE, DELAY, GRAIN, VOICE, PHYS and SAMPLE are ported, each with a unit test and a render, and the reverb's lines
+are 16-bit. VOICE, PHYS and SAMPLE are sources of a scene part, through the same voice allocator and mixer as FM;
+the effects are on the mix. Everything is off at `fm_init`, so the ZEN-1 scenes sound as before.
+
+| | Free at the end of M2 |
+| --- | --- |
+| Flash | 21264 B of 581564 |
+| RAM | 15224 B of 98304 |
+| Pool | 276 B above the 8 KiB kept free |
+
+Renders, all in `build/host/`: `tape.wav`, `echo.wav`, `voice.wav`, `phys.wav`, `sample.wav`.
+
+**Open, for M3 or a flash**
+
+- The reverb is not retuned darker yet (brief, 4.2). It is a scene setting and a listening job; M3.
+- Nothing is measured on hardware: CPU for each source and effect, and the audio path's stack with PHYS.
+- All three memory regions are near full again. M3 makes room by replacing ZEN-1's scenes and recordings.
+- The plucked string's 12 cents (above), and `scenario-ambient`.
+- Sakura is out of the FM-1 image but in the simulator and the emulator until M3.

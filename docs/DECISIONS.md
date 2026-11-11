@@ -174,3 +174,43 @@ level with an FM pad's peak (MODAL) and 11 dB under it (STRING); bowed ones sit 
 builds at `-Os`) the compiler calls it for one 64-bit division in `phys_dsp.c`, once a block. `physfx.c` supplies a
 plain long division. The alternatives were linking the toolchain's `libcompiler-rt.a` (new third-party binary code in
 the image) or editing the MIT file.
+
+## 2026-11-10 M2: SAMPLE
+
+Steven left both open questions to be decided from the project's context.
+
+**The samples live in the image, not in a flash area of their own.** GR!MM keeps four 72 KiB slots at
+0x97000..0xDF000, fills them at boot and takes uploads over SysEx. Crawl keeps its samples as constant data in the
+app, as ZEN-1 keeps its recordings (`crawl_samples.h`, made by `tools/crawl_samples.py`). Reasons: GR!MM's area
+overlaps ZEN-1's save journal (0xC0000) and panel object (0xDC000); using it needs new flash code in the frozen
+platform layer; uploads are a sample editor, which v1 leaves out; and one `.fwsc` then holds all of Crawl, so install
+and restore stay as they are. The cost: samples take app flash, about 11 KB a second, and changing one needs a
+build. M3 frees flash when ZEN-1's recordings (279 KB) are replaced.
+
+**What GR!MM works out at boot is made at build time.** The seek index and the decoder's two tables are in the
+generated header, in flash: no boot scan, no CRC, no 6.9 KB of pool for the index, no 2.1 KB of RAM for the tables.
+A sample is always ready. `samples.c`'s slots, upload and factory restore are not ported.
+
+**The windows are in RAM, four notes at once (`FM_NSAMPLE`).** GR!MM puts a voice's four windows (2 KB) in the
+pool. Crawl's pool is at its floor (276 B above the 8 KiB that must stay free) and its holders are the screen and
+the effects. RAM had 23.9 KB free. Four slots take 8.6 KB with their state and leave 15.2 KB for the scenes. PHYS
+and SAMPLE now share one slot mechanism in `fumi.c` (`src_*`), each with its own four slots.
+
+**A part's source, as VOICE and PHYS.** `fm_part_patch(part, FM_ENG_SAMPLE + n)`; GR!MM's SLOT knob is the patch.
+The knobs are START, LENGTH, REVERSE; the fourth is unused. One past the last sample plays nothing.
+
+**The level is twice GR!MM's.** At GR!MM's 9000 a normalized sample sat 14 dB under an FM pad, and a part's level
+only goes down. At 18000 it is 8 dB under, with its peak below the mixer's knee.
+
+**M-SOFT is a stand-in.** One sample, the first 1.5 s of GR!MM's CC0 factory sample `M-Soft.wav`, proves the source
+and the tool (`assets/SAMPLES.md`). Which samples ship is M3's choice, with the scenes. GR!MM's four factory samples
+whole are 292 KB and do not fit.
+
+## 2026-11-10 M2: end
+
+**Voices stay 12, with caps by source.** PHYS 4, SAMPLE 4, the rest FM or VOICE. M1's plan of 8 in all and 2 PHYS
+is a time budget, and time is not measured on hardware yet. The caps here are memory's. M3's scene tables should
+keep to M1's plan until a flash gives CPU figures.
+
+**Whether DELAY replaces ZEN-1's echo is not decided here.** The brief allows it. ZEN-1's code is untouched on
+this point; it is settled when the Crawl scenes are written.
