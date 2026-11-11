@@ -317,3 +317,18 @@ panel's tab). Not flashed, not listened to. Reasons for its calls are in `docs/D
   by design (the arches' strings, the thunder, the stones), not measured on hardware. The Crows knob sets how
   often they call; their count is the mood's. The far trees' canopy and the ivy are palette only (always drawn,
   colored or stone), so a mood change redraws nothing.
+
+**Forest Ruins: the air changed after Steven listened (2026-11-11).** His notes: too much hiss in Dawn Mist, Long
+Night, Overgrown and Storm; Long Night sounded like Dawn Mist; Owl Moon had little hiss. Reasons in
+`docs/DECISIONS.md` ("M3: Forest Ruins' air, after listening").
+
+- Every mood now has the synthesized breeze as its air (Owl Moon's, the one he liked); the dry-leaves recording
+  is gone from the tool, the image and `assets/sounds/README.md` (noted there); Storm's rain bed is a third of
+  what it was. Long Night starts anywhere in its day.
+- Renders again, 2.5 minutes each in `build/host/`: peaks -29 to -37 dBFS at the output, no dead air. Steady
+  noise in 3..10 kHz under the music: Long Night 48 dB, Dawn 54, Overgrown 32, Storm 35, Owl Moon 46 (before: 29,
+  34, 18, 23, 49). Overgrown's floor is its mallets' tails, not noise: lowering its Air moved it 1 dB.
+- Build: image 519680 B (61884 B of flash free), RAM unchanged. `forest.zen` and `hotaru.zen` pass as before;
+  guard clean.
+- Open: still not heard on the FM-1. The crows' recordings keep their own room tone under each call (their
+  floors -51 to -71 dB in the originals, high-passed at 300 Hz); if a call carries hiss, cut shorter.

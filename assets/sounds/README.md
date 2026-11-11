@@ -14,10 +14,10 @@ are Freesound's high-quality previews.
 | `tube-140694-preview.mp3` | "Packaging Paper Hollow Tube Percussion Hit", afleetingspeck, https://freesound.org/s/140694/ | Koi: the shishi-odoshi's knock. Two hits (1.10 s, 2.01 s), ~470 Hz hollow |
 | `owl-465697-preview.mp3` | "Owl Hoot", Breviceps, https://freesound.org/s/465697/ | Hotaru: the owl. One call, 0.1-4.3 s |
 | `owl-454842-preview.mp3` | "HOOT.wav", thegoosington, https://freesound.org/s/454842/ | Hotaru: the owl. Two calls |
-| `leaves-457318-preview.mp3` | "Autumn wind and dry leaves", Stek59, https://freesound.org/s/457318/ | Forest Ruins (Crawl): Air: Leaves. 19 s + 4 s, high-pass 150 Hz |
 | `crow-741366-preview.mp3` | "Hooded Crow: Cawing", Mish7913, https://freesound.org/s/741366/ | Forest Ruins: the crows. Three caws and a pair, high-pass 300 Hz, 11025 Hz one-shots |
 | `rook-556221-preview.mp3` | "Rook (Corvus frugilegus)", Walking.With.Microphones, https://freesound.org/s/556221/ | Forest Ruins: a second crow. Three calls, high-pass 300 Hz |
 | `rooks-553111-preview.mp3` | "Rooks in the trees - winter", HighPeakEmma, https://freesound.org/s/553111/ | Forest Ruins: the flock taking off (a storm). One burst, 47.95-50.2 s, high-pass 400 Hz |
 
-The four Forest Ruins recordings are Crawl's (M3, 2026-11-11), each checked CC0 on its Freesound page that day; they
-go through this same tool. The brook is no longer in the FM-1 image (bed.c: the simulator keeps it).
+The three Forest Ruins recordings are Crawl's (M3, 2026-11-11), each checked CC0 on its Freesound page that day; they
+go through this same tool. A fourth, dry leaves in the wind (Stek59, https://freesound.org/s/457318/, CC0), was Air:
+Leaves for a day and went: it read as hiss. The brook is no longer in the FM-1 image (bed.c: the simulator keeps it).

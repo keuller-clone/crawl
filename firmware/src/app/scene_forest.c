@@ -15,8 +15,8 @@
  *   a stone falls from the wall         a dull knock where it lands (part 6: PHYS, MODAL, inharmonic), dust
  *   a bat crosses the moon  a faint high tick (part 3)
  *   under them              the drone (part 2: a pad, or VOICE: a choir in the nave; at night one hollow voice
- *                           whose vowel the wind opens), the air (the breeze or dry leaves, recordings; at night a
- *                           synthesized one), in a storm rain and a deep roar
+ *                           whose vowel the wind opens), the air (the synthesized breeze: the recordings hissed),
+ *                           in a storm rain and a deep roar
  *
  *   KNOB 1 Mood   2 Activity   3 Instrument (Drop, Mallet, Bell, Bamboo)   4 Space (reverb)
  *   Volume: Notes, Drone, Air, Harp (the arches' singing).   Nature: Voices (Pad, Solo, Monks, Nuns, Cathedral),
@@ -29,13 +29,13 @@
  *   Dawn Mist     a pale sun low behind thick fog among the piers; the fog's banks through the arches are swells
  *                 over a soft pad; a leaf now and then; one crow far off, crossing behind the ruin; no wind
  *   Overgrown     ivy on the piers, the forest in leaf, saplings in the floor; leaves fall thick and each is a
- *                 note; three crows on the wall hopping and calling; a cathedral choir in the nave; dry leaves
- *                 in the air
+ *                 note; three crows on the wall hopping and calling; a cathedral choir in the nave
  *   Storm         a slate sky, rain, the wind driving the leaves straight through; the arches sing without
  *                 pause; lightning, thunder, the crows wheeling and crying; a deep pad, a roar under it
  *   Owl Moon      the moon and the stars through bare arches, bats, thin wisps of fog, no crows: an owl; stones
  *                 fall from the wall; one hollow voice, its vowel the wind's; few notes, low, in the cloud
- *   Long Night    a day: Dawn Mist, Overgrown, Storm, Owl Moon, half an hour in all, then dawn again
+ *   Long Night    a day: Dawn Mist, Overgrown, Storm, Owl Moon, half an hour in all, then dawn again; it starts
+ *                 wherever the day is
  *
  * The world is 240 x 240; drawing scales by r8_fb.w / 240 for pixel art. Every loop has a fixed bound. */
 #define FR_NL 28                                /* leaves */
@@ -105,10 +105,10 @@ static const sc_set_t FR_MOODS[FR_NMOOD][FR_NSET] = {
     {{FK_ACT, 12}, {FK_TONE, 2}, {FK_NOTES, 45}, {FK_DRONE, 50}, {FK_AIR, 15}, {FK_HARP, 30}, {FK_VOICES, 0}, {FK_CROWS, 25},
      {FK_FOG, 100}, {FK_WIND, 8}, {FK_ECHO, 35}, {FK_DEPTH, 30}, {FK_TAPE, 10}, {FK_ARC, 30}},   /* (still: the pad,
                                                        * the fog's swells, a bell now and then, the crow far off) */
-    {{FK_ACT, 40}, {FK_TONE, 1}, {FK_NOTES, 60}, {FK_DRONE, 40}, {FK_AIR, 12}, {FK_HARP, 50}, {FK_VOICES, 4}, {FK_CROWS, 60},
+    {{FK_ACT, 40}, {FK_TONE, 1}, {FK_NOTES, 60}, {FK_DRONE, 40}, {FK_AIR, 14}, {FK_HARP, 50}, {FK_VOICES, 4}, {FK_CROWS, 60},
      {FK_FOG, 8}, {FK_WIND, 20}, {FK_ECHO, 20}, {FK_DEPTH, 10}, {FK_TAPE, 10}, {FK_ARC, 20}},   /* (the leaves' mallets,
                                                        * the cathedral choir, the crows at their talk) */
-    {{FK_ACT, 55}, {FK_TONE, 3}, {FK_NOTES, 50}, {FK_DRONE, 45}, {FK_AIR, 55}, {FK_HARP, 70}, {FK_VOICES, 0}, {FK_CROWS, 70},
+    {{FK_ACT, 55}, {FK_TONE, 3}, {FK_NOTES, 50}, {FK_DRONE, 45}, {FK_AIR, 50}, {FK_HARP, 70}, {FK_VOICES, 0}, {FK_CROWS, 70},
      {FK_FOG, 0}, {FK_WIND, 65}, {FK_ECHO, 40}, {FK_DEPTH, 35}, {FK_TAPE, 25}, {FK_ARC, 30}},   /* (the arches singing,
                                                        * rain, thunder, the deep pad) */
     {{FK_ACT, 15}, {FK_TONE, 2}, {FK_NOTES, 40}, {FK_DRONE, 45}, {FK_AIR, 12}, {FK_HARP, 35}, {FK_VOICES, 1}, {FK_CROWS, 0},
@@ -118,7 +118,9 @@ static const sc_set_t FR_MOODS[FR_NMOOD][FR_NSET] = {
 static const uint8_t FR_TONE_SLOT[FR_NTONE] = {ZN_DROP, ZN_MALLET, ZN_BELL, ZN_BAMBOO};
 static const char *const FR_TONE_NAME[FR_NTONE] = {"Drop", "Mallet", "Bell", "Bamboo"};
 static const char *const FR_CHOIR_NAME[FR_NCHOIR] = {"Pad", "Solo", "Monks", "Nuns", "Cathedral"};
-static const uint8_t FR_AIR_STYLE[FR_NMOOD] = {FM_AIR_BREEZE, FM_AIR_BREEZE, FM_AIR_LEAVES, FM_AIR_BREEZE, FM_AIR_BREEZE_SYNTH};
+static const uint8_t FR_AIR_STYLE[FR_NMOOD] = {FM_AIR_BREEZE_SYNTH, FM_AIR_BREEZE_SYNTH, FM_AIR_BREEZE_SYNTH, FM_AIR_BREEZE_SYNTH,
+                                               FM_AIR_BREEZE_SYNTH};   /* (the recordings read as hiss: Steven, after
+                                                * listening; the synthesized breeze is low-passed, and its puffs are the gusts) */
 static const uint32_t FR_LEAFPAL[4][4] = {       /* the leaves' four colors by the mood's palette */
     {0xC8B070u, 0xA88850u, 0x8C6A40u, 0xB09868u},   /* pale: dry yellow and tan */
     {0x5A8A30u, 0x8AA838u, 0xC8B040u, 0x6A9A48u},   /* green and yellow */
@@ -1006,7 +1008,7 @@ SC_SMALL static void fr_enter(uint32_t seed, int16_t *kv)
     fr.seed = seed | 1u;
     sc_seed(fr.seed * 2654435761u + 11u);
     fr_layout();
-    fr.phase = 0.05f + 0.15f * (float)(seed % 100u) * 0.01f;   /* (Long Night: early in the morning) */
+    fr.phase = (float)(seed % 1000u) * 0.001f;        /* (Long Night: wherever the day is) */
     fr.night = 0.2f;
     fr.pal_lv = fr.air_sent = fr.rain_sent = fr.stream_sent = -1;
     fr.air_style = fr.air_want = -1;
@@ -1171,7 +1173,7 @@ static void fr_step(uint32_t dt_ms)
     }
     /* the storm's beds: the rain, the roar (sent as they change) */
     {
-        int r = (int)(fr.rain * 34.0f), st = fr.ch->thunder ? 18 : 0;
+        int r = (int)(fr.rain * 14.0f), st = fr.ch->thunder ? 14 : 0;
         if (r / 3 != fr.rain_sent / 3) {
             fr.rain_sent = r;
             fm_bed(FM_BED_RAIN, r);

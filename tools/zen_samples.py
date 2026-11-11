@@ -37,11 +37,6 @@ SOUNDS = [
     # crickets; their background hum (half the energy, under 1 kHz) taken away above 1.2 kHz
     ("INSECTS", "assets/sounds/crickets-522299-preview.mp3", 196.5, 6.0, 1200,
      "Crickets At Night - Raw sound, Defelozedd94, https://freesound.org/s/522299/ (CC0 1.0)"),
-    # Crawl, Forest Ruins (M3): dry leaves skittering in an autumn wind. The recording is broadband throughout
-    # (centroid 5.4-6 kHz); the 4 s taken are where it skitters most (its 0.25 s level wanders 1.2 dB, against
-    # 0.45 in its steadiest stretch, which read as hiss), the rumble under 150 Hz taken away. Air: Leaves
-    ("LEAVES", "assets/sounds/leaves-457318-preview.mp3", 19.0, 4.0, 150,
-     "Autumn wind and dry leaves, Stek59, https://freesound.org/s/457318/ (CC0 1.0)"),
 ]
 
 # One-shots: single calls, played whole at a scene's moment (bed.c's shot players), at a lower rate (their

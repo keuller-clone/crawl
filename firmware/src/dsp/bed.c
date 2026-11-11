@@ -133,8 +133,8 @@ static void heads_set(head_t *l, head_t *r, int s)
     l->data = r->data = ZN_SAMPLE_TAB[s].data;
     l->len = r->len = ZN_SAMPLE_TAB[s].len;
 #else                                               /* (the FM-1 image: the loops it holds, without the brook) */
-    l->data = r->data = s == ZN_S_BREEZE ? ZN_BREEZE : s == ZN_S_LEAVES ? ZN_LEAVES : ZN_INSECTS;
-    l->len = r->len = s == ZN_S_BREEZE ? ZN_BREEZE_LEN : s == ZN_S_LEAVES ? ZN_LEAVES_LEN : ZN_INSECTS_LEN;
+    l->data = r->data = s == ZN_S_BREEZE ? ZN_BREEZE : ZN_INSECTS;
+    l->len = r->len = s == ZN_S_BREEZE ? ZN_BREEZE_LEN : ZN_INSECTS_LEN;
 #endif
     l->pos = 0;
     r->pos = l->len / 2 / ZN_BLOCK * ZN_BLOCK;
@@ -156,8 +156,8 @@ static void bed_style(int which, int style)
         (void)ZN_SAMPLE_TAB;
 #endif
     } else if (which == BED_WIND) {
-        static const uint8_t AIR_SAMPLE[4] = {0, ZN_S_BREEZE, ZN_S_LEAVES, ZN_S_INSECTS};   /* (Leaves: Crawl's dry
-                                                                                     * leaves in the wind, Forest Ruins') */
+        static const uint8_t AIR_SAMPLE[4] = {0, ZN_S_BREEZE, ZN_S_BREEZE, ZN_S_INSECTS};   /* (Leaves went:
+                                                                                     * the room; it plays the breeze) */
         bed.style[which] = (uint8_t)(style < 0 ? 0 : style > FM_AIR_INSECTS ? FM_AIR_INSECTS : style);
         if (bed.style[which])
             heads_set(&bed.al, &bed.ar, AIR_SAMPLE[bed.style[which]]);

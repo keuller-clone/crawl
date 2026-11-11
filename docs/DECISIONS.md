@@ -341,3 +341,19 @@ gives 23 dB. Both are textures, not VOICE's breath, but they are the first thing
 **Forest Ruins takes project slot 2, Koi's.** Koi is out of the FM-1 image; in the simulator the two share the
 slot until step 6, when the four Crawl scenes take slots 0 to 3 and the magic changes. The slot holds knobs and
 the kept picture; no script switches between Koi and Forest Ruins with saved state.
+
+## 2026-11-11 M3: Forest Ruins' air, after listening
+
+**The air is the synthesized breeze in every mood; the dry-leaves loop went.** Steven heard too much hiss in
+Dawn Mist, Long Night, Overgrown and Storm and little in Owl Moon. Owl Moon was the one mood on the synthesized
+breeze (soft noise low-passed at about 520 Hz, puffs to 1 kHz); the others sat on the breeze recording, on the
+dry-leaves loop (broadband, centroid 5.4 to 6 kHz everywhere in it) and, in Storm, on the rain bed. So every
+mood takes the synthesized breeze, whose puffs are the gusts anyway; the leaves loop is out of the tool, the
+image and the logs (its row says it was there for a day); Storm's rain bed is at a third of what it was and the
+roar a little lower. Measured, the steady 3..10 kHz noise against the music went from 29, 34, 18, 23 dB under
+(Long Night, Dawn, Overgrown, Storm) to 48, 54, 32, 35; Owl Moon 46. Overgrown's remaining floor does not move
+with its Air knob: it is the mallets' tails at Activity 40, not noise. The breeze recording stays in the image
+for Hotaru until step 6. Flash: image 519680 B, 61884 B free.
+
+**Long Night starts wherever the day is.** It began at dawn every time, so its render was Dawn Mist again
+(Steven: "sounds just like forest dawn"). A day has no natural first hour; the phase at power-on is the seed's.
