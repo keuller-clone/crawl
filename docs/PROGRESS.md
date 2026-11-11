@@ -339,3 +339,9 @@ Ruins' picture, the second one"): dark wall, rim-lit jambs, the forest in flat l
 of the window's light on the floor whose color is the mood's (gold at dawn, green-white, cold grey, moonlight
 blue). The sounds and the moods' events are as they were; `forest.zen` passes unchanged (61 checks). Build: image
 520592 B (60972 B of flash free), RAM 80792 B (17512 B free). Pictures of each mood in `build/host/forest-*.png`.
+
+**Forest Ruins: the picture to Steven's reference (2026-11-11).** A misty marsh clearing from a little above: bare
+pale trees in four depths fading into a blue haze, pools of water holding the sky, ochre grass, and wooden ruins
+(a fallen hut, fence posts, a cart wheel, a log) with a stone well (`docs/DECISIONS.md`, "M3: Forest Ruins'
+picture, the third one"). The sounds are unchanged; `forest.zen` passes (61 checks). Build: image 523296 B
+(58268 B of flash free), RAM 81416 B (16888 B free). Pictures of each mood in `build/host/forest-*.png`.

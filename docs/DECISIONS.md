@@ -374,3 +374,20 @@ the window (its arc fitted to it, so it is never behind the wall), the sun rises
 wash lights the whole nave. The geometry is three functions (`fr_open`, `fr_tracery`, `fr_ring_y`); what is
 outside is drawn only over the palette entries below `FR_STONE`, so the wall stands in front of everything out
 there without a mask.
+
+## 2026-11-11 M3: Forest Ruins' picture, the third one
+
+**Steven gave a reference: a misty marsh clearing seen from a little above**, bare pale trees with fine crowns
+standing all through it and fading back into a blue haze, wet ground with standing water that holds the sky,
+ochre marsh grass, and the ruins wooden: a hut fallen in under its thatch, fence posts, a cart wheel in the
+water, a fallen log. The picture is built to that and the stone nave is gone. Trees are grown at enter (a trunk,
+two side branches, a crown of twigs three deep, from the picture's own random stream) in four depths, each depth
+its own trunk and twig shades mixed toward the haze (`FR_TRK`), so the wood recedes; the ground's haze is four
+steps by depth too (`FR_GND`). The hamlet's leavings sit at their depths among the trees. The three hollows that
+sing are now the stone well (the root, the widest), the hut's doorway and the log; stones fall from the hut; a
+leaf on the water makes a ring, a plip (the rain bed's drop) and a soft touch instead of a note. Nothing in the
+sound changed otherwise, and `forest.zen` passes unchanged.
+
+**The canopy is a palette switch, not a redraw.** Each crown carries two dithered discs in its depth's canopy
+entries; in Overgrown they are green, in the other moods they are the haze thickened a little, so the trees are
+in leaf or bare without the picture being made again.
