@@ -90,9 +90,11 @@ expect part1 105
 spin K3 3
 expect part1 0
 # PRESETS ("twitchy ... skipping a scene"): a click shows the next scene's name, the one playing goes on;
-# half a second after the last click it switches to the one shown
+# half a second after the last click it switches to the one shown (four clicks round the five scenes: Hotaru to Koi)
 wait 4000
 expect scene 2
+spin PRESET 1
+wait 150
 spin PRESET 1
 wait 150
 spin PRESET 1

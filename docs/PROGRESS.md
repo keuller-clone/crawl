@@ -272,3 +272,48 @@ Vigil; Vigil and Procession alike; the pictures alike except Sealed and Embers; 
 - Tests: 55 pass, `kanji` skipped, `scenario-ambient` fails as accepted; `crypt.zen` is 56 checks. Guard clean.
 - Open: still not heard by me. Procession's drum and bell are both PHYS (two notes at most, M1's plan; the bell
   keeps to one note while the pace runs). The engine's low output level is ZEN-1's own; on the FM-1 it is 24 bits.
+
+**Forest Ruins: first version on the host (2026-11-11).** `firmware/src/app/scene_forest.c` ("Ruins" on the
+panel's tab). Not flashed, not listened to. Reasons for its calls are in `docs/DECISIONS.md` ("M3: Forest Ruins").
+
+- The world: two or three arches on their piers with a stump of wall, the forest behind, two old trees leaning
+  in, a floor of litter and fallen stones. A leaf landing is a note where it lands (on the wall a touch); a crow's
+  call is its own recording, heard where it sits or flies; wind through an arch is a bowed string, one note an
+  arch, rising with the gust; a fog bank through an arch is a swell; lightning washes the palette white and a bolt
+  is drawn, the thunder follows (PHYS MEMBRANE) and the crows go up (the flock's recording); a stone falling from
+  the wall is a dull knock (PHYS MODAL); a bat across the moon a faint tick. Under them a pad or a VOICE choir,
+  the air (the breeze or the dry leaves, recordings; synthesized at night), in a storm rain and a deep roar.
+- Textures, CC0 (`assets/sounds/README.md`, `assets/SAMPLES.md`): a hooded crow and a rook (one one-shot set), a
+  rook flock's burst, dry leaves in the wind (Air: Leaves). The brook is out of the FM-1 image; the four together
+  are its 68 KB to the byte. The owl is Hotaru's recording, which stays as long as a scene uses it.
+- Moods, as data (`FR_MOOD`, `FR_MOODS`): Long Night (a day: the four in turn, half an hour), Dawn Mist (Aeolian;
+  fog, a pale sun, swells, one far crow), Overgrown (Dorian; ivy, the forest in leaf, leaves thick, three crows,
+  the cathedral choir), Storm (In a fifth down; rain, the arches singing without pause, lightning and thunder,
+  crows wheeling), Owl Moon (Min'yo a fourth down; the moon and the stars, bats, falling stones, the owl, one
+  hollow voice). "Hollow Night" became "Owl Moon" for the knob bar's width.
+- Keys: white keys a note each and a leaf let go above it; black keys 1 to 4 a crow each, 5 to 7 an arch each
+  sings, then a gust, a fog bank rolling in, a stone falling, lightning.
+- In the FM-1 image the scenes are Crypt, Ruins, Hotaru; in the simulator Forest Ruins is last. Build: image
+  551728 B (29836 B of flash free, from 56352), RAM 80680 B of 98304 (17624 B free), pool unchanged. The scene is
+  about 26 KB of flash by difference (the textures replaced the brook byte for byte). Free flash is now the
+  constraint for Frozen Lake: Hotaru's 32 KB and its frogs and owl (56 KB) were to leave with Night Sky; they may
+  have to go with Frozen Lake instead, or the kanji bitmaps (14 KB) earlier.
+- Scenario `tests/scenarios/forest.zen`: 61 checks (events counted, every black key, each mood's scale, key,
+  crows, fog, rain, sun and moon, pixel art, a new ruin, leaving). Three ZEN-1 scripts changed by a click because
+  the scene list is one longer again (`crypt.zen`, `ambient.zen`, `scenes.zen`).
+- Renders, 2.5 minutes each, from `tools/forest_moods.zen` in `build/host/`: `forest-longnight.wav`, `forest-dawn.wav`,
+  `forest-overgrown.wav`, `forest-storm.wav`, `forest-moon.wav`, with a picture of each. Measured: peaks -30 to
+  -38 dBFS at the output (-6 to -16 in the files at wavgain 24), no 10 s stretch under -75 dB. Steady noise in
+  3..10 kHz against the music: Long Night 29 dB under, Dawn 34, Overgrown 18 (the dry-leaves loop at Air 12),
+  Storm 23 (the rain), Owl Moon 49. The first renders clipped (thunder, crows); the levels were cut by
+  measurement, see the decisions.
+- Tests: 56 pass (the new scenario among them), `kanji` skipped, `scenario-ambient` fails as accepted (the race
+  flake). Guard clean. Emulator builds. The FM-1 build's own checks pass.
+- Pictures looked at: the four moods differ at a glance (fog and sun; green, ivy and leaves; slate and rain;
+  moon and stars). Storm and Owl Moon are dark in the simulator, as Crypt's Sealed and Embers were, and are left
+  for the panel.
+- Open: not heard. The dry-leaves loop is broadband throughout the recording (centroid 5.4 to 6 kHz): if it reads
+  as hiss on the FM-1, Overgrown should take the breeze instead and the loop go. PHYS notes: two at a time at most
+  by design (the arches' strings, the thunder, the stones), not measured on hardware. The Crows knob sets how
+  often they call; their count is the mood's. The far trees' canopy and the ivy are palette only (always drawn,
+  colored or stone), so a mood change redraws nothing.

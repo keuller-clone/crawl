@@ -293,3 +293,51 @@ on the file. The peak checks stay on the true output.
 
 **Long Night's knobs are its own; its range, pace and shaft are its round's.** Changing the choir's source inside
 the round would switch a part's source under held notes, which is not tested for clicks.
+
+## 2026-11-11 M3: Forest Ruins
+
+Built from the plan's step 4 with the open calls settled here.
+
+**Its textures are recordings through ZEN-1's pipeline, not the SAMPLE source.** The brief's nature layer is CC0
+recordings matched to scenes; `bed.c` already plays loops (the air) and one-shot calls (the owl) from flash with
+no RAM to speak of, and the SAMPLE source is a pitched tape loop, which a crow is not. So the crows are a one-shot
+set (`FM_SHOT_CROW`: a hooded crow's four caws, then a rook's three, so two birds answer each other; a storm's
+take-off is a rook flock's burst, `FM_SHOT_FLOCK`) and the dry leaves are the Air style Leaves, which ZEN-1 had
+emptied (it played the breeze). Each is CC0 on its Freesound page, logged in `assets/sounds/README.md` and in a
+table in `assets/SAMPLES.md`. SAMPLE waits for a scene whose texture wants pitch (Frozen Lake's ice, perhaps).
+
+**The brook leaves the FM-1 image now, as the plan said.** In the FM-1 build `bed.c` no longer reads the loop
+table (the breeze, the leaves and the insects by name), so the brook's 68 KB is not emitted; Hotaru's "Water is:
+Brook" plays the bubbles there until Hotaru goes. The simulator keeps the brook: its scripts use it. The leaves
+loop (32 KB) and the crows (34 KB) take about half of what the brook freed.
+
+**Wind through the arches is a bowed string, one note an arch.** PHYS STRING with BOW up sustains; each arch
+sings a chord tone (the widest the root, the others above it), brought into 147..294 Hz for the speaker, as
+strong as the gust and as long, and glided up to 55 cents as the wind rises. Two arches at once in a mood
+without thunder, one with: with the thunder (PHYS MEMBRANE) and the falling stones (PHYS MODAL) that keeps PHYS
+within M1's two notes at a time, to be measured on hardware like the rest.
+
+**Each mood has its own event source, sources and sight.** Dawn Mist: fog banks (a swell each time one passes
+through an arch), a pale sun, a pad, one crow far off behind the ruin, no wind. Overgrown: the leaves (a note each
+where one lands, a touch on the wall), ivy and the forest in leaf, three crows on the wall, a cathedral choir,
+the dry leaves in the air. Storm: gusts back to back (the arches singing), rain and a deep roar, lightning (the
+palette washed white for a flash, a bolt) with thunder after it and the crows up all at once, leaves driven
+straight through. Owl Moon: the moon up all night with bats (a crossing is a faint tick), stones falling from the
+wall (a dull knock), the owl's recording, one VOICE solo whose vowel the wind opens, thin wisps of fog, Min'yo a
+fourth down in the cloud. Long Night is a day: the four in that order, half an hour round.
+
+**"Hollow Night" is "Owl Moon" on the panel.** The mood's name shows in the knob bar, 11 characters and 56 px at
+most; "Hollow Night" is 12 and "Hollow Moon" measured 61 px. Owl Moon is what the mood shows and sounds. The
+scene is "Ruins" on its page tab for the same reason ("Forest Ruins" overflowed the tab), Forest Ruins
+everywhere else.
+
+**The levels were set by measurement, not ears.** The first renders clipped: thunder at velocity 112 and crows at
+74..104 peaked 15 dB over Crypt. Now the thunder is 86 on a part at 40 %, the crows 44..62 near and 26..34 far
+(a one-shot's gain is velocity squared), the owl 44..62, the flock 52; the renders peak -30 to -38 dBFS at the
+output, where Crypt's are -34 to -40. The dry-leaves loop is broadband (its centroid 5.4 to 6 kHz everywhere in
+the recording), so Overgrown's air sits at 12 and its 3..10 kHz floor is 18 dB under the music; Storm's rain
+gives 23 dB. Both are textures, not VOICE's breath, but they are the first things to listen for.
+
+**Forest Ruins takes project slot 2, Koi's.** Koi is out of the FM-1 image; in the simulator the two share the
+slot until step 6, when the four Crawl scenes take slots 0 to 3 and the magic changes. The slot holds knobs and
+the kept picture; no script switches between Koi and Forest Ruins with saved state.
