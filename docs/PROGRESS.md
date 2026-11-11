@@ -248,3 +248,27 @@ to: I can measure a render, not hear it.
   measured. Sealed and Embers are very dark in the simulator's pictures with the dark curve at 80; the panel
   shows darks lighter, so it is left for a flash. The reverb is not retuned. No CC0 texture recordings yet: the
   drips and the draught are synthesized. The Key page's Scale still lists ZEN-1's three.
+
+**Crypt: the moods reworked after Steven listened (2026-11-10).** His notes: a lot of static in Sealed, some in
+Vigil; Vigil and Procession alike; the pictures alike except Sealed and Embers; Embers fine.
+
+- The static had two causes. In the scene: Sealed's choir was the solo voice at BREATH 70, which is mostly a
+  whisper of noise, under more tape hiss and air than the others. In the files: the simulator's output is about
+  -55 dBFS and its WAVs are 16 bits, so the files' own quantizing noise was only about 40 dB under the music.
+  Now no mood but Embers uses BREATH, Tape and Air are lower outside Embers, and renders are written 24 dB louder
+  (`wavgain`, a simulator command; the checks still read the output itself).
+- Each mood has its own sound and picture, as data (`CR_MOOD`: range, pace, shaft; `CR_MOODS`: the knobs):
+  Vigil still (monks, dark; the bowl, low; no water; the bell seldom). Procession a pace: a footfall every 1.1 s
+  (PHYS MEMBRANE), three notes a bar on the candles in turn, the bell every other bar, hooded figures crossing
+  with a candle each, a step a beat. Sealed one candle and a shaft of cold light onto the tomb, a deep pad and no
+  voice, the water's drops as high notes in a long echo. Embers as it was. Long Night goes round Vigil,
+  Procession, Embers, Sealed and takes each one's range, pace and shaft with its look.
+- A new picture (PLAY) is another vault: the arch's width, height and shape, the pillars, burial niches, the
+  stones' size, the tomb's sign.
+- Renders, 2.5 minutes each, in `build/host/`: `crypt-longnight.wav`, `crypt-vigil.wav`, `crypt-procession.wav`,
+  `crypt-sealed.wav`, `crypt-embers.wav` (peaks -4.6 to -16.6 dBFS in the files, no 10 s stretch under -75 dB).
+  Measured, steady noise between notes in 3 to 10 kHz: 41 to 58 dB under the music (before: 30 to 37).
+- Build: image 525212 B (56352 B of flash free), RAM 77288 B of 98304 (21016 B free), pool unchanged.
+- Tests: 55 pass, `kanji` skipped, `scenario-ambient` fails as accepted; `crypt.zen` is 56 checks. Guard clean.
+- Open: still not heard by me. Procession's drum and bell are both PHYS (two notes at most, M1's plan; the bell
+  keeps to one note while the pace runs). The engine's low output level is ZEN-1's own; on the FM-1 it is 24 bits.

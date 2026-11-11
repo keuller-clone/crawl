@@ -271,3 +271,25 @@ Key page's Scale still offers ZEN-1's three and holds one of them over the mood'
 6, with the Key page's own script.
 
 **Black keys:** five candles, five bell notes, a draught. The brief leaves a scene's functions to the scene.
+
+## 2026-11-10 M3: Crypt's moods, after listening
+
+**A mood must differ in what is heard and in what is seen (Steven).** Changing levels, the scale and the tint was
+not enough: Vigil and Procession sounded alike and three pictures looked alike. So a mood row now also holds its
+note range, a pace and a shaft of light, and the moods use different sources and event sources: Procession is
+driven by a clock (footfalls, a figure of notes, the bell on the bar) and shows figures walking; Sealed's notes
+come from the water and it has no voice; Vigil is the choir with few notes.
+
+**Procession takes "a consistent pace" literally** (Steven's word): 1.1 s a step, the conductor's token bucket
+and rests bypassed for its notes so the pace never breaks. Its notes are three of the motif's, so they follow the
+chord. The flames' own gutters are silent while it runs.
+
+**VOICE's BREATH is used sparingly.** On the solo voice it is noise through the formants; at 70 it read as static.
+Embers keeps 45 on the nuns, which Steven found fine.
+
+**Renders are written louder than the output (`wavgain 24`).** The level itself is ZEN-1's and is left alone: the
+scenes' loudness is one thing to set for all of them, on hardware. The 16-bit file is the problem, so the gain is
+on the file. The peak checks stay on the true output.
+
+**Long Night's knobs are its own; its range, pace and shaft are its round's.** Changing the choir's source inside
+the round would switch a part's source under held notes, which is not tested for clicks.
