@@ -332,3 +332,10 @@ Night, Overgrown and Storm; Long Night sounded like Dawn Mist; Owl Moon had litt
   guard clean.
 - Open: still not heard on the FM-1. The crows' recordings keep their own room tone under each call (their
   floors -51 to -71 dB in the originals, high-passed at 300 Hz); if a call carries hiss, cut shorter.
+
+**Forest Ruins: a new picture (2026-11-11).** Steven asked for a completely different direction from the arcade.
+Now the nave from inside, looking out through one great broken pointed window (`docs/DECISIONS.md`, "M3: Forest
+Ruins' picture, the second one"): dark wall, rim-lit jambs, the forest in flat layers outside, two lancets, a pool
+of the window's light on the floor whose color is the mood's (gold at dawn, green-white, cold grey, moonlight
+blue). The sounds and the moods' events are as they were; `forest.zen` passes unchanged (61 checks). Build: image
+520592 B (60972 B of flash free), RAM 80792 B (17512 B free). Pictures of each mood in `build/host/forest-*.png`.

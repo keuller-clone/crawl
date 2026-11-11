@@ -357,3 +357,20 @@ for Hotaru until step 6. Flash: image 519680 B, 61884 B free.
 
 **Long Night starts wherever the day is.** It began at dawn every time, so its render was Dawn Mist again
 (Steven: "sounds just like forest dawn"). A day has no natural first hour; the phase at power-on is the seed's.
+
+## 2026-11-11 M3: Forest Ruins' picture, the second one
+
+**Steven asked for a wholly different picture.** The first was the arcade seen from outside: piers and arches
+across the middle, a dithered far wood, a litter floor, two trees at the sides; a soft painting. The second is
+the opposite stance: we stand inside the dark nave looking out through one great pointed window that fills the
+frame. The wall is black blocks with a cold rim of light along the openings' edges; through the window the
+forest in flat silhouette layers (a hazy far wood, a middle wood with its canopy in leaf or bare, two near
+trunks that sway); a lancet in each side wall; the window's light lies in a pool on the floor inside, the
+mullion's shadow down it, among fallen blocks; the tracery is broken to a stump of mullion and a few spokes.
+Flat shades and hard edges, after the brief's pixel-brutalist art. The sounds did not change: the three openings
+sing (the window the root, the lancets above it), crows perch large on the sill and the mullion's stump, leaves
+blow in and land in the light, fog comes in across the floor, stones fall from the tracery, the moon crosses
+the window (its arc fitted to it, so it is never behind the wall), the sun rises in it at dawn, the lightning's
+wash lights the whole nave. The geometry is three functions (`fr_open`, `fr_tracery`, `fr_ring_y`); what is
+outside is drawn only over the palette entries below `FR_STONE`, so the wall stands in front of everything out
+there without a mask.
