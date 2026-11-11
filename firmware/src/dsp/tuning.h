@@ -13,7 +13,9 @@
 #include <stdint.h>
 
 enum { TN_EQUAL, TN_SUIKO, TN_KOTO, TN_USER, TN_N };    /* 平均律, 純正律 as measured, pure fifths, per-note trim */
-enum { SC_IN, SC_YO, SC_MINYO, SC_N };                  /* 陰, 陽, 民謡 (Ginken's names, docs/research/07) */
+enum { SC_IN, SC_YO, SC_MINYO,                          /* 陰, 陽, 民謡 (Ginken's names, docs/research/07) */
+       SC_AEOLIAN, SC_DORIAN, SC_HARMONIC, SC_HUNGARIAN, SC_N };   /* Crawl: the scenes' dark sets (tuning.c) */
+#define SC_NINST 3                                      /* the instrument's own: the first three */
 #define TN_NHON 16
 #define TN_NPC 12
 

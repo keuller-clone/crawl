@@ -96,6 +96,25 @@ int main(void)
     t.scale = SC_IN;
     t.tuning = TN_EQUAL;
 
+    /* Crawl's dark sets: five rising notes within the octave from the tonic, each mode's colour notes in place */
+    {
+        int s, d, ok = 1;
+        for (s = 0; s < SC_N; s++)
+            for (d = 0; d < 5; d++)
+                ok &= TN_SCALE[s][d] < 12 && (d ? TN_SCALE[s][d] > TN_SCALE[s][d - 1] : TN_SCALE[s][0] == 0);
+        CHECK("every scale: the tonic, then four rising notes under the octave", ok);
+    }
+    t.scale = SC_AEOLIAN;
+    CHECK_NEAR("AEOLIAN white key 5 = the flat sixth (800)", tuning_white_cents(&t, 4), -2400 + 800, 1e-4);
+    t.scale = SC_DORIAN;
+    CHECK_NEAR("DORIAN white key 5 = the sixth (900)", tuning_white_cents(&t, 4), -2400 + 900, 1e-4);
+    t.scale = SC_HARMONIC;
+    CHECK_NEAR("HARMONIC white key 5 = the leading note (1100)", tuning_white_cents(&t, 4), -2400 + 1100, 1e-4);
+    t.scale = SC_HUNGARIAN;
+    CHECK_NEAR("HUNGARIAN white key 4 = the sharp fourth (600)", tuning_white_cents(&t, 3), -2400 + 600, 1e-4);
+    CHECK_NEAR("the octave holds in a dark set: white key 6 = 三", tuning_white_cents(&t, 5), -1200, 1e-4);
+    t.scale = SC_IN;
+
     /* fine tune and reference */
     t.fine = -50.0f;
     CHECK_NEAR("fine -50 (-1/2 本)", tuning_white_cents(&t, 5), -1200 - 50, 1e-4);

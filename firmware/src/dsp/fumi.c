@@ -33,7 +33,7 @@
 
 /* ------------------------------------------------------------- params --- */
 static const fm_param_t PARAMS[P_NPARAMS] = {
-    {"Hon", 0, TN_NHON - 1, 4}, {"Scale", 0, SC_N - 1, SC_IN}, {"Tuning", 0, TN_N - 1, TN_SUIKO}, {"Depth", 0, 150, 100},
+    {"Hon", 0, TN_NHON - 1, 4}, {"Scale", 0, SC_NINST - 1, SC_IN}, {"Tuning", 0, TN_N - 1, TN_SUIKO}, {"Depth", 0, 150, 100},
     {"Fine", -50, 50, 0}, {"A", 430, 445, 440}, {"Octave", -1, 1, 0},
     {"Voice", 0, FM_NPATCH - 1, 0}, {"Yoin", 0, 100, 80}, {"Level", 0, 100, 80},
     {"Vibrato", 0, 1, 0}, {"Vib rate", 0, 100, 45}, {"Vib depth", 0, 100, 80},
@@ -835,7 +835,11 @@ static void load_builtin(int s)
 static void apply(int p, int v)
 {
     const fm_param_t *pi = &PARAMS[p];
-    v = v < pi->lo ? pi->lo : v > pi->hi ? pi->hi : v;
+    if (p == P_SCALE)                              /* (Crawl: a scene may ask for any scale; the instrument's knob
+                                                    * keeps to its three, SC_NINST) */
+        v = v < 0 ? 0 : v >= SC_N ? SC_N - 1 : v;
+    else
+        v = v < pi->lo ? pi->lo : v > pi->hi ? pi->hi : v;
     par[p] = (int16_t)v;
     switch (p) {
     case P_HON: case P_SCALE: case P_TUNING: case P_DEPTH: case P_FINE: case P_A4: case P_OCTAVE:

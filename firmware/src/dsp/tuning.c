@@ -7,6 +7,12 @@ const uint8_t TN_SCALE[SC_N][5] = {
     {0, 1, 5, 7, 8},                /* IN 陰: mi fa la ti do (the ST-50's lower row) */
     {0, 2, 5, 7, 9},                /* YO 陽: fa and do raised a semitone */
     {0, 3, 5, 7, 10},               /* MIN'YO 民謡: fa and do raised a whole tone */
+    /* Crawl: five notes of each dark mode, its colour notes kept (docs/DECISIONS.md, "M3: plan"). In is Phrygian's
+     * 1 b2 4 5 b6 already, Min'yo the minor pentatonic. A scene's mood names its scale (its mood table) */
+    {0, 2, 3, 7, 8},                /* AEOLIAN: 1 2 b3 5 b6 */
+    {0, 3, 5, 7, 9},                /* DORIAN: 1 b3 4 5 6 */
+    {0, 3, 7, 8, 11},               /* HARMONIC minor: 1 b3 5 b6 7 */
+    {0, 2, 3, 6, 7},                /* HUNGARIAN minor: 1 2 b3 #4 5 */
 };
 const uint8_t TN_UPPER[5] = {2, 3, 6, 9, 10};   /* fa# sol ti-flat do# re (docs/research/10) */
 
@@ -29,7 +35,7 @@ const char *const TN_HON_NAME[TN_NHON] = {"\xe6\xb0\xb4" "4", "\xe6\xb0\xb4" "3"
                                           "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
 const char *const TN_HON_ASCII[TN_NHON] = {"S4", "S3", "S2", "S1", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
 const char *const TN_NAME[TN_N] = {"EQUAL", "SUIKO", "KOTO", "USER"};
-const char *const SC_NAME[SC_N] = {"IN", "YO", "MIN'YO"};
+const char *const SC_NAME[SC_N] = {"IN", "YO", "MIN'YO", "AEOLIAN", "DORIAN", "HARMONIC", "HUNGARIAN"};
 
 void tuning_defaults(tuning_t *t)
 {
