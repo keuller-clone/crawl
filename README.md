@@ -10,8 +10,8 @@ named here. Installing custom firmware is at your own risk.
 
 The rest of this page is ZEN-1's README. It still describes what Crawl does today.
 
-Crawl's TAPE, DELAY and GRAIN effects and its VOICE and PHYS sources are ported from [GR!MM](https://github.com/GRiMMBIENT/grimm)
-(GPL-3.0); SAMPLE follows (`docs/PROGRESS.md`). PHYS's models are Felucca's fixed-point ports of
+Crawl's TAPE, DELAY and GRAIN effects and its VOICE, PHYS and SAMPLE sources are ported from [GR!MM](https://github.com/GRiMMBIENT/grimm)
+(GPL-3.0). No scene uses them yet (`docs/PROGRESS.md`). SAMPLE's samples are CC0 (`assets/SAMPLES.md`). PHYS's models are Felucca's fixed-point ports of
 [DaisySP](https://github.com/electro-smith/DaisySP) (Electrosmith and Emilie Gillet, MIT) and of the sympathetic strings
 of Emilie Gillet's Rings (MIT). The choirs' wavetables are made from
 [VocalSet: A Singing Voice Dataset](https://doi.org/10.5281/zenodo.1442513) by Julia Wilkins, Prem Seetharaman, Alison

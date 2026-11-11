@@ -75,6 +75,12 @@ void fm_part_patch(int part, int slot);          /* a built-in patch on part 1..
  * A part given another source has that source's default knobs: set the knobs after the patch. */
 #define FM_ENG_PHYS 1100
 #define FM_NPHYS 4
+/* A patch slot of FM_ENG_SAMPLE + n makes the part GR!MM's SAMPLE (samplefx.c): sample n of crawl_samples.h played as
+ * a tape loop, the note its speed (the sample's root note plays it as recorded; two octaves above it at most). Its
+ * knobs: START 0..127 (where the loop begins), LENGTH 0..127 (50 ms .. the rest of the sample), REVERSE 0 / 1; they
+ * take effect at the loop's next pass. At most FM_NSAMPLE SAMPLE notes sound at once. */
+#define FM_ENG_SAMPLE 1200
+#define FM_NSAMPLE 4
 void fm_part_knobs(int part, int k0, int k1, int k2, int k3);
 void fm_part_attack(int part, int ms);
 void fm_part_release(int part, int ms);          /* after a note's end: the time to -60 dB, 20 .. 8000 ms */

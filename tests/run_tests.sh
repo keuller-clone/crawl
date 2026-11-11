@@ -28,7 +28,7 @@ run fastmath sh -c "$CC -O2 -ffp-contract=off -Wall -Wextra -Werror -o $OUT/fast
 run encoder sh -c "$CC -O2 -w -Ifirmware/hal -o $OUT/encoder_test tests/host/encoder_test.c && $OUT/encoder_test"
 run uac sh -c "$CC -O2 -w -Ifirmware/src -Ifirmware/hal -o $OUT/uac_test tests/host/uac_test.c -lm && $OUT/uac_test"
 run trs sh -c "$CC -O2 -w -Ifirmware/src -Ifirmware/hal -o $OUT/trs_test tests/host/trs_test.c && $OUT/trs_test"
-for t in tuning smooth bend fm6 zen tape echo voice phys click; do
+for t in tuning smooth bend fm6 zen tape echo voice phys sample click; do
     run "$t" sh -c "$CC $DSP -o $OUT/${t}_test tests/host/${t}_test.c -lm && $OUT/${t}_test"
 done
 # the click test must fail with the smoothing bypassed, or it tests nothing

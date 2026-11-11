@@ -133,6 +133,12 @@ int main(void)
         }
     }
     bq();
+    hold(1, 1, FM_ENG_SAMPLE);
+    row("SAMPLE x1");
+    bq();
+    hold(4, 1, FM_ENG_SAMPLE);
+    row("SAMPLE x4");
+    bq();
     fm_fx_send(100);
     fm_delay(88, 64, 50, 127);
     hold(1, 1, ZN_SOFT_PAD);
