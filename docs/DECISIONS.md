@@ -146,3 +146,31 @@ still in the tree. It is set when the Crawl scenes are written, with hardware fi
 
 **The choir wavetables are CC BY 4.0** (VocalSet). `LICENSES/CC-BY-4.0.txt` came along, and the credit is in
 `LICENSING.md` and `README.md`, as GR!MM has it.
+
+## 2026-11-10 M2: PHYS
+
+**The DSP files are GR!MM's, byte for byte.** `phys_dsp.c` (DaisySP, MIT) and `phys_symp.c` (Rings, MIT) are copied
+from `refs/grimm/v2.0.2` unchanged, with `LICENSES/MIT-DaisySP.txt` and `LICENSES/MIT-Rings.txt`. Only the wrapper,
+`physfx.c` (GR!MM's `phys.c`), is adapted. A later GR!MM fix to the models can be taken by copying the file.
+
+**A part's source, as VOICE.** `fm_part_patch(part, FM_ENG_PHYS + MODEL)` (0 MODAL, 1 STRING, 2 MEMBRANE, 3 SYMPATH).
+The knobs are STRUCTURE, DAMP, BOW and a fourth, BRIGHT, which GR!MM fixes at 80: dark scenes will want it lower, and
+the knob was free. A part given another source takes that source's default knobs, so the knobs are set after the
+patch. VOICE keeps its defaults; only a part that was PHYS and becomes VOICE behaves differently from before.
+
+**Four PHYS notes at once (`FM_NPHYS`), in slots.** A model's state is 4.3 KB. One a voice, as GR!MM has it, is
+52 KB for 12 voices, and 41 KB of RAM was free. M1 asks for at most 2 PHYS notes until hardware is measured. Four
+slots (17 KB) leave room above that plan and 24 KB of RAM for SAMPLE and the scenes. A fifth note goes over the
+oldest PHYS note in its own voice, so the gain ramps on and nothing clicks. The tradeoff: a long bell tail can be
+cut by a fifth strike. Scenes should plan for four.
+
+**The velocity is the accent.** Felucca's PHYS takes its accent from the velocity; GR!MM fixes the velocity at 100.
+Crawl's scene notes carry a velocity, so a harder strike is brighter as well as louder.
+
+**The level is GR!MM's.** PHYS is written at twice VOICE's scale, as in GR!MM's mixer. At A3 a struck note's peak is between
+level with an FM pad's peak (MODAL) and 11 dB under it (STRING); bowed ones sit within 4 dB of the pad's level.
+
+**`__udivdi3` is Crawl's own, for the FM-1 build only.** The firmware links no compiler runtime. At `-O2` (GR!MM
+builds at `-Os`) the compiler calls it for one 64-bit division in `phys_dsp.c`, once a block. `physfx.c` supplies a
+plain long division. The alternatives were linking the toolchain's `libcompiler-rt.a` (new third-party binary code in
+the image) or editing the MIT file.

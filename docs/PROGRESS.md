@@ -122,5 +122,24 @@ not fit until ZEN-1 content goes (a scene, its recordings, or the koto instrumen
 - Build: image 524072 B (57492 B of flash free), RAM 57208 B of 98304 (41096 B free), pool 335596 B of 344064.
 - Tests: 65 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
 
-**Left in M2:** PHYS, then SAMPLE. PHYS fits in RAM now (4.3 KB a voice). SAMPLE needs pool for its windows and a
-decision on where samples live in flash.
+**PHYS: ported (2026-11-10).** `firmware/src/dsp/physfx.c`, with GR!MM's `phys_dsp.c` and `phys_symp.c` unchanged.
+
+- API: `fm_part_patch(part, FM_ENG_PHYS + MODEL)` (MODAL, STRING, MEMBRANE, SYMPATH), `fm_part_knobs` (STRUCTURE,
+  DAMP, BOW, BRIGHT). Four PHYS notes at once (`FM_NPHYS`); `docs/DECISIONS.md` says why.
+- Unit test `tests/host/phys_test.c` (in `run_tests.sh`): 40 checks pass. Each model sounds at 220 Hz for A3 (within
+  12 cents) and dies away, DAMP shortens it, bowed MODAL and STRING hold for as long as the note is held, the
+  velocity makes a strike louder and brighter, a fifth and sixth note go over the oldest, the release frees the
+  voice, FM and VOICE parts are as before.
+- Render to listen to: `build/host/phys.wav` (48 s: a bell line, inharmonic metal from 10 s, bowed metal from 18 s,
+  bowed strings from 26 s, SYMPATH from 34 s, the drum from 42 s).
+- Cost on the host, a voice a block: MODAL and MEMBRANE 23 us, bowed MODAL 25, SYMPATH 14, STRING 9.5 (an FM voice
+  in the same run: 8.5). Estimated about 3 to 9 % of an FM-1 block a voice.
+- Build: image 538840 B (42724 B of flash free), RAM 74440 B of 98304 (23864 B free), pool 335596 B of 344064.
+- Tests: 66 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
+- Not audible yet in a scene: no scene uses PHYS until M3.
+- Open: the plucked string reads 10 to 12 cents sharp at A3 (221.4 Hz), and more when bowed (223 Hz). The
+  model files are unchanged and MODAL reads 220.0 Hz from the same phase increment, so it is taken to be the string
+  model's own; it was not compared with GR!MM's build. Listen for it against FM notes in M3. The audio path's stack is about 1 KB deeper
+  with PHYS; it is not measured (ZEN-1 has no stack check, GR!MM has `tools/stack_check.py`).
+
+**Left in M2:** SAMPLE. It needs pool for its windows and a decision on where samples live in flash.
