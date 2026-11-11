@@ -1,22 +1,23 @@
 /* SPDX-License-Identifier: GPL-3.0-only
  * Copyright (C) 2026 the Crawl contributors */
-/* Forest Ruins: a drowned hamlet in a marsh wood, seen from a little above. Bare trees, pale trunks and fine dark
- * crowns, stand all through the clearing and fade back into a blue haze; the ground is wet, with standing water
- * that holds the sky, and tufts of ochre marsh grass; what is left of the place is wood: a hut fallen in under its
- * thatch, a line of fence posts, a cart wheel in the water, a hollow log, and a stone well. Leaves come down and
- * land on the ground or on the water, crows keep the posts and the roof, fog lies among the trunks, the wind sings
- * in the hollow things. What is heard is what is seen:
+/* Forest Ruins: a path through a redwood grove. It runs from our feet to a vanishing point lost in mist, and the
+ * trees flank it, enormous fluted red columns that go off the top of the picture, smaller and paler with the
+ * distance until the far ones are ghosts in the haze; sword ferns at their feet, a dark fringe of foliage overhead,
+ * shafts of light down through the mist. What is left of a ruin is small among them: a hollow burnt into the
+ * nearest trunk (a goose pen), a fallen log, a stump, a few mossy stones by the path. Leaves come down and land on
+ * the path or in the ferns, crows keep the log and the stump, fog lies along the path, the wind sings in the
+ * hollows. What is heard is what is seen:
  *
- *   a leaf lands            a note (part 1), its pitch where it lands across; on the water a ring, a plip and a
- *                           soft touch (part 3)
+ *   a leaf lands            on the path a note (part 1), its pitch where it lands across; in the ferns a soft touch
+ *                           (part 3)
  *   a crow calls            its own recorded caw (CC0: a hooded crow, a rook), heard where it perches or flies
- *   wind in a hollow        the well shaft sings, the hut's doorway, the log: a bowed string (part 5: PHYS, STRING,
+ *   wind in a hollow        the hollow trunk sings, the log, the stump: a bowed string (part 5: PHYS, STRING,
  *                           bowed), one note each, the wider the lower, rising a little with the gust; leaves rush
  *                           past it
- *   a fog bank drifts past the well       a swell (part 4)
- *   lightning               the marsh lit white, a bolt; the thunder after it (part 7: PHYS, MEMBRANE, low), the
- *                           crows up off the posts all at once (the flock's recording)
- *   a stone falls from the hut's wall     a dull knock where it lands (part 6: PHYS, MODAL, inharmonic), dust
+ *   a fog bank drifts past the hollow trunk   a swell (part 4)
+ *   lightning               the grove lit white; the thunder after it (part 7: PHYS, MEMBRANE, low), the crows up
+ *                           all at once (the flock's recording)
+ *   a cone falls            a dull knock where it lands (part 6: PHYS, MODAL, inharmonic), dust
  *   a bat crosses the moon  a faint high tick (part 3)
  *   under them              the drone (part 2: a pad, or VOICE: a choir; at night one hollow voice whose vowel the
  *                           wind opens), the air (the synthesized breeze: the recordings hissed), in a storm rain
@@ -26,19 +27,21 @@
  *   Volume: Notes, Drone, Air, Harp (the hollows' singing).   Nature: Voices (Pad, Solo, Monks, Nuns, Cathedral),
  *   Crows (how often they call; 0: never), Fog, Wind.   Music: Echo (the tape echo), Warmth, Tape, Tide
  *   White keys  a note each, rising; a leaf lets go above it and falls
- *   Black keys  the first four: a crow each calls (one not here calls far off); the next three: the well, the
- *               doorway and the log sing; then a gust; a fog bank rolling in; a stone falling; the top one: lightning
+ *   Black keys  the first four: a crow each calls (one not here calls far off); the next three: the hollow trunk,
+ *               the log and the stump sing; then a gust; a fog bank rolling in; a cone falling; the top one: lightning
  *
  * Moods, each its own sound and picture (FR_MOOD and FR_MOODS, data):
- *   Dawn Mist     the marsh white with mist, a pale sun low in it, the water pale; the fog's banks are swells over
- *                 a soft pad; a leaf now and then; one crow far off in the trees; no wind
- *   Overgrown     the grass green and the trees in leaf, the water green; leaves come down thick and each is a
- *                 note; three crows on the roof and the posts hopping and calling; a cathedral choir
- *   Storm         a slate sky, rain on the water, the wind driving the leaves across; the hollows sing without
- *                 pause; lightning lights the marsh white, thunder, the crows wheeling and crying; a deep pad, a
- *                 roar under it
- *   Owl Moon      the moon and the stars over the trees and in the water, bats, thin wisps of fog, no crows: an
- *                 owl; stones fall from the hut; one hollow voice, its vowel the wind's; few notes, low, in the cloud
+ *   Dawn Mist     the grove white with mist, the path's end lost in it, shafts of pale light down between the
+ *                 trunks, a pale sun at the end of the path; the fog's banks are swells over a soft pad; a leaf
+ *                 now and then; one crow far off among the far trunks; no wind
+ *   Overgrown     green: the ferns bright, the haze green, the light warm; leaves come down thick and each is a
+ *                 note; three crows on the log and the stump hopping and calling; a cathedral choir
+ *   Storm         the grove dark, rain down through it, the wind driving the leaves across; the hollows sing
+ *                 without pause; lightning lights the trunks white, thunder, the crows wheeling and crying; a deep
+ *                 pad, a roar under it
+ *   Owl Moon      the moon at the end of the path and its beams down through the trees, the stars in the gap, bats,
+ *                 thin wisps of fog, no crows: an owl; cones fall; one hollow voice, its vowel the wind's; few
+ *                 notes, low, in the cloud
  *   Long Night    a day: Dawn Mist, Overgrown, Storm, Owl Moon, half an hour in all, then dawn again; it starts
  *                 wherever the day is
  *
@@ -51,27 +54,29 @@
 #define FR_NRAIN 36
 #define FR_NDUST 8
 #define FR_NQ 8
-#define FR_NA 3                                 /* the hollows that sing: the well, the hut's doorway, the log */
-#define FR_NTREE 22
-#define FR_NWAT 4                               /* pools of standing water */
-#define FR_NTUFT 8                              /* tufts of grass near us, swaying (the far ones are drawn once) */
-#define FR_NRIP 6                               /* rings on the water */
+#define FR_NA 3                                 /* the hollows that sing: the hollow trunk, the log, the stump */
+#define FR_NTREE 16                             /* redwoods, eight a side */
+#define FR_NBEAM 3                              /* shafts of light */
+#define FR_F 100.0f                             /* the eye: a point at depth z and lateral X is at 120 + FR_F X / z,
+                                                 * the ground there at FR_HOR + FR_F / z (the eye a unit above it) */
+#define FR_HOR 118.0f                           /* where the path vanishes */
 #define FR_NPERCH 6
 #define FR_NTONE 4
 #define FR_NCHOIR 5
 #define FR_SOUND 1
 #define FR_DARK 80                              /* the panel's dark curve (render8.c r8_dark), as Crypt's */
-#define FR_HORIZON 74.0f                        /* the far edge of the ground, where the trees go into the haze */
+
 #define FR_NSKY 32
 #define FR_NST 32                               /* the stone's shades */
-enum { FR_SKY = 0, FR_TRK = 32, FR_CAN = 40, FR_GND = 48, FR_WAT = 64, FR_GRS = 72, FR_WOOD = 80, FR_STONE = 88,
-       FR_LEAF = 100, FR_FOG = 116, FR_CROW = 132, FR_MOON = 136, FR_HALO = 140, FR_STAR = 144, FR_SUN = 148,
-       FR_RAIN = 152, FR_BOLT = 154, FR_BAT = 155, FR_DUST = 156, FR_RIP = 158 };   /* (FR_TRK: a trunk and a twig
-                                                 * shade for each of four depths, far to near; FR_CAN: a canopy pair
-                                                 * each; FR_GND: four tones at four depths of haze; FR_WAT: the water,
-                                                 * four depths, still and rippled; FR_GRS: the grass, near and far;
-                                                 * FR_WOOD: timber, its lit side, thatch, straw, rot, iron, weathered
-                                                 * posts; FR_STONE: the well; FR_RIP: a ring on the water) */
+enum { FR_SKY = 0, FR_TRK = 32, FR_PATH = 64, FR_GND = 80, FR_FERN = 96, FR_LEAF = 104, FR_FOG = 120, FR_CROW = 136,
+       FR_MOON = 140, FR_HALO = 144, FR_STAR = 148, FR_SUN = 152, FR_RAIN = 156, FR_BOLT = 158, FR_BAT = 159,
+       FR_DUST = 160, FR_CONE = 162, FR_STONE = 164 };   /* (FR_SKY: the mist beyond the trees, the grove's gloom to
+                                                 * the glow at the path's end; FR_TRK: the trees at four depths, far
+                                                 * to near, eight shades each (furrow, bark, bark lit, rim, hollow,
+                                                 * moss, foliage, foliage lit); FR_PATH and FR_GND: four tones at four
+                                                 * depths of haze; FR_FERN: near and far, four shades each; FR_STONE:
+                                                 * mossy stones) */
+enum { TK_FURROW, TK_BARK, TK_LIT, TK_RIM, TK_HOLLOW, TK_MOSS, TK_LEAF, TK_LEAF2 };
 #define FR_NCAW 4                               /* the hooded crow's calls in FM_SHOT_CROW; the rook's follow (zen_samples.py) */
 #define FR_ID_HARP (FM_VOICE_ID + 48)           /* an arch each (three) */
 #define FR_ID_THUNDER (FM_VOICE_ID + 52)        /* (two: the clap and its roll) */
@@ -94,22 +99,22 @@ typedef struct {
     int8_t scale;                               /* SC_* (tuning.h); -1: the round's own (Long Night) */
     int16_t key;                                /* cents from the player's key */
     uint8_t lo, n;                              /* its notes: white keys lo .. lo + n - 1 */
-    uint32_t sky0, sky1, gnd, wat, grs, twig, trunk, fogc;   /* the sky's top and its horizon; the wet ground; the
-                                                 * water; the grass; the trees' twigs and trunks; the fog */
+    uint32_t sky0, sky1, gnd, path, fern, bark, stone, fogc;   /* the grove's gloom and the mist's glow; the duff;
+                                                 * the path; the ferns; the bark; the stones; the fog and the light */
     uint8_t leafpal;                            /* the leaves' colors (FR_LEAFPAL's row) */
     uint8_t light;                              /* % */
     uint8_t fog, wind, gust;                    /* % the banks' thickness; % the wind; s between gusts (0: none) */
     uint8_t leaves, crows, rain;                /* % how many fall; crows seen; % */
-    uint8_t moon, sun, ivy, bats, stones, thunder, canopy;   /* (ivy and canopy %) */
+    uint8_t moon, sun, ivy, bats, stones, thunder, beam;   /* (ivy %, unused here; beam %: shafts of light) */
     uint8_t vowel, buzz, breath;                /* the voice's (VOICE's knobs, 0..127) */
     uint8_t cloud;                              /* % GRAIN */
 } fr_mood_t;
 static const fr_mood_t FR_MOOD[FR_NMOOD] = {
-    {"Long Night", -1, 0, 4, 9, 0xB4C8DCu, 0xECF0F2u, 0x4E5A68u, 0xC4D4E0u, 0xB89050u, 0x2A2E36u, 0xC8CCD0u, 0xDCE4EAu, 0, 90, 100, 8, 40, 12, 1, 0, 0, 1, 0, 0, 0, 0, 0, 90, 30, 0, 0},
-    {"Dawn Mist", SC_AEOLIAN, 0, 5, 8, 0xB4C8DCu, 0xECF0F2u, 0x4E5A68u, 0xC4D4E0u, 0xB89050u, 0x2A2E36u, 0xC8CCD0u, 0xDCE4EAu, 0, 90, 100, 8, 40, 12, 1, 0, 0, 1, 0, 0, 0, 0, 0, 90, 30, 0, 0},
-    {"Overgrown", SC_DORIAN, 0, 4, 9, 0x6890B8u, 0xC8DCD8u, 0x44503Au, 0x98B8B0u, 0x7A9A40u, 0x30322Au, 0xC0C4B8u, 0xC8D4CCu, 1, 110, 8, 20, 22, 70, 3, 0, 0, 0, 100, 0, 0, 0, 100, 60, 60, 0, 0},
-    {"Storm", SC_IN, -700, 2, 8, 0x3C4650u, 0x7A8690u, 0x262A30u, 0x6A7884u, 0x6A5A38u, 0x1A1C20u, 0x8A9094u, 0x707A84u, 2, 72, 0, 65, 7, 60, 4, 70, 0, 0, 30, 0, 1, 1, 25, 40, 80, 0, 0},
-    {"Owl Moon", SC_MINYO, -500, 3, 7, 0x0C1228u, 0x2E3C58u, 0x12141Cu, 0x3A4C6Cu, 0x3A3424u, 0x0A0C12u, 0x6A7284u, 0x3C4860u, 3, 70, 30, 15, 28, 6, 0, 0, 1, 0, 0, 5, 1, 0, 0, 104, 20, 22, 25},
+    {"Long Night", -1, 0, 4, 9, 0x3C4A48u, 0xE4E2D0u, 0x3A3024u, 0x8A6A4Cu, 0x3E6A34u, 0x6E3E2Au, 0x6A7060u, 0xE8E6D8u, 0, 95, 100, 8, 40, 12, 1, 0, 0, 1, 0, 0, 0, 0, 100, 90, 30, 0, 0},
+    {"Dawn Mist", SC_AEOLIAN, 0, 5, 8, 0x3C4A48u, 0xE4E2D0u, 0x3A3024u, 0x8A6A4Cu, 0x3E6A34u, 0x6E3E2Au, 0x6A7060u, 0xE8E6D8u, 0, 95, 100, 8, 40, 12, 1, 0, 0, 1, 0, 0, 0, 0, 100, 90, 30, 0, 0},
+    {"Overgrown", SC_DORIAN, 0, 4, 9, 0x263A2Au, 0xC4D8B0u, 0x3C3A22u, 0x8C6C48u, 0x4E8A38u, 0x764430u, 0x6A7A58u, 0xC8DCC0u, 1, 110, 8, 20, 22, 70, 3, 0, 0, 0, 100, 0, 0, 0, 45, 60, 60, 0, 0},
+    {"Storm", SC_IN, -700, 2, 8, 0x222A30u, 0x707C86u, 0x24221Eu, 0x564A3Eu, 0x2A4830u, 0x4A332Au, 0x4A504Eu, 0x6A7680u, 2, 80, 0, 65, 7, 60, 4, 70, 0, 0, 30, 0, 1, 1, 0, 40, 80, 0, 0},
+    {"Owl Moon", SC_MINYO, -500, 3, 7, 0x060A14u, 0x4E6090u, 0x101420u, 0x3A3E50u, 0x182A20u, 0x2E2C3Cu, 0x3C4458u, 0x44547Cu, 3, 60, 30, 15, 28, 6, 0, 0, 1, 0, 0, 5, 1, 0, 55, 104, 20, 22, 25},
 };
 static const uint8_t FR_LN[4] = {1, 2, 3, 4};   /* Long Night's day: Dawn Mist, Overgrown, Storm, Owl Moon */
 #define FR_NSET 14
@@ -164,9 +169,7 @@ static sc_drop_t fr_r[FR_NRAIN];
 static struct {
     float x, y, vx, vy, life;
 } fr_d[FR_NDUST];
-static struct {
-    float x, y, t;                              /* a ring on the water: where, how long it has to go */
-} fr_rp[FR_NRIP];
+
 static struct {
     uint32_t at;
     int id, part, vel, pan, dur;
@@ -176,9 +179,9 @@ static struct {
     uint32_t seed, ms;
     int16_t *kv;
     float t, phase, night, dawn;                /* Long Night's day (0..1 in half an hour); the moon's night, the sun's dawn */
-    float sky0[3], sky1[3], gnd[3], wat[3], grs[3], twig[3], trunk[3], fogc[3], leaf[4][3];   /* the look now (eased
+    float sky0[3], sky1[3], gnd[3], path[3], fern[3], bark[3], stone[3], fogc[3], leaf[4][3];   /* the look now (eased
                                                  * toward the mood's) */
-    float light, ivy, canopy, moonamt, sunamt, rain, fogamt, flash;
+    float light, ivy, beam, moonamt, sunamt, rain, fogamt, flash;
     float wind, wbase, gust, gpeak, gt, grise, ghold, gfall, gnext;   /* the wind now; its base; a gust's envelope */
     int gph;                                    /* a gust: 0 none, 1 rising, 2 blowing, 3 dying */
     int air_sent, air_style, air_want, rain_sent, stream_sent, vowel_sent, harp_sent;
@@ -192,25 +195,17 @@ static struct {
     float harp_c[FR_NA], harp_left[FR_NA];
     sc_moon_t mn;
     float moon_top;
-    struct {                                    /* this clearing (the picture's seed): */
+    struct {                                    /* this grove (the picture's seed): */
         struct {
-            float x, y, h;                      /* a tree: its foot, its height */
-            uint8_t band;                       /* how far: 0 in the haze .. 3 near */
+            float z, X, W;                      /* a redwood: its depth, its lateral place (+ right), its girth */
+            float x, yg, w;                     /* and on the screen: its middle, its foot, its width there */
+            uint8_t band, hollow;               /* how far: 0 in the haze .. 3 near; the goose pen */
         } tree[FR_NTREE];
         int ntree;
-        struct {
-            float x, y, rx, ry;                 /* a pool of water: an ellipse */
-        } wat[FR_NWAT];
-        float hx, hy;                           /* the hut's middle and foot */
-        float fx0, fy;                          /* the fence: its first post, their feet */
-        float wx, wy;                           /* the well's top */
-        float cx0, cy0;                         /* the cart wheel's hub */
-        float lx0, ly0, lx1, ly1;               /* the log, hollow end first */
-        struct {
-            float x, y, h;
-            int n;
-        } tuft[FR_NTUFT];                       /* the grass near us */
-        int na;                                 /* the hollows that sing: the well, the doorway, the log */
+        float logx, logy, logw, logl;           /* the fallen log: its hollow end, its thickness, its length (right) */
+        float stx, sty, stw;                    /* the stump */
+        float bx[FR_NBEAM], bw[FR_NBEAM];       /* the shafts of light: where each meets the top, its half width */
+        int na;                                 /* the hollows that sing: the trunk, the log, the stump */
         float cx[FR_NA], cy[FR_NA], hw[FR_NA];  /* each one's place and width */
         float px[FR_NPERCH], py[FR_NPERCH], ps[FR_NPERCH];   /* where a crow may sit, and how near (its size) */
         int np;
@@ -242,22 +237,20 @@ static float fr_n1(float x, int salt)           /* smooth noise along a line, 0.
 }
 
 /* ------------------------------------------------------------ the ruin --- */
-static void fr_moon_xy(float *mt, float *mx, float *my)   /* the moon on its arc over the trees: up all night */
+static void fr_moon_xy(float *mt, float *mx, float *my)   /* the moon on its arc over the path's end: up all night */
 {
     *mt = fr.night;
-    *mx = 24.0f + 192.0f * *mt;
-    *my = fr.moon_top - 90.0f * *mt * (1.0f - *mt);
+    *mx = 60.0f + 120.0f * *mt;
+    *my = fr.moon_top - 60.0f * *mt * (1.0f - *mt);
 }
-static float fr_horizon(float wx) { return FR_HORIZON + 3.0f * fr_n1(wx * (1.0f / 19.0f), 41); }
-static int fr_water(float wx, float wy)        /* the pool at (wx, wy), or -1 */
+static int fr_band(float z) { return z < 1.8f ? 3 : z < 3.5f ? 2 : z < 7.0f ? 1 : 0; }
+/* the ground at (wx, wy): its depth z and lateral X (the eye's perspective); on the path if |X| < the path's half
+ * width there */
+static float fr_depth(float wy) { return FR_F / fm_maxf(wy - FR_HOR, 0.6f); }
+static int fr_on_path(float wx, float wy)
 {
-    int i;
-    for (i = 0; i < FR_NWAT; i++) {
-        float dx = (wx - fr.lay.wat[i].x) / fr.lay.wat[i].rx, dy = (wy - fr.lay.wat[i].y) / fr.lay.wat[i].ry;
-        if (dx * dx + dy * dy < 1.0f + 0.12f * fm_sin_turns(wx * 0.05f + wy * 0.03f))
-            return i;
-    }
-    return -1;
+    float z = fr_depth(wy), X = (wx - 120.0f) * z * (1.0f / FR_F);
+    return fm_fabsf(X) < 0.52f + 0.1f * fr_n1(z * 2.0f, 41) - 0.04f;
 }
 static uint32_t fr_tr(void)                     /* the trees' randomness: 0..255 */
 {
@@ -266,8 +259,8 @@ static uint32_t fr_tr(void)                     /* the trees' randomness: 0..255
 }
 static float fr_trf(void) { return (float)fr_tr() * (1.0f / 255.0f); }
 
-/* a pixel; with `behind` only over palette entries below it (FR_TRK: the sky alone, for the sun, the moon and the
- * stars; FR_GND: the sky and the trees, for a crow far off) */
+/* a pixel; with `behind` only over palette entries below it (FR_TRK: the mist alone, for the sun, the moon and the
+ * stars; FR_TRK + 24: the mist and the farther trees, for a crow far off) */
 static inline void fr_px(surf_t *s, int32_t x, int32_t y, uint8_t c, int behind)
 {
     if ((uint32_t)x < (uint32_t)s->w && (uint32_t)y < (uint32_t)s->h) {
@@ -306,149 +299,159 @@ static void fr_ellipse(surf_t *s, float cx, float cy, float rx, float ry, uint8_
             r8_hspan(s, y, (int32_t)fm_floorf(cx - rx * fm_sqrtf(w2) + 0.5f), (int32_t)fm_floorf(cx + rx * fm_sqrtf(w2) - 0.5f), c);
     }
 }
-
-/* a branch (a turns from straight up, len long, w wide at its root) and, while depth lasts, two or three from its
- * end, each a little to one side and thinner; the thin ones in the twig shade, the thick in the trunk's */
-static void fr_branch(surf_t *s, float k, float x, float y, float a, float len, float w, int depth, int band)
+/* a quad (a trunk's face) from the span x0a..x0b at y0 to x1a..x1b at y1 */
+static void fr_quad(surf_t *s, float x0a, float x0b, float y0, float x1a, float x1b, float y1, uint8_t c)
 {
-    float ex = x + len * fm_sin_turns(a), ey = y - len * fm_sin_turns(a + 0.25f);
-    int j, n;
-    r8_limb(s, x * k, y * k, w * k, ex * k, ey * k, w * 0.55f * k, (uint8_t)(FR_TRK + 2 * band + (w < 1.4f)));
-    if (depth <= 0)
-        return;
-    n = 2 + (int)(fr_tr() & 1u);
+    r8_tri(s, x0a, y0, x0b, y0, x1b, y1, c);
+    r8_tri(s, x0a, y0, x1b, y1, x1a, y1, c);
+}
+
+/* a sword fern: fronds from one root, up and out, curling over at the tips */
+static void fr_fern(surf_t *s, float k, float x, float y, float size, int band)
+{
+    int j, n = 5 + (int)(fr_tr() % 3u);
     for (j = 0; j < n; j++) {
-        float a2 = a + ((float)j - 0.5f * (float)(n - 1)) * (0.07f + 0.05f * fr_trf()) + (fr_trf() - 0.5f) * 0.04f;
-        fr_branch(s, k, ex, ey, a2, len * (0.58f + 0.1f * fr_trf()), w * 0.62f, depth - 1, band);
+        float a = -0.2f + 0.4f * ((float)j + 0.5f) / (float)n + (fr_trf() - 0.5f) * 0.04f, l = size * (0.7f + 0.5f * fr_trf()),
+              mx = x + l * 0.55f * fm_sin_turns(a), my = y - l * 0.55f * fm_sin_turns(a + 0.25f), curl = a > 0.0f ? 0.12f : -0.12f,
+              tx = mx + l * 0.5f * fm_sin_turns(a + curl), ty = my - l * 0.5f * fm_sin_turns(a + curl + 0.25f);
+        uint8_t c = (uint8_t)(FR_FERN + (band < 2 ? 4 : 0) + (j % 3));
+        r8_limb(s, x * k, y * k, 1.3f * k, mx * k, my * k, 0.9f * k, c);
+        r8_limb(s, mx * k, my * k, 0.9f * k, tx * k, ty * k, 0.3f * k, (uint8_t)(c + (j % 3 == 2 ? 1 : 0)));
     }
-}
-/* a bare tree: a pale trunk with dark marks, two side branches, a crown of fine twigs; its canopy (a pair of
- * dithered discs, in leaf or not by the palette) */
-static void fr_tree(surf_t *s, float k, float x, float y, float h, int band)
-{
-    float w = 1.0f + h * 0.03f, lean = (fr_trf() - 0.5f) * 0.05f, tl = h * 0.6f, tx = x + tl * fm_sin_turns(lean),
-          ty = y - tl * fm_sin_turns(lean + 0.25f);
-    int j, depth = band == 0 ? 2 : 3;
-    r8_limb(s, x * k, y * k, w * k, tx * k, ty * k, w * 0.6f * k, (uint8_t)(FR_TRK + 2 * band));
-    for (j = 0; j < 3; j++) {                         /* (the birch's marks) */
-        float u = 0.15f + 0.25f * (float)j + 0.1f * fr_trf(), mx = x + (tx - x) * u, my = y + (ty - y) * u;
-        r8_hspan(s, (int32_t)(my * k), (int32_t)((mx - w * 0.5f) * k), (int32_t)((mx + w * 0.3f) * k), (uint8_t)(FR_TRK + 2 * band + 1));
-    }
-    for (j = 0; j < 2; j++) {
-        float u = 0.5f + 0.3f * (float)j, bx = x + (tx - x) * u, by = y + (ty - y) * u, side = j ? 1.0f : -1.0f;
-        fr_branch(s, k, bx, by, lean + side * (0.1f + 0.08f * fr_trf()), h * 0.28f, w * 0.5f, depth - 1, band);
-    }
-    fr_branch(s, k, tx, ty, lean, h * 0.34f, w * 0.7f, depth, band);
-    for (j = 0; j < 2; j++)
-        fr_disc(s, (tx + (fr_trf() - 0.5f) * h * 0.3f) * k, (ty - h * 0.24f - fr_trf() * h * 0.12f) * k, h * (0.09f + 0.05f * fr_trf()) * k,
-                (uint8_t)(FR_CAN + 2 * band + j), 0, 5);
 }
 
-/* the clearing, drawn once: the sky, the wet ground and its pools, the trees from the haze forward with the
- * hamlet's leavings among them, the far grass */
+/* a redwood: a fluted column from its foot off the top of the picture, its lit side toward the path, furrows
+ * down it, a flare of roots; the far ones carry tufts of foliage near the top; the nearest left one its hollow */
+static void fr_redwood(surf_t *s, float k, int i)
+{
+    float x = fr.lay.tree[i].x, yg = fr.lay.tree[i].yg, w = fr.lay.tree[i].w, top = -8.0f, wt = w * 0.84f, side = x < 120.0f ? 1.0f : -1.0f,
+          lean = (fr_trf() - 0.5f) * 0.03f * (240.0f - top);
+    int band = fr.lay.tree[i].band, j, nf;
+    uint8_t base = (uint8_t)(FR_TRK + band * 8);
+    fr_quad(s, (x - w * 0.5f) * k, (x + w * 0.5f) * k, yg * k, (x + lean - wt * 0.5f) * k, (x + lean + wt * 0.5f) * k, top * k, base + TK_BARK);
+    fr_quad(s, (x - side * w * 0.5f) * k, (x - side * w * 0.18f) * k, yg * k, (x + lean - side * wt * 0.5f) * k, (x + lean - side * wt * 0.18f) * k, top * k, base + TK_FURROW);
+    fr_quad(s, (x + side * w * 0.5f) * k, (x + side * w * 0.28f) * k, yg * k, (x + lean + side * wt * 0.5f) * k, (x + lean + side * wt * 0.28f) * k, top * k, base + TK_LIT);
+    nf = (int)(w * 0.22f) + 1;
+    for (j = 0; j < nf && j < 12; j++) {              /* the furrows: lines down the bark, wavering */
+        float u = -0.42f + 0.84f * ((float)j + 0.5f) / (float)nf + (fr_trf() - 0.5f) * 0.06f, fx = x + u * w, fw = (0.4f + 0.5f * fr_trf()) * (w > 12.0f ? 1.2f : 0.8f);
+        r8_limb(s, fx * k, yg * k, fw * k, (fx + lean * 0.5f + (fr_trf() - 0.5f) * 2.0f + u * (wt - w)) * k, (yg + top) * 0.5f * k, fw * k, base + TK_FURROW);
+        r8_limb(s, (fx + lean * 0.5f + u * (wt - w)) * k, (yg + top) * 0.5f * k, fw * k, (fx + lean + u * (wt - w) * 2.0f) * k, top * k, fw * k, base + TK_FURROW);
+    }
+    r8_limb(s, (x + side * w * 0.5f) * k, yg * k, 0.9f * k, (x + lean + side * wt * 0.5f) * k, top * k, 0.9f * k, base + TK_RIM);   /* (the rim of light) */
+    r8_tri(s, (x - w * 0.5f) * k, (yg - w * 0.7f) * k, (x - w * 0.5f) * k, (yg + 1.0f) * k, (x - w * 0.9f) * k, (yg + 1.0f) * k, base + (side > 0.0f ? TK_FURROW : TK_BARK));   /* (the roots' flare) */
+    r8_tri(s, (x + w * 0.5f) * k, (yg - w * 0.7f) * k, (x + w * 0.9f) * k, (yg + 1.0f) * k, (x + w * 0.5f) * k, (yg + 1.0f) * k, base + (side > 0.0f ? TK_LIT : TK_FURROW));
+    for (j = 0; j < 3 && w > 6.0f; j++)               /* moss low on the shaded side */
+        fr_disc(s, (x - side * w * 0.3f + (fr_trf() - 0.5f) * w * 0.3f) * k, (yg - w * (0.2f + 0.6f * fr_trf())) * k, w * 0.12f * k, base + TK_MOSS, 0, 9);
+    if (band <= 2) {                                  /* tufts of foliage up the trunk, more the farther */
+        int nt = band == 2 ? 2 : 4;
+        for (j = 0; j < nt; j++) {
+            float ty = 4.0f + (band == 2 ? 14.0f : 40.0f) * fr_trf(), tl = w * (1.2f + 1.5f * fr_trf()), tside = fr_tr() & 1u ? 1.0f : -1.0f,
+                  tx = x + lean * (1.0f - ty / 240.0f) + tside * (w * 0.5f + tl);
+            r8_limb(s, (x + lean * (1.0f - ty / 240.0f)) * k, ty * k, w * 0.12f * k, tx * k, (ty + tl * 0.25f) * k, w * 0.05f * k, base + TK_FURROW);
+            fr_disc(s, tx * k, (ty + tl * 0.2f) * k, tl * 0.45f * k, base + TK_LEAF, 0, 10);
+            fr_disc(s, (tx + tside * tl * 0.1f) * k, (ty + tl * 0.1f) * k, tl * 0.25f * k, base + TK_LEAF2, 0, 7);
+        }
+    }
+    if (fr.lay.tree[i].hollow) {                      /* the goose pen: a burnt hollow at the foot, a pointed dark mouth */
+        float hw = w * 0.22f, hh = w * 0.75f, hx = x + side * w * 0.05f;
+        r8_tri(s, (hx - hw) * k, yg * k, (hx + hw) * k, yg * k, hx * k, (yg - hh) * k, base + TK_HOLLOW);
+        r8_rect(s, (int32_t)((hx - hw) * k), (int32_t)((yg - hh * 0.45f) * k), (int32_t)(2.0f * hw * k), (int32_t)(hh * 0.45f * k + 1.0f), base + TK_HOLLOW);
+        r8_limb(s, (hx + side * hw) * k, yg * k, 1.0f * k, hx * k, (yg - hh) * k, 0.6f * k, base + TK_LIT);
+    }
+}
+
+/* the grove, drawn once: the mist, the path and the duff in perspective, the trees from the haze forward with the
+ * ferns at their feet, the log, the stump, the stones; the foliage overhead */
 SC_SMALL static void fr_background(void)
 {
     surf_t *s = &r8_bg;
     float k = fr_scale(), ik = 1.0f / k;
-    int32_t x, y, i, b;
+    int32_t x, y, i, j;
     for (y = 0; y < s->h; y++) {
         float wy = ((float)y + 0.5f) * ik;
         uint8_t *row = s->px + y * s->w;
         for (x = 0; x < s->w; x++) {
-            float wx = ((float)x + 0.5f) * ik, hz = fr_horizon(wx), v, hzl, tone;
-            int32_t f, hl, w;
-            if (wy < hz) {                            /* the sky, pale toward the horizon */
-                f = (int32_t)(wy * (float)(FR_NSKY - 1) * 16.0f * (1.0f / FR_HORIZON));
-                f = f > (FR_NSKY - 1) * 16 ? (FR_NSKY - 1) * 16 : f;
+            float wx = ((float)x + 0.5f) * ik, tone, hzf;
+            int32_t f, hl;
+            if (wy < FR_HOR + 1.0f) {                 /* beyond the trees: the mist, glowing where the path goes */
+                float dx = (wx - 120.0f) * (1.0f / 70.0f), dy = (wy - FR_HOR) * (1.0f / 60.0f), g = 1.0f - fm_minf(1.0f, fm_sqrtf(dx * dx + dy * dy));
+                f = (int32_t)(g * g * (float)(FR_NSKY - 1) * 16.0f);
                 row[x] = (uint8_t)(FR_SKY + (f >> 4) + r8_dith(x, y, f & 15));
                 continue;
             }
-            v = fm_clampf((wy - hz) * (1.0f / (240.0f - FR_HORIZON)), 0.0f, 1.0f);
-            hzl = (1.0f - v) * (1.0f - v) * 3.99f;    /* the haze: thick far off, none near */
-            hl = (int32_t)hzl;
-            hl += r8_dith(x, y, (int)((hzl - (float)hl) * 16.0f));
-            hl = hl > 3 ? 3 : hl;
-            w = fr_water(wx, wy);
-            if (w >= 0) {                             /* standing water: the sky in it, a ripple here and there */
-                int rp = fr_n1(wx * 0.3f + wy * 0.9f, 71 + w) > 0.72f;
-                row[x] = (uint8_t)(FR_WAT + hl * 2 + rp);
-                continue;
-            }
-            {   /* the ground: wet earth, its texture coarser near us */
-                float cs = 2.0f + 5.0f * v;
-                int32_t gx = (int32_t)(wx / cs), gy = (int32_t)((wy - FR_HORIZON) / cs);
-                tone = (float)fr_h(gx, gy + 300) * (1.0f / 255.0f) * 0.7f + 0.3f * fr_n1(wx * 0.04f + wy * 0.02f, 72);
+            {
+                float z = fr_depth(wy), X = (wx - 120.0f) * z * (1.0f / FR_F), cs = 0.6f + 0.3f * z;
+                int32_t gx = (int32_t)fm_floorf(X * 8.0f / cs), gz = (int32_t)fm_floorf(z * 6.0f / cs);
+                hzf = fm_clampf((z - 1.0f) * (1.0f / 13.0f), 0.0f, 1.0f) * 3.99f;
+                hl = (int32_t)hzf;
+                hl += r8_dith(x, y, (int)((hzf - (float)hl) * 16.0f));
+                hl = hl > 3 ? 3 : hl;
+                tone = (float)fr_h(gx, gz + 300) * (1.0f / 255.0f);
                 f = (int32_t)(tone * 3.0f * 16.0f);
-                row[x] = (uint8_t)(FR_GND + hl * 4 + (f >> 4) + r8_dith(x + 1, y, f & 15));
+                if (fr_on_path(wx, wy))
+                    row[x] = (uint8_t)(FR_PATH + hl * 4 + (f >> 4) + r8_dith(x + 1, y, f & 15));
+                else
+                    row[x] = (uint8_t)(FR_GND + hl * 4 + (f >> 4) + r8_dith(x + 1, y, f & 15));
             }
         }
     }
-    for (b = 0; b < 4; b++) {                         /* the trees, far to near, and the hamlet's leavings at their
-                                                       * depths; the grass far off, a few strokes each tuft */
-        for (i = 0; i < fr.lay.ntree; i++)
-            if (fr.lay.tree[i].band == b)
-                fr_tree(s, k, fr.lay.tree[i].x, fr.lay.tree[i].y, fr.lay.tree[i].h, b);
-        if (b == 0) {                                 /* the fence: posts, some gone, a rail still on a few */
-            float fy = fr.lay.fy;
-            int j;
-            for (j = 0; j < 9; j++) {
-                float px = fr.lay.fx0 + 11.0f * (float)j;
-                if ((fr_h(j, 76) % 5u) == 0u)
-                    continue;
-                r8_rect(s, (int32_t)(px * k), (int32_t)((fy - 7.0f) * k), (int32_t)(2.0f * k + 0.5f), (int32_t)(7.0f * k), FR_WOOD + 6);
-                if (j >= 2 && j <= 5)
-                    r8_limb(s, px * k, (fy - 5.0f) * k, 1.0f * k, (px + 11.0f) * k, (fy - 4.5f) * k, 1.0f * k, FR_WOOD + 6);
+    fr.tr = fr.seed * 747796405u + 2891336453u;
+    for (i = fr.lay.ntree - 1; i >= 0; i--) {         /* the trees, far to near (the list is near to far a side) */
+        int t = -1, b;
+        float zbest = 0.0f;
+        for (j = 0; j < fr.lay.ntree; j++)           /* (the farthest not yet drawn) */
+            if (fr.lay.tree[j].z > zbest && fr.lay.tree[j].band != 9) {
+                int done = 0;
+                (void)done;
+                zbest = fr.lay.tree[j].z;
+                t = j;
             }
+        if (t < 0)
+            break;
+        b = fr.lay.tree[t].band;
+        fr_redwood(s, k, t);
+        if (fr.lay.tree[t].z < 7.0f) {                /* ferns at its foot, on the path's side */
+            float fs = 0.22f * FR_F / fr.lay.tree[t].z;
+            fr_fern(s, k, fr.lay.tree[t].x + (fr.lay.tree[t].x < 120.0f ? 1.0f : -1.0f) * fr.lay.tree[t].w * 0.6f, fr.lay.tree[t].yg + 1.0f, fs, b);
+            if (fr.lay.tree[t].z < 3.0f)
+                fr_fern(s, k, fr.lay.tree[t].x + (fr.lay.tree[t].x < 120.0f ? 1.0f : -1.0f) * fr.lay.tree[t].w * 1.1f, fr.lay.tree[t].yg + 4.0f, fs * 0.8f, b);
         }
-        if (b == 1) {                                 /* the hut: four posts, the roof fallen in between them */
-            float hx = fr.lay.hx, hy = fr.lay.hy;
-            int j;
-            for (j = 0; j < 4; j++) {
-                float px = hx - 27.0f + 18.0f * (float)j, ph = 12.0f + (float)(fr_h(j, 77) % 9u);
-                r8_rect(s, (int32_t)(px * k), (int32_t)((hy - ph) * k), (int32_t)(3.0f * k + 0.5f), (int32_t)(ph * k), FR_WOOD);
-            }
-            r8_rect(s, (int32_t)((hx - 9.0f) * k), (int32_t)((hy - 13.0f) * k), (int32_t)(10.0f * k), (int32_t)(13.0f * k), FR_WOOD + 4);   /* (the doorway) */
-            r8_tri(s, (hx - 32.0f) * k, (hy - 15.0f) * k, (hx + 30.0f) * k, (hy - 23.0f) * k, (hx + 24.0f) * k, (hy - 3.0f) * k, FR_WOOD + 2);
-            r8_tri(s, (hx - 32.0f) * k, (hy - 15.0f) * k, (hx + 24.0f) * k, (hy - 3.0f) * k, (hx - 20.0f) * k, (hy - 6.0f) * k, FR_WOOD + 2);
-            r8_tri(s, (hx - 20.0f) * k, (hy - 6.0f) * k, (hx + 2.0f) * k, (hy - 20.0f) * k, (hx + 8.0f) * k, (hy - 2.0f) * k, FR_WOOD + 4);   /* (where it caved) */
-            for (j = 0; j < 7; j++) {
-                float u = (float)j * (1.0f / 6.0f), sx0 = hx - 30.0f + 58.0f * u, sy0 = hy - 15.0f - 8.0f * u;
-                r8_limb(s, sx0 * k, sy0 * k, 0.8f * k, (sx0 - 4.0f) * k, (sy0 + 9.0f) * k, 0.8f * k, FR_WOOD + 3);
-            }
-            r8_limb(s, (hx - 32.0f) * k, (hy - 15.0f) * k, 1.2f * k, (hx + 30.0f) * k, (hy - 23.0f) * k, 1.2f * k, FR_WOOD + 3);   /* (the ridge) */
+        if (fr.lay.tree[t].z < 2.8f && fr.lay.tree[t].z > 2.2f && fr.lay.tree[t].x > 120.0f) {   /* the log, at its depth */
+            float lx = fr.lay.logx, ly = fr.lay.logy, lw = fr.lay.logw, ll = fr.lay.logl;
+            r8_limb(s, (lx + ll) * k, (ly - lw * 0.15f) * k, lw * 0.8f * k, lx * k, ly * k, lw * k, FR_TRK + 16 + TK_BARK);
+            r8_limb(s, (lx + ll) * k, (ly - lw * 0.15f - lw * 0.32f) * k, lw * 0.25f * k, lx * k, (ly - lw * 0.38f) * k, lw * 0.3f * k, FR_TRK + 16 + TK_LIT);
+            r8_disc(s, lx * k, ly * k, lw * 0.5f * k, FR_TRK + 16 + TK_RIM);
+            r8_disc(s, lx * k, ly * k, lw * 0.36f * k, FR_TRK + 16 + TK_HOLLOW);
+            fr_fern(s, k, lx + ll * 0.7f, ly + lw * 0.4f, 9.0f, 2);
         }
-        if (b == 2) {                                 /* the well, and the cart wheel in the water */
-            float wx = fr.lay.wx, wy = fr.lay.wy, cx = fr.lay.cx0, cy = fr.lay.cy0;
-            int j;
-            fr_ellipse(s, wx * k, (wy + 6.0f) * k, 13.0f * k, 4.5f * k, FR_STONE + 2);
-            r8_rect(s, (int32_t)((wx - 13.0f) * k), (int32_t)(wy * k), (int32_t)(26.0f * k), (int32_t)(6.0f * k), FR_STONE + 3);
-            for (j = 0; j < 6; j++)
-                r8_rect(s, (int32_t)((wx - 13.0f + 4.4f * (float)j) * k), (int32_t)(wy * k), (int32_t)(1.0f * k + 0.5f), (int32_t)(6.0f * k), FR_STONE + 1);
-            fr_ellipse(s, wx * k, wy * k, 13.0f * k, 4.5f * k, FR_STONE + 6);
-            fr_ellipse(s, wx * k, wy * k, 9.0f * k, 3.0f * k, FR_STONE);
-            r8_ring(s, cx * k, cy * k, 11.0f * k, 9.5f * k, FR_WOOD + 5);
-            r8_ring(s, cx * k, cy * k, 10.0f * k, 8.5f * k, FR_WOOD + 5);
-            for (j = 0; j < 6; j++)
-                fr_line(s, cx * k, cy * k, (cx + 9.5f * fm_sin_turns((float)j * (1.0f / 6.0f))) * k, (cy - 8.0f * fm_sin_turns((float)j * (1.0f / 6.0f) + 0.25f)) * k,
-                        FR_WOOD + 5, 0);
-            r8_disc(s, cx * k, cy * k, 2.2f * k, FR_WOOD + 5);
+        if (fr.lay.tree[t].z < 3.6f && fr.lay.tree[t].z > 2.8f && fr.lay.tree[t].x < 120.0f) {   /* the stump */
+            float sx = fr.lay.stx, sy = fr.lay.sty, sw = fr.lay.stw;
+            r8_rect(s, (int32_t)((sx - sw * 0.5f) * k), (int32_t)((sy - sw * 0.7f) * k), (int32_t)(sw * k), (int32_t)(sw * 0.7f * k + 1.0f), FR_TRK + 16 + TK_BARK);
+            r8_rect(s, (int32_t)((sx - sw * 0.5f) * k), (int32_t)((sy - sw * 0.7f) * k), (int32_t)(sw * 0.3f * k), (int32_t)(sw * 0.7f * k + 1.0f), FR_TRK + 16 + TK_FURROW);
+            fr_ellipse(s, sx * k, (sy - sw * 0.7f) * k, sw * 0.5f * k, sw * 0.18f * k, FR_TRK + 16 + TK_LIT);
+            fr_ellipse(s, sx * k, (sy - sw * 0.7f) * k, sw * 0.3f * k, sw * 0.1f * k, FR_TRK + 16 + TK_HOLLOW);
+            fr_fern(s, k, sx + sw * 0.6f, sy + 1.0f, 8.0f, 2);
         }
-        if (b == 3) {                                 /* the log, hollow at its near end */
-            r8_limb(s, fr.lay.lx1 * k, fr.lay.ly1 * k, 6.0f * k, fr.lay.lx0 * k, fr.lay.ly0 * k, 9.0f * k, FR_WOOD);
-            r8_limb(s, fr.lay.lx1 * k, (fr.lay.ly1 - 2.5f) * k, 1.2f * k, fr.lay.lx0 * k, (fr.lay.ly0 - 3.8f) * k, 1.4f * k, FR_WOOD + 1);
-            r8_disc(s, fr.lay.lx0 * k, fr.lay.ly0 * k, 4.5f * k, FR_WOOD + 1);
-            r8_disc(s, fr.lay.lx0 * k, fr.lay.ly0 * k, 3.0f * k, FR_WOOD + 4);
-        }
-        for (i = 0; i < 24; i++) {                    /* the grass at this depth, a few strokes a tuft */
-            float gx = (float)(fr_h(i + 30 * b, 78) % 240u), gv = ((float)b + (float)fr_h(i + 30 * b, 79) * (1.0f / 255.0f)) * 0.25f,
-                  gy = fr_horizon(gx) + 4.0f + (240.0f - FR_HORIZON - 8.0f) * gv * gv, gh = 3.0f + 9.0f * gv;
-            int j, n = 3 + (int)(fr_h(i, 80 + b) % 3u);
-            if (fr_water(gx, gy) >= 0 || b == 3)
-                continue;
-            for (j = 0; j < n; j++)
-                r8_limb(s, (gx + 1.2f * (float)j) * k, gy * k, 1.0f * k, (gx + 1.2f * (float)j + (float)(j - n / 2) * 1.5f) * k, (gy - gh * (0.7f + 0.3f * (float)(j & 1))) * k,
-                        0.6f * k, (uint8_t)(FR_GRS + (b < 2 ? 4 : 0) + (j % 3)));
-        }
+        fr.lay.tree[t].band = 9;                      /* (drawn) */
+    }
+    for (i = 0; i < fr.lay.ntree; i++)                /* (their depths again) */
+        fr.lay.tree[i].band = (uint8_t)fr_band(fr.lay.tree[i].z);
+    for (i = 0; i < 5; i++) {                         /* mossy stones along the path's edges */
+        float z = 1.2f + 2.2f * (float)fr_h(i, 51) * (1.0f / 255.0f), side = i & 1 ? 1.0f : -1.0f, X = side * (0.62f + 0.1f * (float)fr_h(i, 52) * (1.0f / 255.0f)),
+              sx = 120.0f + FR_F * X / z, sy = FR_HOR + FR_F / z, sr = (2.5f + 2.0f * (float)fr_h(i, 53) * (1.0f / 255.0f)) * 2.0f / z;
+        fr_ellipse(s, sx * k, sy * k, sr * k, sr * 0.6f * k, FR_STONE + 1);
+        fr_ellipse(s, sx * k, (sy - sr * 0.2f) * k, sr * 0.8f * k, sr * 0.35f * k, FR_STONE + 2);
+        fr_disc(s, (sx - sr * 0.3f) * k, (sy - sr * 0.25f) * k, sr * 0.35f * k, FR_STONE + 3, 0, 8);
+    }
+    for (i = 0; i < 7; i++) {                         /* the foliage overhead: a dark fringe hanging in along the top */
+        float fx = -10.0f + 260.0f * ((float)i + 0.3f + 0.4f * fr_trf()) * (1.0f / 7.0f), fy = -6.0f + 10.0f * fr_trf(), fr_ = 14.0f + 12.0f * fr_trf();
+        if (i == 0 || i == 6)
+            fr_ += 10.0f;
+        fr_disc(s, fx * k, fy * k, fr_ * k, FR_TRK + 24 + TK_LEAF, 0, 12);
+        fr_disc(s, (fx + 4.0f) * k, (fy - 4.0f) * k, fr_ * 0.7f * k, FR_TRK + 24 + TK_LEAF2, 0, 7);
+        for (j = 0; j < 3; j++)
+            r8_limb(s, (fx + (fr_trf() - 0.5f) * fr_) * k, (fy + fr_ * 0.5f) * k, 1.0f * k, (fx + (fr_trf() - 0.5f) * fr_ * 1.4f) * k, (fy + fr_ * (0.9f + 0.5f * fr_trf())) * k,
+                    0.4f * k, FR_TRK + 24 + TK_LEAF);
     }
 }
 
@@ -499,8 +502,8 @@ static void fr_harp(int a, float peak)
     for (i = 0; i < FR_NL && n < 3; i++)              /* (three leaves through the arch) */
         if (!fr_l[i].st) {
             fr_l[i].st = 1;
-            fr_l[i].x = fr.lay.cx[a] - 18.0f - 10.0f * sc_frand();
-            fr_l[i].y = fr.lay.cy[a] - 16.0f - 14.0f * sc_frand();
+            fr_l[i].x = fr.lay.cx[a] - 14.0f - 10.0f * sc_frand();
+            fr_l[i].y = fr.lay.cy[a] - 20.0f - 16.0f * sc_frand();
             fr_l[i].vx = 40.0f + 30.0f * sc_frand();
             fr_l[i].vy = 2.0f;
             fr_l[i].rot = sc_frand();
@@ -554,14 +557,14 @@ static void fr_bolt(void)
     }
 }
 
-static void fr_stone_drop(void)
+static void fr_stone_drop(void)                 /* a cone falls (the knock is a stone's: part 6) */
 {
     if (fr.fall.on)
         return;
     fr.fall.on = 1;
-    fr.fall.x = fr.lay.hx + (sc_frand() - 0.5f) * 44.0f;
-    fr.fall.y = fr.lay.hy - 19.0f;
-    fr.fall.v = 0.0f;
+    fr.fall.x = 30.0f + 180.0f * sc_frand();
+    fr.fall.y = -3.0f;
+    fr.fall.v = 20.0f;
 }
 
 static void fr_drone(void)                      /* Voices: the drone's source, a pad or one of GR!MM's choirs */
@@ -654,95 +657,86 @@ static void fr_char(const fr_mood_t *m)
 static void fr_palette(void)
 {
 #define FR_RGB(v) ((uint32_t)(v)[0] << 16 | (uint32_t)(v)[1] << 8 | (uint32_t)(v)[2])
-    uint32_t sky0 = FR_RGB(fr.sky0), sky1 = FR_RGB(fr.sky1), gnd = FR_RGB(fr.gnd), wat = FR_RGB(fr.wat), grs = FR_RGB(fr.grs),
-             twig = FR_RGB(fr.twig), trunk = FR_RGB(fr.trunk), fogc = FR_RGB(fr.fogc), shadow = 0x08090Cu,
-             haze = r8_mix(sky1, fogc, 0.5f), cat[4];
-    static const float HZ[4] = {0.74f, 0.52f, 0.3f, 0.08f};   /* how far into the haze each depth of trees stands */
+    uint32_t sky0 = FR_RGB(fr.sky0), sky1 = FR_RGB(fr.sky1), gnd = FR_RGB(fr.gnd), path = FR_RGB(fr.path), fern = FR_RGB(fr.fern),
+             bark = FR_RGB(fr.bark), stone = FR_RGB(fr.stone), fogc = FR_RGB(fr.fogc), shadow = 0x08090Cu, haze = r8_mix(sky1, sky0, 0.15f), cat[4];
+    static const float HZ[4] = {0.78f, 0.55f, 0.3f, 0.06f};   /* how far into the haze each depth of trees stands */
     float l = fr.light, lm = fm_minf(1.0f, l);
     int i, b, c;
 #undef FR_RGB
     for (i = 0; i < FR_NSKY; i++)
         r8_pal_set(FR_SKY + i, r8_mix(sky0, sky1, (float)i * (1.0f / (float)(FR_NSKY - 1))));
-    for (b = 0; b < 4; b++) {
-        uint32_t tk = r8_mix(r8_mix(shadow, trunk, 0.4f + 0.6f * lm), haze, HZ[b]), tw = r8_mix(r8_mix(shadow, twig, lm), haze, HZ[b]);
-        r8_pal_set(FR_TRK + 2 * b, tk);
-        r8_pal_set(FR_TRK + 2 * b + 1, tw);
-        for (c = 0; c < 2; c++)                       /* the canopy: in leaf, or a thickening of twigs */
-            r8_pal_set(FR_CAN + 2 * b + c, r8_mix(r8_mix(haze, tw, 0.3f), r8_mix(r8_mix(shadow, c ? 0x7A9A38u : 0x3E5A26u, lm), haze, HZ[b] * 0.8f), fr.canopy));
+    for (b = 0; b < 4; b++) {                         /* the trees at each depth: eight shades, into the haze */
+        uint32_t bk = r8_mix(shadow, bark, lm), fur = r8_mix(shadow, bark, 0.35f * lm), lit = r8_mix(bk, 0xE0B080u, 0.28f * lm),
+                 lf = r8_mix(r8_mix(shadow, 0x18301Eu, 0.25f + 0.75f * lm), sky0, 0.3f), lf2 = r8_mix(r8_mix(shadow, 0x2C5228u, 0.25f + 0.75f * lm), sky0, 0.3f), sh[8];
+        sh[TK_FURROW] = fur;
+        sh[TK_BARK] = bk;
+        sh[TK_LIT] = lit;
+        sh[TK_RIM] = r8_mix(lit, sky1, 0.4f);
+        sh[TK_HOLLOW] = 0x08080Au;
+        sh[TK_MOSS] = r8_mix(bk, 0x4A7A30u, 0.5f * lm);
+        sh[TK_LEAF] = lf;
+        sh[TK_LEAF2] = lf2;
+        for (c = 0; c < 8; c++)
+            r8_pal_set(FR_TRK + b * 8 + c, r8_mix(sh[c], haze, c == TK_HOLLOW ? HZ[b] * 0.8f : HZ[b]));
     }
     for (b = 0; b < 4; b++)
-        for (i = 0; i < 4; i++)
-            r8_pal_set(FR_GND + b * 4 + i, r8_mix(r8_mix(shadow, gnd, (0.45f + 0.55f * (float)i * (1.0f / 3.0f)) * lm), haze, 0.26f * (float)b));
-    for (b = 0; b < 4; b++)
-        for (i = 0; i < 2; i++)
-            r8_pal_set(FR_WAT + b * 2 + i, r8_mix(r8_mix(r8_mix(shadow, wat, lm), sky1, 0.2f + 0.3f * (float)i), haze, 0.22f * (float)b));
+        for (i = 0; i < 4; i++) {
+            r8_pal_set(FR_PATH + b * 4 + i, r8_mix(r8_mix(shadow, path, (0.5f + 0.5f * (float)i * (1.0f / 3.0f)) * lm), haze, 0.27f * (float)b));
+            r8_pal_set(FR_GND + b * 4 + i, r8_mix(r8_mix(shadow, gnd, (0.4f + 0.6f * (float)i * (1.0f / 3.0f)) * lm), haze, 0.27f * (float)b));
+        }
     for (i = 0; i < 4; i++) {
-        uint32_t g = r8_mix(shadow, grs, (0.4f + 0.2f * (float)i) * lm);
-        r8_pal_set(FR_GRS + i, g);
-        r8_pal_set(FR_GRS + 4 + i, r8_mix(g, haze, 0.42f));
+        uint32_t g = r8_mix(shadow, fern, (0.35f + 0.22f * (float)i) * lm);
+        r8_pal_set(FR_FERN + i, g);
+        r8_pal_set(FR_FERN + 4 + i, r8_mix(g, haze, 0.5f));
     }
-    {
-        static const uint32_t WD[8] = {0x5A4A38u, 0x8A7A60u, 0x3A3022u, 0x9A8458u, 0x0A0A0Cu, 0x3C3C40u, 0x8C8880u, 0x5A4A38u};
-        for (i = 0; i < 8; i++)
-            r8_pal_set(FR_WOOD + i, r8_mix(r8_mix(shadow, WD[i], (i == 4 ? 1.0f : 0.75f) * lm), haze, 0.12f));
-    }
-    for (i = 0; i < 8; i++)
-        r8_pal_set(FR_STONE + i, r8_mix(shadow, 0x8A8E90u, (0.1f + 0.9f * (float)i * (1.0f / 7.0f)) * lm));
     for (c = 0; c < 4; c++) {
         uint32_t lc = (uint32_t)fr.leaf[c][0] << 16 | (uint32_t)fr.leaf[c][1] << 8 | (uint32_t)fr.leaf[c][2];
         for (i = 0; i < 4; i++)
             r8_pal_set(FR_LEAF + c * 4 + i, r8_mix(shadow, lc, (0.45f + 0.2f * (float)i) * fm_minf(1.2f, l)));
     }
-    cat[0] = sky1;
-    cat[1] = r8_base[FR_TRK + 3];
-    cat[2] = r8_base[FR_GND + 9];
-    cat[3] = r8_base[FR_WAT + 2];
+    cat[0] = r8_base[FR_SKY + 12];                    /* the fog and the shafts of light: over the mist, the far trees,
+                                                       * the path, the duff and the ferns */
+    cat[1] = r8_base[FR_TRK + 8 + TK_BARK];
+    cat[2] = r8_base[FR_PATH + 5];
+    cat[3] = r8_base[FR_GND + 5];
     for (c = 0; c < 4; c++)
         for (i = 0; i < 4; i++)
-            r8_pal_set(FR_FOG + c * 4 + i, r8_mix(cat[c], fogc, 0.3f + 0.19f * (float)i));
+            r8_pal_set(FR_FOG + c * 4 + i, r8_mix(cat[c], fogc, 0.26f + 0.19f * (float)i));
     r8_pal_set(FR_CROW, 0x0A0A0Cu);
     r8_pal_set(FR_CROW + 1, r8_mix(0x0A0A0Cu, sky1, 0.28f));
     r8_pal_set(FR_CROW + 2, 0x3A3028u);
     r8_pal_set(FR_CROW + 3, 0x0A0A0Cu);
-    {   /* the moon and the stars by night, the sun at dawn: in the sky's own colors when they are not up */
+    {   /* the moon and the stars by night, the sun at dawn: in the mist's own colors when they are not up */
         static const uint32_t MOON[4] = {0xE8E4D0u, 0xC8C4B0u, 0xA8A490u, 0x404048u};
+        uint32_t sk = r8_base[FR_SKY + 20];
         for (i = 0; i < 4; i++) {
-            r8_pal_set(FR_MOON + i, r8_mix(sky0, MOON[i], fr.moonamt));
-            r8_pal_set(FR_HALO + i, r8_mix(sky0, 0xB0B8C8u, (0.08f + 0.1f * (float)i) * fr.moonamt));
+            r8_pal_set(FR_MOON + i, r8_mix(sk, MOON[i], fr.moonamt));
+            r8_pal_set(FR_HALO + i, r8_mix(sk, 0xC8D0E0u, (0.1f + 0.12f * (float)i) * fr.moonamt));
             r8_pal_set(FR_STAR + i, r8_mix(sky0, 0xE0E4F0u, (0.3f + 0.23f * (float)i) * fr.moonamt));
         }
-        r8_pal_set(FR_SUN, r8_mix(sky1, 0xFFF4D8u, 0.8f * fr.sunamt));
+        r8_pal_set(FR_SUN, r8_mix(sk, 0xFFF4D8u, 0.85f * fr.sunamt));
         for (i = 1; i < 4; i++)
-            r8_pal_set(FR_SUN + i, r8_mix(sky1, 0xFFE8C0u, (0.4f - 0.11f * (float)i) * fr.sunamt));
+            r8_pal_set(FR_SUN + i, r8_mix(sk, 0xFFE8C0u, (0.4f - 0.11f * (float)i) * fr.sunamt));
     }
     r8_pal_set(FR_RAIN, r8_mix(sky1, 0xC8D0D8u, 0.45f));
     r8_pal_set(FR_RAIN + 1, r8_mix(r8_base[FR_GND + 6], 0xC8D0D8u, 0.4f));
     r8_pal_set(FR_BOLT, 0xF0F4FFu);
     r8_pal_set(FR_BAT, 0x030304u);
-    r8_pal_set(FR_DUST, r8_mix(r8_base[FR_GND + 2], 0xC0B8A8u, 0.5f));
-    r8_pal_set(FR_DUST + 1, r8_mix(r8_base[FR_GND + 2], 0xC0B8A8u, 0.25f));
-    r8_pal_set(FR_RIP, r8_mix(r8_base[FR_WAT + 1], 0xE8EEF4u, 0.55f));
-    r8_pal_set(FR_RIP + 1, r8_mix(r8_base[FR_WAT + 1], 0xE8EEF4u, 0.25f));
+    r8_pal_set(FR_DUST, r8_mix(r8_base[FR_PATH + 2], 0xC0B8A8u, 0.5f));
+    r8_pal_set(FR_DUST + 1, r8_mix(r8_base[FR_PATH + 2], 0xC0B8A8u, 0.25f));
+    r8_pal_set(FR_CONE, r8_mix(shadow, 0x4A3020u, 0.7f * lm));
+    r8_pal_set(FR_CONE + 1, r8_mix(shadow, 0x7A5A3Au, 0.7f * lm));
+    for (i = 0; i < 4; i++)
+        r8_pal_set(FR_STONE + i, r8_mix(r8_mix(shadow, stone, (0.3f + 0.2f * (float)i) * lm), 0x4A7A30u, i == 3 ? 0.45f : 0.0f));
     r8_pal_commit(0xFFFFFFu, 0xE8ECFFu, (int)(fr.flash * 210.0f));
 }
 
-static void fr_ripple(float x, float y)
-{
-    int i, old = 0;
-    for (i = 1; i < FR_NRIP; i++)
-        if (fr_rp[i].t < fr_rp[old].t)
-            old = i;
-    fr_rp[old].x = x;
-    fr_rp[old].y = y;
-    fr_rp[old].t = 1.4f;
-}
-
 /* a crow: perched (its body, tail, head and beak, the head up as it calls; sized by how near its perch is), or
- * flying (its wings beating; a far one small, behind the trees) */
+ * flying (its wings beating; a far one small, behind the nearer trees) */
 static void fr_draw_crow(surf_t *s, int i, float k)
 {
     float x = fr_c[i].x, y = fr_c[i].y, d = (float)fr_c[i].dir, sz = fr_c[i].far ? 0.5f : 0.9f;
-    int bh = fr_c[i].far ? FR_GND : 0;
+    int bh = fr_c[i].far ? FR_TRK + 24 : 0;
     if (fr_c[i].st) {
         float fl = fm_sin_turns(fr_c[i].wing), wy = -5.0f * sz * fl, wx = 7.5f * sz, bx = x * k, by = y * k;
         fr_line(s, bx, by, (x - wx) * k, (y + wy - 1.0f) * k, FR_CROW, bh);
@@ -767,34 +761,79 @@ static void fr_draw_crow(surf_t *s, int i, float k)
     }
 }
 
+/* fog and light alike: a pixel of what lies under them takes one of four lighter shades of its kind (the mist, the
+ * far trees, the path, the duff and the ferns); the nearer trees and what was drawn in front stay as they are */
+static inline void fr_veil(uint8_t *p, int lv, int32_t x, int32_t y, float a)
+{
+    int old, cat;
+    uint8_t v = *p;
+    lv += r8_dith(x, y, (int)((a - (float)lv) * 16.0f));
+    if (lv <= 0)
+        return;
+    lv = lv > 4 ? 4 : lv;
+    old = v >= FR_FOG && v < FR_FOG + 16 ? ((v - FR_FOG) & 3) + 1 : 0;
+    if (old >= lv)
+        return;
+    if (old)
+        cat = (v - FR_FOG) >> 2;
+    else if (v < FR_TRK)
+        cat = 0;
+    else if (v < FR_TRK + 16)
+        cat = 1;
+    else if (v < FR_PATH)
+        return;
+    else if (v < FR_GND)
+        cat = 2;
+    else if (v < FR_LEAF)
+        cat = 3;
+    else
+        return;
+    *p = (uint8_t)(FR_FOG + cat * 4 + lv - 1);
+}
+
 static void fr_draw(void)
 {
     surf_t *s = &r8_fb;
     float k = fr_scale();
-    int i, j;
+    int i;
     r8_copy(s, &r8_bg);
-    if (fr.moonamt > 0.02f) {                         /* the night sky: the stars, the moon on its way over the trees */
+    if (fr.moonamt > 0.02f) {                         /* the night: the stars in the gap, the moon over the path's end */
         float mt, mx, my;
         fr_moon_xy(&mt, &mx, &my);
         for (i = 0; i < FR_NSTAR; i++) {
             int tw = (int)(fr.t * 2.0f + (float)i * 0.37f) & 3;
-            fr_px(s, (int32_t)(fr_s[i].x * k), (int32_t)(fr_s[i].y * k), (uint8_t)(FR_STAR + (fr_s[i].br + (tw == 0)) % 4), FR_TRK);
+            fr_px(s, (int32_t)(fr_s[i].x * k), (int32_t)(fr_s[i].y * k), (uint8_t)(FR_STAR + (fr_s[i].br + (tw == 0)) % 4), FR_TRK + 8);
         }
         if (mt > -0.05f && mt < 1.05f)
-            sc_moon_draw(s, k, &fr.mn, mx * k, my * k, FR_TRK, FR_MOON, FR_HALO, 4);
+            sc_moon_draw(s, k, &fr.mn, mx * k, my * k, FR_TRK + 16, FR_MOON, FR_HALO, 4);   /* (through the ghost trunks) */
     }
-    if (fr.sunamt > 0.02f) {                          /* the sun at dawn, low in the haze behind the trees */
-        float sx = 196.0f, sy = 66.0f - 34.0f * fr.dawn;
-        fr_disc(s, sx * k, sy * k, 22.0f * k, FR_SUN + 3, FR_TRK, 7);
-        fr_disc(s, sx * k, sy * k, 16.0f * k, FR_SUN + 2, FR_TRK, 9);
-        fr_disc(s, sx * k, sy * k, 12.0f * k, FR_SUN + 1, FR_TRK, 12);
-        fr_disc(s, sx * k, sy * k, 9.0f * k, FR_SUN, FR_TRK, 16);
+    if (fr.sunamt > 0.02f) {                          /* the sun at dawn, small and pale at the end of the path */
+        float sx = 128.0f, sy = 112.0f - 26.0f * fr.dawn;
+        fr_disc(s, sx * k, sy * k, 18.0f * k, FR_SUN + 3, FR_TRK + 16, 7);
+        fr_disc(s, sx * k, sy * k, 13.0f * k, FR_SUN + 2, FR_TRK + 16, 9);
+        fr_disc(s, sx * k, sy * k, 9.5f * k, FR_SUN + 1, FR_TRK + 16, 12);
+        fr_disc(s, sx * k, sy * k, 7.0f * k, FR_SUN, FR_TRK + 16, 16);
     }
-    for (i = 0; i < FR_NCROW; i++)                    /* the crows far off, among the trees */
+    for (i = 0; i < FR_NCROW; i++)                    /* the crows far off, among the far trunks */
         if (fr_c[i].on && fr_c[i].st && fr_c[i].far)
             fr_draw_crow(s, i, k);
-    for (i = 0; i < FR_NFOG; i++) {                   /* the fog: banks lying among the trunks and over the water, each
-                                                       * pixel a shade of what it covers by how thick the fog is there */
+    if (fr.beam > 0.03f)                              /* the shafts of light: down from the upper left through the
+                                                       * mist, slow to come and go, fading toward the ground */
+        for (i = 0; i < FR_NBEAM; i++) {
+            float bw = fr.lay.bw[i], str = fr.beam * (0.55f + 0.45f * fm_sin_turns(fr.t * 0.009f + 0.37f * (float)i));
+            int32_t y;
+            for (y = 0; y < s->h; y++) {
+                float yw = (float)y / k, cxw = fr.lay.bx[i] + 0.3f * yw, fall = 1.0f - yw * (1.0f / 250.0f);
+                int32_t x, x0 = (int32_t)((cxw - bw) * k), x1 = (int32_t)((cxw + bw) * k);
+                uint8_t *row = s->px + y * s->w;
+                for (x = x0 < 0 ? 0 : x0; x <= x1 && x < s->w; x++) {
+                    float u = ((float)x / k - cxw) / bw, a = (1.0f - u * u) * str * fall * 2.6f;
+                    if (a > 0.0f)
+                        fr_veil(row + x, (int)a, x, y, a);
+                }
+            }
+        }
+    for (i = 0; i < FR_NFOG; i++) {                   /* the fog: banks lying along the path among the trunks */
         float w = fr_f[i].w, hh = fr_f[i].hh, th = fr_f[i].th * fr.fogamt;
         int32_t x, y, x0 = (int32_t)((fr_f[i].x - w) * k), x1 = (int32_t)((fr_f[i].x + w) * k), y0 = (int32_t)((fr_f[i].y - hh) * k),
                 y1 = (int32_t)((fr_f[i].y + hh) * k);
@@ -807,57 +846,21 @@ static void fr_draw(void)
                 continue;
             for (x = x0 < 0 ? 0 : x0; x <= x1 && x < s->w; x++) {
                 float xw = (float)x / k, dx = (xw - fr_f[i].x) / w, vx = 1.0f - dx * dx, a, st;
-                int lv, cat, old;
-                uint8_t p = row[x];
                 if (vx <= 0.0f)
                     continue;
                 st = fm_sin_turns(xw * 0.017f + yw * 0.09f + fr.t * 0.012f + fr_f[i].ph) + 0.5f * fm_sin_turns(xw * 0.041f - fr.t * 0.02f);
                 a = fm_sqrtf(vx * vy) * th * (1.0f + 0.4f * st) * 5.2f;
-                lv = (int)a;
-                lv += r8_dith(x, y, (int)((a - (float)lv) * 16.0f));
-                if (lv <= 0)
-                    continue;
-                lv = lv > 4 ? 4 : lv;
-                old = p >= FR_FOG && p < FR_FOG + 16 ? ((p - FR_FOG) & 3) + 1 : 0;
-                if (old >= lv)
-                    continue;
-                if (old)
-                    cat = (p - FR_FOG) >> 2;
-                else if (p < FR_TRK)
-                    cat = 0;
-                else if (p < FR_GND)
-                    cat = 1;
-                else if (p < FR_WAT)
-                    cat = 2;
-                else if (p < FR_GRS)
-                    cat = 3;
-                else if (p < FR_LEAF)
-                    cat = 2;
-                else
-                    continue;                         /* (what was drawn in front stays in front) */
-                row[x] = (uint8_t)(FR_FOG + cat * 4 + lv - 1);
+                fr_veil(row + x, (int)a, x, y, a);
             }
         }
     }
-    for (i = 0; i < FR_NRIP; i++)                     /* rings on the water */
-        if (fr_rp[i].t > 0.0f) {
-            float r = (1.4f - fr_rp[i].t) * 7.0f + 1.0f;
-            r8_ring(s, fr_rp[i].x * k, fr_rp[i].y * k, r * k, r * 0.35f * k, (uint8_t)(FR_RIP + (fr_rp[i].t < 0.6f)));
-        }
-    for (i = 0; i < FR_NTUFT; i++) {                  /* the grass near us, leaning with the wind */
-        float gx = fr.lay.tuft[i].x, gy = fr.lay.tuft[i].y, gh = fr.lay.tuft[i].h,
-              bend = gh * (0.45f * fr.wind + 0.06f * fm_sin_turns(fr.t * 0.5f + gx * 0.01f));
-        for (j = 0; j < fr.lay.tuft[i].n; j++) {
-            float bx = gx + 1.5f * (float)(j - fr.lay.tuft[i].n / 2), h = gh * (0.7f + 0.3f * (float)((j * 7) % 3) * 0.5f);
-            fr_line(s, bx * k, gy * k, (bx + bend + (float)(j % 3 - 1) * 2.5f) * k, (gy - h) * k, (uint8_t)(FR_GRS + j % 3), 0);
-            fr_px(s, (int32_t)((bx + bend + (float)(j % 3 - 1) * 2.5f) * k), (int32_t)((gy - h) * k), FR_GRS + 3, 0);
-        }
-    }
-    for (i = 0; i < FR_NCROW; i++)                    /* the crows on the posts and the roof, and in the air near */
+    for (i = 0; i < FR_NCROW; i++)                    /* the crows on the log and the stump, and in the air near */
         if (fr_c[i].on && (!fr_c[i].st || !fr_c[i].far))
             fr_draw_crow(s, i, k);
-    if (fr.fall.on)
-        r8_rect(s, (int32_t)((fr.fall.x - 1.5f) * k), (int32_t)(fr.fall.y * k), (int32_t)(3.0f * k + 0.5f), (int32_t)(2.0f * k + 0.5f), FR_STONE + 5);
+    if (fr.fall.on) {                                 /* a cone coming down */
+        fr_ellipse(s, fr.fall.x * k, fr.fall.y * k, 1.6f * k, 2.4f * k, FR_CONE);
+        fr_px(s, (int32_t)((fr.fall.x - 0.6f) * k), (int32_t)((fr.fall.y - 1.0f) * k), FR_CONE + 1, 0);
+    }
     for (i = 0; i < FR_NDUST; i++)
         if (fr_d[i].life > 0.0f)
             fr_px(s, (int32_t)(fr_d[i].x * k), (int32_t)(fr_d[i].y * k), (uint8_t)(FR_DUST + (fr_d[i].life < 0.6f)), 0);
@@ -869,17 +872,17 @@ static void fr_draw(void)
         r8_quad(s, fr_l[i].x * k, fr_l[i].y * k, fr_l[i].size * k, hh * fr_l[i].size * k, fr_l[i].st == 1 ? fr_l[i].rot : 0.02f,
                 (uint8_t)(FR_LEAF + fr_l[i].col * 4 + (fr_l[i].st == 1 ? 1 + (int)(2.9f * hh) : 1)));
     }
-    if (fr.rain > 0.02f)                              /* the rain: streaks, slanted by the wind */
+    if (fr.rain > 0.02f)                              /* the rain, down through the trees: streaks, slanted by the wind */
         for (i = 0; i < FR_NRAIN; i++)
             if (fr_r[i].on) {
                 float sl = (0.15f + 0.6f * fr.wind) * 3.0f;
                 fr_px(s, (int32_t)(fr_r[i].x * k), (int32_t)(fr_r[i].y * k), FR_RAIN, 0);
                 fr_px(s, (int32_t)((fr_r[i].x - sl) * k), (int32_t)((fr_r[i].y - 3.0f) * k), FR_RAIN + 1, 0);
             }
-    if (fr.bolt_t > 0.0f)                             /* the bolt, a moment */
+    if (fr.bolt_t > 0.0f)                             /* the bolt, a moment, where the mist shows it */
         for (i = 0; i < 7; i++)
-            r8_limb(s, fr.bolt[i][0] * k, fr.bolt[i][1] * k, 1.5f * k, fr.bolt[i + 1][0] * k, fr.bolt[i + 1][1] * k, 0.9f * k, FR_BOLT);
-    if (fr.ch && fr.ch->bats)                         /* the bats: a flicker of wings over the trees */
+            fr_line(s, fr.bolt[i][0] * k, fr.bolt[i][1] * k, fr.bolt[i + 1][0] * k, fr.bolt[i + 1][1] * k, FR_BOLT, FR_TRK + 16);
+    if (fr.ch && fr.ch->bats)                         /* the bats: a flicker of wings down the path's gap */
         for (i = 0; i < fr.ch->bats && i < FR_NBAT; i++) {
             float x = fr_b[i].x * k, y = fr_b[i].y * k, w = ((int)(fr_b[i].t * 14.0f) & 1) ? 1.0f : -0.5f;
             fr_px(s, (int32_t)x, (int32_t)y, FR_BAT, 0);
@@ -891,98 +894,83 @@ static void fr_draw(void)
 }
 
 /* -------------------------------------------------------------- world --- */
-/* the clearing's own shape: where the trees stand and how tall, the pools, where the hamlet's leavings lie; the
- * perches; the stars; the fog */
+/* the grove's own shape: where the redwoods stand along the path and how big, which one is hollow, where the log
+ * and the stump lie, the shafts of light; the perches; the stars; the fog */
 SC_SMALL static void fr_layout(void)
 {
-    static const int NB[4] = {9, 6, 4, 3};
-    static const float Y0[4] = {76.0f, 90.0f, 118.0f, 160.0f}, Y1[4] = {84.0f, 110.0f, 150.0f, 205.0f},
-                       H0[4] = {30.0f, 58.0f, 98.0f, 136.0f}, H1[4] = {44.0f, 78.0f, 126.0f, 180.0f};
-    int i, b, n = 0;
-    fr.tr = fr.seed * 747796405u + 2891336453u;
-    for (b = 0; b < 4; b++)
-        for (i = 0; i < NB[b] && n < FR_NTREE; i++, n++) {
-            float u = ((float)i + 0.5f) / (float)NB[b];
-            fr.lay.tree[n].x = u * 240.0f + ((float)fr_h(n, 1) * (1.0f / 255.0f) - 0.5f) * 240.0f / (float)NB[b] * 0.9f;
-            fr.lay.tree[n].y = Y0[b] + (Y1[b] - Y0[b]) * (float)fr_h(n, 2) * (1.0f / 255.0f);
-            fr.lay.tree[n].h = H0[b] + (H1[b] - H0[b]) * (float)fr_h(n, 3) * (1.0f / 255.0f);
-            fr.lay.tree[n].band = (uint8_t)b;
+    int i, n = 0, side, k;
+    for (side = 0; side < 2; side++)
+        for (k = 0; k < FR_NTREE / 2; k++, n++) {
+            float z = 1.05f * fm_exp2f(0.5f * (float)k) * (0.9f + 0.2f * (float)fr_h(n, 1) * (1.0f / 255.0f)),
+                  X = (side ? 1.0f : -1.0f) * (0.95f + 0.6f * (float)fr_h(n, 2) * (1.0f / 255.0f)),
+                  W = 0.4f + 0.3f * (float)fr_h(n, 3) * (1.0f / 255.0f);
+            fr.lay.tree[n].z = z;
+            fr.lay.tree[n].X = X;
+            fr.lay.tree[n].W = W;
+            fr.lay.tree[n].x = 120.0f + FR_F * X / z;
+            fr.lay.tree[n].yg = FR_HOR + FR_F / z;
+            fr.lay.tree[n].w = FR_F * W / z;
+            fr.lay.tree[n].band = (uint8_t)fr_band(z);
+            fr.lay.tree[n].hollow = (uint8_t)(side == 0 && k == 1);   /* (the second on the left: the goose pen) */
         }
     fr.lay.ntree = n;
-    for (i = 0; i < FR_NWAT; i++) {                   /* the pools: wide and flat, nearer ones larger */
-        float v = 0.15f + 0.8f * (float)i / (float)(FR_NWAT - 1);
-        fr.lay.wat[i].x = 30.0f + 180.0f * (float)fr_h(i, 11) * (1.0f / 255.0f);
-        fr.lay.wat[i].y = FR_HORIZON + 10.0f + (240.0f - FR_HORIZON - 20.0f) * v + ((float)fr_h(i, 12) * (1.0f / 255.0f) - 0.5f) * 20.0f;
-        fr.lay.wat[i].rx = 18.0f + 40.0f * v + (float)(fr_h(i, 13) % 20u);
-        fr.lay.wat[i].ry = fr.lay.wat[i].rx * (0.18f + 0.12f * v);
+    {   /* the log lies off the path's right edge in the middle distance, its hollow end toward us; the stump on
+         * the left a little farther */
+        float z = 2.5f;
+        fr.lay.logw = 0.3f * FR_F / z;
+        fr.lay.logl = 0.9f * FR_F / z;
+        fr.lay.logx = 120.0f + FR_F * 0.62f / z;
+        fr.lay.logy = FR_HOR + FR_F / z - fr.lay.logw * 0.4f;
+        z = 3.2f;
+        fr.lay.stw = 0.5f * FR_F / z;
+        fr.lay.stx = 120.0f - FR_F * 0.78f / z;
+        fr.lay.sty = FR_HOR + FR_F / z;
     }
-    fr.lay.hx = 150.0f + (float)(fr_h(10, 21) % 50u);   /* the hut, mid-distance right; the fence far left to the
-                                                       * middle; the well mid right; the cart wheel in a pool, left;
-                                                       * the log in the near left corner */
-    fr.lay.hy = 118.0f + (float)(fr_h(10, 22) % 12u);
-    fr.lay.fx0 = 20.0f + (float)(fr_h(10, 23) % 30u);
-    fr.lay.fy = 100.0f + (float)(fr_h(10, 24) % 8u);
-    fr.lay.wx = 130.0f + (float)(fr_h(10, 25) % 40u);
-    fr.lay.wy = 158.0f + (float)(fr_h(10, 26) % 16u);
-    fr.lay.cx0 = 40.0f + (float)(fr_h(10, 27) % 40u);
-    fr.lay.cy0 = 150.0f + (float)(fr_h(10, 28) % 20u);
-    fr.lay.wat[1].x = fr.lay.cx0 + 6.0f;              /* (one pool round the wheel) */
-    fr.lay.wat[1].y = fr.lay.cy0 + 6.0f;
-    fr.lay.wat[1].rx = 34.0f;
-    fr.lay.wat[1].ry = 8.0f;
-    fr.lay.lx0 = 14.0f + (float)(fr_h(10, 29) % 20u);
-    fr.lay.ly0 = 208.0f + (float)(fr_h(10, 30) % 16u);
-    fr.lay.lx1 = fr.lay.lx0 + 56.0f + (float)(fr_h(10, 31) % 20u);
-    fr.lay.ly1 = fr.lay.ly0 - 10.0f - (float)(fr_h(10, 32) % 8u);
-    for (i = 0; i < FR_NTUFT; i++) {
-        fr.lay.tuft[i].x = 8.0f + 224.0f * (float)fr_h(i, 33) * (1.0f / 255.0f);
-        fr.lay.tuft[i].y = 168.0f + 66.0f * (float)fr_h(i, 34) * (1.0f / 255.0f);
-        fr.lay.tuft[i].h = 10.0f + 10.0f * (fr.lay.tuft[i].y - 168.0f) * (1.0f / 66.0f) + (float)(fr_h(i, 35) % 5u);
-        fr.lay.tuft[i].n = 5 + (int)(fr_h(i, 36) % 4u);
-        if (fr_water(fr.lay.tuft[i].x, fr.lay.tuft[i].y) >= 0)
-            fr.lay.tuft[i].n = 0;
+    for (i = 0; i < FR_NBEAM; i++) {
+        fr.lay.bx[i] = 20.0f + 60.0f * (float)i + (float)(fr_h(i, 11) % 30u);
+        fr.lay.bw[i] = 9.0f + (float)(fr_h(i, 12) % 10u);
     }
-    fr.lay.na = FR_NA;                                /* what sings: the well (the root), the doorway, the log */
-    fr.lay.cx[0] = fr.lay.wx;
-    fr.lay.cy[0] = fr.lay.wy;
-    fr.lay.hw[0] = 13.0f;
-    fr.lay.cx[1] = fr.lay.hx - 4.0f;
-    fr.lay.cy[1] = fr.lay.hy - 7.0f;
-    fr.lay.hw[1] = 5.0f;
-    fr.lay.cx[2] = fr.lay.lx0;
-    fr.lay.cy[2] = fr.lay.ly0;
-    fr.lay.hw[2] = 3.0f;
-    n = 0;                                            /* the perches: the roof's ridge, a fence post, the well's rim,
-                                                       * the log (near: large), the wheel */
-    fr.lay.px[n] = fr.lay.hx + 8.0f;
-    fr.lay.py[n] = fr.lay.hy - 21.0f;
-    fr.lay.ps[n++] = 1.0f;
-    fr.lay.px[n] = fr.lay.fx0 + 34.0f;
-    fr.lay.py[n] = fr.lay.fy - 7.0f;
-    fr.lay.ps[n++] = 0.8f;
-    fr.lay.px[n] = fr.lay.wx - 7.0f;
-    fr.lay.py[n] = fr.lay.wy - 3.0f;
-    fr.lay.ps[n++] = 1.25f;
-    fr.lay.px[n] = fr.lay.lx0 + 24.0f;
-    fr.lay.py[n] = fr.lay.ly0 - 7.0f;
-    fr.lay.ps[n++] = 1.6f;
-    fr.lay.px[n] = fr.lay.cx0;
-    fr.lay.py[n] = fr.lay.cy0 - 10.0f;
+    fr.lay.na = FR_NA;                                /* what sings: the hollow trunk (the root), the log, the stump */
+    fr.lay.cx[0] = fr.lay.tree[1].x;
+    fr.lay.cy[0] = fr.lay.tree[1].yg - fr.lay.tree[1].w * 0.3f;
+    fr.lay.hw[0] = fr.lay.tree[1].w * 0.25f + 6.0f;
+    fr.lay.cx[1] = fr.lay.logx;
+    fr.lay.cy[1] = fr.lay.logy;
+    fr.lay.hw[1] = fr.lay.logw * 0.4f;
+    fr.lay.cx[2] = fr.lay.stx;
+    fr.lay.cy[2] = fr.lay.sty - fr.lay.stw * 0.7f;
+    fr.lay.hw[2] = fr.lay.stw * 0.3f;
+    n = 0;                                            /* the perches: the log's near end and its far end, the stump,
+                                                       * the roots of the nearest trees */
+    fr.lay.px[n] = fr.lay.logx + fr.lay.logw * 0.6f;
+    fr.lay.py[n] = fr.lay.logy - fr.lay.logw * 0.5f;
     fr.lay.ps[n++] = 1.3f;
+    fr.lay.px[n] = fr.lay.logx + fr.lay.logl * 0.8f;
+    fr.lay.py[n] = fr.lay.logy - fr.lay.logw * 0.65f;
+    fr.lay.ps[n++] = 1.1f;
+    fr.lay.px[n] = fr.lay.stx;
+    fr.lay.py[n] = fr.lay.sty - fr.lay.stw * 0.75f;
+    fr.lay.ps[n++] = 1.0f;
+    fr.lay.px[n] = fr.lay.tree[0].x + fr.lay.tree[0].w * 0.75f;
+    fr.lay.py[n] = fr.lay.tree[0].yg - 1.0f;
+    fr.lay.ps[n++] = 1.7f;
+    fr.lay.px[n] = fr.lay.tree[FR_NTREE / 2].x - fr.lay.tree[FR_NTREE / 2].w * 0.75f;
+    fr.lay.py[n] = fr.lay.tree[FR_NTREE / 2].yg - 1.0f;
+    fr.lay.ps[n++] = 1.7f;
     fr.lay.np = n;
     for (i = 0; i < FR_NSTAR; i++) {
-        fr_s[i].x = 2.0f + 236.0f * (float)fr_h(i, 41) * (1.0f / 255.0f);
-        fr_s[i].y = 2.0f + 60.0f * (float)fr_h(i, 42) * (1.0f / 255.0f);
+        fr_s[i].x = 60.0f + 120.0f * (float)fr_h(i, 41) * (1.0f / 255.0f);
+        fr_s[i].y = 50.0f + 66.0f * (float)fr_h(i, 42) * (1.0f / 255.0f);
         fr_s[i].br = (uint8_t)(fr_h(i, 43) % 3u);
     }
-    sc_moon_repick(&fr.mn, 1.0f, fr.seed * 7u + 3u);
-    fr.moon_top = 46.0f + (float)(fr_h(10, 44) % 16u);
+    sc_moon_repick(&fr.mn, 0.8f, fr.seed * 7u + 3u);
+    fr.moon_top = 100.0f + (float)(fr_h(10, 44) % 10u);
     sc_mst_k = -1.0f;
     for (i = 0; i < FR_NFOG; i++) {
         fr_f[i].x = 40.0f + 80.0f * (float)i;
-        fr_f[i].y = 96.0f + 18.0f * (float)i + (float)(fr_h(i, 45) % 10u);
+        fr_f[i].y = 136.0f + 28.0f * (float)i + (float)(fr_h(i, 45) % 10u);
         fr_f[i].w = 60.0f + (float)(fr_h(i, 46) % 50u);
-        fr_f[i].hh = 12.0f + (float)(fr_h(i, 47) % 10u);
+        fr_f[i].hh = 10.0f + (float)(fr_h(i, 47) % 10u);
         fr_f[i].ph = (float)fr_h(i, 48) * (1.0f / 255.0f);
         fr_f[i].lastx = fr_f[i].x;
     }
@@ -1000,7 +988,7 @@ static void fr_leaf_new(int i, int from_left)
     fr_l[i].spin = (0.3f + 0.5f * sc_frand()) * (sc_rnd() & 1u ? 1.0f : -1.0f);
     fr_l[i].ph = sc_frand();
     fr_l[i].size = 1.5f + 1.6f * u;                   /* (the nearer it lands, the larger) */
-    fr_l[i].land_y = fr.wind > 0.5f ? 300.0f : FR_HORIZON + 8.0f + 150.0f * u;
+    fr_l[i].land_y = fr.wind > 0.5f ? 300.0f : FR_HOR + 10.0f + 118.0f * u * u;
     fr_l[i].col = (int8_t)(sc_rnd() & 3u);
     fr_l[i].silent = 0;
 }
@@ -1037,10 +1025,10 @@ static void fr_look(float dt, int at_once)
     FR_EASE(fr.sky0, a->sky0, b->sky0);
     FR_EASE(fr.sky1, a->sky1, b->sky1);
     FR_EASE(fr.gnd, a->gnd, b->gnd);
-    FR_EASE(fr.wat, a->wat, b->wat);
-    FR_EASE(fr.grs, a->grs, b->grs);
-    FR_EASE(fr.twig, a->twig, b->twig);
-    FR_EASE(fr.trunk, a->trunk, b->trunk);
+    FR_EASE(fr.path, a->path, b->path);
+    FR_EASE(fr.fern, a->fern, b->fern);
+    FR_EASE(fr.bark, a->bark, b->bark);
+    FR_EASE(fr.stone, a->stone, b->stone);
     FR_EASE(fr.fogc, a->fogc, b->fogc);
     for (c = 0; c < 4; c++)
         FR_EASE(fr.leaf[c], FR_LEAFPAL[a->leafpal][c], FR_LEAFPAL[b->leafpal][c]);
@@ -1048,7 +1036,7 @@ static void fr_look(float dt, int at_once)
 #define FR_EASE1(dst, fa, fb, sc) do { v = ((float)(fa) + ((float)(fb) - (float)(fa)) * u) * (sc); (dst) += (v - (dst)) * e; } while (0)
     FR_EASE1(fr.light, a->light, b->light, 0.01f);
     FR_EASE1(fr.ivy, a->ivy, b->ivy, 0.01f);
-    FR_EASE1(fr.canopy, a->canopy, b->canopy, 0.01f);
+    FR_EASE1(fr.beam, a->beam, b->beam, 0.01f);
     FR_EASE1(fr.moonamt, a->moon, b->moon, 1.0f);
     FR_EASE1(fr.sunamt, a->sun, b->sun, 1.0f);
     FR_EASE1(fr.rain, a->rain, b->rain, 0.01f);
@@ -1094,7 +1082,6 @@ SC_SMALL static void fr_enter(uint32_t seed, int16_t *kv)
     memset(fr_q, 0, sizeof fr_q);
     memset(fr_r, 0, sizeof fr_r);
     memset(fr_d, 0, sizeof fr_d);
-    memset(fr_rp, 0, sizeof fr_rp);
     fr.kv = kv;
     for (i = 0; i < SC_NKNOB; i++)
         if (FR_KNOB[i][1] > FR_KNOB[i][0] && (kv[i] < FR_KNOB[i][0] || kv[i] > FR_KNOB[i][1]))
@@ -1308,19 +1295,15 @@ static void fr_step(uint32_t dt_ms)
             fr_l[i].st = 0;
             continue;
         }
-        if (fr_l[i].y >= fr_l[i].land_y) {             /* on the ground: a note; on the water: a ring, a plip, a touch */
-            int w = fr_water(fr_l[i].x, fr_l[i].y);
+        if (fr_l[i].y >= fr_l[i].land_y) {             /* on the path: a note; in the ferns: a touch */
             fr_l[i].st = 2;
             fr_l[i].life = 6.0f + 6.0f * sc_frand();
             fr.leaves++;
-            if (w >= 0) {
-                fr_ripple(fr_l[i].x, fr_l[i].y);
-                if (!fr_l[i].silent) {
-                    fm_drop(26 + (int)(sc_rnd() % 20u), cd_pan(fr_l[i].x * (1.0f / 240.0f)), 0);
-                    cd_touch(fr_l[i].x * (1.0f / 240.0f), 0.6f);
-                }
-            } else if (!fr_l[i].silent) {
-                cd_pluck(fr_l[i].x * (1.0f / 240.0f), 0.3f + 0.12f * fr_l[i].size, 1400);
+            if (!fr_l[i].silent) {
+                if (fr_on_path(fr_l[i].x, fr_l[i].y))
+                    cd_pluck(fr_l[i].x * (1.0f / 240.0f), 0.3f + 0.12f * fr_l[i].size, 1400);
+                else
+                    cd_touch(fr_l[i].x * (1.0f / 240.0f), 0.5f);
             }
         }
     }
@@ -1475,7 +1458,7 @@ static void fr_step(uint32_t dt_ms)
         fr_stone_drop();
     }
     if (fr.fall.on) {
-        float fy = fr.lay.hy + 2.0f + 8.0f * fr_n1(fr.fall.x * 0.3f, 91);
+        float fy = 150.0f + 80.0f * fr_n1(fr.fall.x * 0.3f, 91);
         fr.fall.v += 400.0f * dt;
         fr.fall.y += fr.fall.v * dt;
         if (fr.fall.y >= fy) {
@@ -1492,9 +1475,6 @@ static void fr_step(uint32_t dt_ms)
             }
         }
     }
-    for (i = 0; i < FR_NRIP; i++)
-        if (fr_rp[i].t > 0.0f)
-            fr_rp[i].t -= dt;
     for (i = 0; i < FR_NDUST; i++)
         if (fr_d[i].life > 0.0f) {
             fr_d[i].life -= dt;
@@ -1523,7 +1503,7 @@ static void fr_step(uint32_t dt_ms)
             fr_b[i].y += fr_b[i].vy * dt;
             if (fr_b[i].y < 10.0f)
                 fr_b[i].vy = fm_fabsf(fr_b[i].vy);
-            if (fr_b[i].y > FR_HORIZON - 4.0f)
+            if (fr_b[i].y > FR_HOR - 2.0f)
                 fr_b[i].vy = -fm_fabsf(fr_b[i].vy);
             if (fr_b[i].x > 250.0f)
                 fr_b[i].x = -8.0f;

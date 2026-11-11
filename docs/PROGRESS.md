@@ -345,3 +345,9 @@ pale trees in four depths fading into a blue haze, pools of water holding the sk
 (a fallen hut, fence posts, a cart wheel, a log) with a stone well (`docs/DECISIONS.md`, "M3: Forest Ruins'
 picture, the third one"). The sounds are unchanged; `forest.zen` passes (61 checks). Build: image 523296 B
 (58268 B of flash free), RAM 81416 B (16888 B free). Pictures of each mood in `build/host/forest-*.png`.
+
+**Forest Ruins: the picture pivoted to a redwood path (2026-11-11).** Steven's call. A path to a misty vanishing
+point between eight redwoods a side in true perspective, ferns, foliage overhead, shafts of light through the
+mist; the ruin a hollow trunk, a log, a stump and stones (`docs/DECISIONS.md`, "M3: Forest Ruins' picture, the
+fourth one"). Sounds unchanged; `forest.zen` passes (61 checks). Build: image 523296 B (58268 B of flash free),
+RAM 81240 B (17064 B free). Pictures of each mood in `build/host/forest-*.png`.

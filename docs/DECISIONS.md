@@ -391,3 +391,19 @@ sound changed otherwise, and `forest.zen` passes unchanged.
 **The canopy is a palette switch, not a redraw.** Each crown carries two dithered discs in its depth's canopy
 entries; in Overgrown they are green, in the other moods they are the haze thickened a little, so the trees are
 in leaf or bare without the picture being made again.
+
+## 2026-11-11 M3: Forest Ruins' picture, the fourth one: a redwood path
+
+**Steven asked for a pivot: redwoods flanking a path.** The marsh and everything before it are gone. The picture
+is a path from our feet to a vanishing point in the mist, with eight redwoods a side placed in true perspective
+(a point at depth z and lateral X is at 120 + 100 X / z, the ground there at 118 + 100 / z): fluted columns that go
+off the top, their lit side toward the path, furrows down them and a flare of roots, moss low on the shaded
+side, tufts of foliage on the farther ones and a dark fringe of foliage overhead; the far ones fade into the
+haze by depth (`FR_TRK`, eight shades at four depths); sword ferns at their feet; the path and the duff in
+four depths of haze each. Shafts of light come down from the upper left through the mist in Dawn Mist, less in
+Overgrown, as moonbeams at night (the mood row's `beam`), drawn with the fog's own veil: a pixel takes a lighter
+shade of its kind. The ruin is small among the trees: a goose pen (a burnt hollow) in the second trunk on the
+left, a fallen log, a stump, mossy stones by the path. The three hollows that sing are the hollow trunk (the
+root), the log and the stump; what falls from above is a cone, with the stone's knock. A leaf on the path is a
+note, in the ferns a touch. The moon crosses low over the path's end and shows through the ghost trunks of the
+two farthest depths, as the dawn sun does; otherwise the sounds and the script are unchanged.
