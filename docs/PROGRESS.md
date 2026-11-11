@@ -107,3 +107,20 @@ to find it, and that changes the reverb's storage, so it needs a listening check
 **Left in M2:** VOICE, PHYS, SAMPLE. All three memory regions are at their limits again: flash 5 KB, RAM 1.3 KB,
 pool 0.3 KB above its floor. VOICE needs 33 KB of flash, PHYS 13 KB of flash and 4.3 KB of RAM a voice. They do
 not fit until ZEN-1 content goes (a scene, its recordings, or the koto instrument).
+
+**Sakura out of the FM-1 image, and VOICE: done (2026-11-10).**
+
+- Sakura is left out of the firmware build only (`docs/DECISIONS.md`): 86 KB of flash and 42 KB of RAM freed.
+- VOICE is GR!MM's formant voice and its three choirs, as a part's source: `firmware/src/dsp/voicefx.c`,
+  `grimm_choir.h`. API: `fm_part_patch(part, FM_ENG_VOICE + TYPE)`, `fm_part_knobs`, `fm_part_attack`.
+- Unit test `tests/host/voice_test.c` (in `run_tests.sh`): 25 checks pass. Each TYPE sounds at 220 Hz for A3
+  (within 0.9 Hz) and 2 to 5 dB above the FM pad, VOWEL changes the sound, the attack and release work, six
+  choir notes and an FM note play together, a part returns to FM.
+- Render to listen to: `build/host/voice.wav` (40 s: SOLO through A E I O U, then a chord on each choir).
+- Cost on the host: about 8 us a voice a block, SOLO or a choir (an FM voice: 5). Estimated about 5 % of an
+  FM-1 block a voice.
+- Build: image 524072 B (57492 B of flash free), RAM 57208 B of 98304 (41096 B free), pool 335596 B of 344064.
+- Tests: 65 pass, `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator builds.
+
+**Left in M2:** PHYS, then SAMPLE. PHYS fits in RAM now (4.3 KB a voice). SAMPLE needs pool for its windows and a
+decision on where samples live in flash.

@@ -128,3 +128,21 @@ failed, about 140 expectations, because the scripts are written around Sakura's 
 the first scene. Rewriting them would be thrown away in M3, when every scene is replaced. The cost: until M3 the
 simulator and the emulator are not the same scene list as the firmware (three scenes against two). The engine,
 the effects and the two remaining scenes are the same code in both.
+
+## 2026-11-10 M2: VOICE
+
+**A part has a source.** `fm_part_patch(part, FM_ENG_VOICE + TYPE)` makes a scene part GR!MM's VOICE (TYPE 0 SOLO,
+1 GREGORIAN, 2 NUNS, 3 CATHEDRAL); any other slot is an FM patch as before. `fm_part_knobs` sets the source's four
+knobs, `fm_part_attack` its attack. The koto instrument (part 0) stays FM. PHYS and SAMPLE will be further sources
+of the same kind.
+
+**GR!MM's code makes the block; Crawl's voice does the rest.** `voicefx.c` is generated from GR!MM's `formant.c`
+with the changes listed at its top: it writes a block at full level, and fumi.c's existing voice code applies
+level, velocity, pan, the release and the tape's wow, plus a new linear attack. GR!MM's track envelope is not
+ported. The pitch arrives in cents; the phase increment is computed in float instead of from GR!MM's pitch table.
+
+**Voices are still 12.** M1 planned 8. Nothing forced the change yet, and lowering it would alter the ZEN-1 scenes
+still in the tree. It is set when the Crawl scenes are written, with hardware figures if there are any by then.
+
+**The choir wavetables are CC BY 4.0** (VocalSet). `LICENSES/CC-BY-4.0.txt` came along, and the credit is in
+`LICENSING.md` and `README.md`, as GR!MM has it.
