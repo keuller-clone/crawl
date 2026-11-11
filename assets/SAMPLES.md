@@ -13,6 +13,19 @@ The SAMPLE source (`firmware/src/dsp/samplefx.c`) plays the samples of `firmware
 M-SOFT is here to prove the SAMPLE source and its tool in M2. The samples Crawl ships with are chosen in M3, with the
 scenes.
 
+## The scenes' recorded textures
+
+The nature layer's recordings (loops for the beds, one-shot calls) go through ZEN-1's pipeline, not the SAMPLE
+source: `tools/zen_samples.py` into `firmware/src/dsp/zen_samples.h`, played by `firmware/src/dsp/bed.c`. Each is
+logged in `assets/sounds/README.md` with its source, author and license (CC0 only). Crawl's own, so far:
+
+| Scene | Texture | File | Source | Author | License |
+| --- | --- | --- | --- | --- | --- |
+| Forest Ruins | Air: Leaves (dry leaves in the wind, a loop) | `assets/sounds/leaves-457318-preview.mp3` | https://freesound.org/s/457318/ | Stek59 | CC0 1.0 |
+| Forest Ruins | the crows (four calls) | `assets/sounds/crow-741366-preview.mp3` | https://freesound.org/s/741366/ | Mish7913 | CC0 1.0 |
+| Forest Ruins | a second crow, a rook (three calls) | `assets/sounds/rook-556221-preview.mp3` | https://freesound.org/s/556221/ | Walking.With.Microphones | CC0 1.0 |
+| Forest Ruins | the flock taking off (one burst) | `assets/sounds/rooks-553111-preview.mp3` | https://freesound.org/s/553111/ | HighPeakEmma | CC0 1.0 |
+
 ## Adding a sample
 
 1. Check the recording's own page: CC0 only. Put the file in `assets/samples/` (WAV, any rate, mono or stereo).

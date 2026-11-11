@@ -129,8 +129,13 @@ static void bed_init(void)
 /* the two heads of a bed onto recording s: the left at the start, the right half a loop on (a block start) */
 static void heads_set(head_t *l, head_t *r, int s)
 {
+#ifdef FM_HOST
     l->data = r->data = ZN_SAMPLE_TAB[s].data;
     l->len = r->len = ZN_SAMPLE_TAB[s].len;
+#else                                               /* (the FM-1 image: the loops it holds, without the brook) */
+    l->data = r->data = s == ZN_S_BREEZE ? ZN_BREEZE : s == ZN_S_LEAVES ? ZN_LEAVES : ZN_INSECTS;
+    l->len = r->len = s == ZN_S_BREEZE ? ZN_BREEZE_LEN : s == ZN_S_LEAVES ? ZN_LEAVES_LEN : ZN_INSECTS_LEN;
+#endif
     l->pos = 0;
     r->pos = l->len / 2 / ZN_BLOCK * ZN_BLOCK;
     l->frac = r->frac = 0.0f;
@@ -141,11 +146,18 @@ static void bed_style(int which, int style)
 {
     if (which == BED_STREAM) {
         bed.style[which] = (uint8_t)(style < 0 ? 0 : style >= FM_NWATER ? FM_WATER_NOISE : style);
+#ifdef FM_HOST                                      /* (Crawl, M3: the brook's recording left the FM-1 image for Forest
+                                                     * Ruins' textures; there Brook plays the bubbles. The simulator keeps it) */
         if (bed.style[which] == FM_WATER_BROOK)
             heads_set(&bed.hl, &bed.hr, ZN_S_BROOK);
+#else
+        if (bed.style[which] == FM_WATER_BROOK)
+            bed.style[which] = FM_WATER_BUBBLES;
+        (void)ZN_SAMPLE_TAB;
+#endif
     } else if (which == BED_WIND) {
-        static const uint8_t AIR_SAMPLE[4] = {0, ZN_S_BREEZE, ZN_S_BREEZE, ZN_S_INSECTS};   /* (Leaves went:
-                                                                                     * the room; it plays the breeze) */
+        static const uint8_t AIR_SAMPLE[4] = {0, ZN_S_BREEZE, ZN_S_LEAVES, ZN_S_INSECTS};   /* (Leaves: Crawl's dry
+                                                                                     * leaves in the wind, Forest Ruins') */
         bed.style[which] = (uint8_t)(style < 0 ? 0 : style > FM_AIR_INSECTS ? FM_AIR_INSECTS : style);
         if (bed.style[which])
             heads_set(&bed.al, &bed.ar, AIR_SAMPLE[bed.style[which]]);
@@ -185,6 +197,18 @@ static int shot_seg(int set, int seg, const uint8_t **data, int32_t *len)
         (void)ZN_KNOCK_TAB;
         return -1;
 #endif
+    case FM_SHOT_CROW:                                /* (Crawl: a crow's four caws, then a rook's three) */
+        if (seg < 0 || seg >= ZN_CROW_N + ZN_ROOK_N)
+            return -1;
+        *data = seg < ZN_CROW_N ? ZN_CROW_TAB[seg].data : ZN_ROOK_TAB[seg - ZN_CROW_N].data;
+        *len = seg < ZN_CROW_N ? ZN_CROW_TAB[seg].len : ZN_ROOK_TAB[seg - ZN_CROW_N].len;
+        return 0;
+    case FM_SHOT_FLOCK:
+        if (seg < 0 || seg >= ZN_FLOCK_N)
+            return -1;
+        *data = ZN_FLOCK_TAB[seg].data;
+        *len = ZN_FLOCK_TAB[seg].len;
+        return 0;
     case FM_SHOT_OWL:                                 /* (two recordings: one and two calls) */
         if (seg == 0) {
             *data = ZN_OWL_TAB[0].data;
@@ -203,7 +227,7 @@ static int shot_seg(int set, int seg, const uint8_t **data, int32_t *len)
 int fm_shot_count(int set)
 {
     return set == FM_SHOT_FROG ? ZN_FROG_N : set == FM_SHOT_BIRD ? ZN_BIRD_N : set == FM_SHOT_KNOCK ? ZN_KNOCK_N
-         : set == FM_SHOT_OWL ? 1 + ZN_OWL2_N : 0;
+         : set == FM_SHOT_OWL ? 1 + ZN_OWL2_N : set == FM_SHOT_CROW ? ZN_CROW_N + ZN_ROOK_N : set == FM_SHOT_FLOCK ? ZN_FLOCK_N : 0;
 }
 int fm_shot_ms(int set, int seg)
 {
@@ -646,6 +670,7 @@ static void bed_render(float *ml, float *mr)
             }
         }
     }
+#ifdef FM_HOST
     if (ls > 1e-4f && bed.style[BED_STREAM] == FM_WATER_BROOK) {   /* the recording: a head a side */
         float g = ls * ZN_WATER_GAIN;              /* (level with the bubbles, as heard on the speaker) */
         for (k = 0; k < BLK; k++) {
@@ -653,6 +678,7 @@ static void bed_render(float *ml, float *mr)
             mr[k] += g * head_next(&bed.hr);
         }
     }
+#endif
     for (i = 0; i < BED_DROPS; i++) {   /* the drops (and the drips after the rain) */
         drop_t *d = &bed.d[i];
         float g = 0.09f * fm_maxf(lr, 0.35f);           /* (a drop seen is heard even under a light rain) */

@@ -112,7 +112,8 @@ void fm_drop(int vel, int pan, int pad);         /* a raindrop seen landing, hea
 int fm_frog_count(void);                         /* the recorded calls, and how long each is (ms) */
 int fm_frog_ms(int seg);
 void fm_bird(int slot, int seg, int vel, int pan, int rate_pct);   /* a bush warbler's song, as fm_frog */
-enum { FM_SHOT_FROG, FM_SHOT_BIRD, FM_SHOT_KNOCK, FM_SHOT_OWL };    /* the recorded one-shots' sets */
+enum { FM_SHOT_FROG, FM_SHOT_BIRD, FM_SHOT_KNOCK, FM_SHOT_OWL, FM_SHOT_CROW, FM_SHOT_FLOCK };   /* the recorded one-shots'
+                                                  * sets (Crawl: the crows, two birds' calls in one set; a flock's burst) */
 #define FM_NSHOT 4                               /* one-shot slots, each one call at a time */
 void fm_shot(int slot, int set, int seg, int vel, int pan, int rate_pct);   /* any set's call, as fm_frog */
 int fm_shot_count(int set);
