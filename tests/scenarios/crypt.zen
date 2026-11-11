@@ -1,5 +1,6 @@
 # Crypt (Crawl's first scene): candles gutter (a note each), wax runs, the bell tolls, water drips, a choir under
-# them; black keys snuff a candle, ring the bell, send a draught; the moods change the scale, the candles, the light
+# them; black keys snuff a candle, ring the bell, send a draught; each mood its own sound and picture: Vigil still,
+# Procession a pace with figures walking, Sealed no flame and a shaft of light, Embers low and red
 # (the simulator boots into Sakura; Crypt is the last scene there: PRESETS one back)
 wait 800
 spin PRESET -1
@@ -7,11 +8,12 @@ wait 1500
 expect scene 3
 expect knob0 0
 expect knob1 25
-expect knob8 2
+expect knob8 3
 expect knob12 50
 expect candles 5
 expect textfit 0
 peakreset
+wavgain 24
 wav crypt.wav
 wait 60000
 wavstop
@@ -21,7 +23,7 @@ expect tolls >0
 expect crdrips >1
 expect drones >0
 expect nvoices <13
-expect peak_db_max -1
+expect peak_db_max -27
 expect peak_db_min -40
 shot crypt.png
 # black keys: the first five a candle each (snuffed, lit again)
@@ -46,21 +48,28 @@ expect lastkey 3
 tapkey w15
 wait 100
 expect crnote 18
-# Mood (KNOB 1): Vigil, in In (Phrygian's five)
+# Mood (KNOB 1): Vigil, in In (Phrygian's five): the bowl, monks, no pace, no water
 spin K1 1
 wait 500
 expect knob0 1
 expect scalenow 0
 expect keyoff 0
-# Sealed: one candle, Hungarian minor a fourth down, the cloud and more tape
+expect knob2 2
+expect knob9 0
+expect paces 0
+wait 8000
+shot crypt-vigil.png
+# Sealed: one candle, Hungarian minor a fourth down, a shaft of light; the drops are the notes
 spin K1 2
-wait 12000
+wait 20000
 expect knob0 3
 expect scalenow 6
 expect keyoff -500
 expect candles 1
-expect knob14 45
+expect knob8 0
+expect beam >90
 expect crlight <60
+expect walkers 0
 shot crypt-sealed.png
 # Embers: three candles, harmonic minor, home again
 spin K1 1
@@ -69,16 +78,26 @@ expect scalenow 5
 expect keyoff 0
 expect candles 3
 shot crypt-embers.png
-# Procession: all five, Dorian, the bell often
+# Procession: all five, Dorian, a step every 1.1 s, figures crossing, the bell every other bar
 spin K1 -2
-wait 12000
+wait 30000
 expect knob0 2
 expect scalenow 4
 expect candles 5
-expect knob12 90
+expect knob12 0
 expect crlight >80
+expect paces >24
+expect paces <30
+expect walkers >1
+expect beam <5
 shot crypt-procession.png
-# pixel art, and a new vault
+# back to Vigil: the pace stops, the figures walk on out
+spin K1 -1
+wait 500
+expect paces <30
+wait 16000
+expect walkers 0
+# pixel art, and a new vault (another arch, other stones)
 tap GLO
 wait 1500
 expect style 1

@@ -19,8 +19,14 @@
  *   Black keys  the first five: a candle each, snuffed or lit again; the next five: the bell, a note each; the
  *               top one: a draught through the vault, the flames lean and gutter, the dust is carried off
  *
- * Moods: Long Night (the candles burn down through the others' looks in half an hour, and are set new), Vigil,
- * Procession, Sealed, Embers: each its scale, key, candles, light and choir, in CR_MOOD and CR_MOODS (data).
+ * Moods, each its own sound and picture (CR_MOOD and CR_MOODS, data):
+ *   Vigil       still: five tall candles, monks low and dark, a singing bowl now and then, almost no bell
+ *   Procession  a pace: a footfall every 1.1 s (part 5: PHYS, MEMBRANE), a figure of three notes a bar on the candles
+ *               in turn, the bell every other bar; hooded figures cross the vault, a step a beat, each with a candle
+ *   Sealed      one candle, and a shaft of cold light from above onto the tomb; a deep pad, no voice; the water's
+ *               drops are notes too (high, a fourth down, in the tape echo), the dust glints in the shaft
+ *   Embers      three candles burnt low and red, nuns, harmonic minor
+ *   Long Night  the round: Vigil, Procession, Embers, Sealed, half an hour in all, then the candles are set new
  *
  * The world is 240 x 240; drawing scales by r8_fb.w / 240 for pixel art. Every loop has a fixed bound. */
 #define CR_NC 5                                 /* candles */
@@ -28,8 +34,8 @@
 #define CR_NWAX 3
 #define CR_NDRIP 3
 #define CR_NQ 8
-#define CR_KLO 5                                /* the notes: white keys 5..13 (220 Hz up at the default key) */
-#define CR_KN 9
+#define CR_NW 4                                 /* the procession's figures */
+#define CR_WGAP 74.0f                           /* (apart; four of them: a round of 296 px, the screen and a margin) */
 #define CR_NTONE 4
 #define CR_NCHOIR 5
 #define CR_SOUND 1                              /* its sounds' version */
@@ -41,9 +47,10 @@
 #define CR_LY 118.0f
 #define CR_NLV 48                               /* the stone's shades, unlit .. fully lit */
 enum { CR_WALL = 0, CR_VOID = 48, CR_WAX = 52, CR_FLAME = 56, CR_HALO = 60, CR_MOTE = 66, CR_BELL = 70, CR_DROP = 74,
-       CR_WET = 76 };
+       CR_WET = 76, CR_ROBE = 78, CR_BEAM = 80 };   /* (CR_BEAM: the stone's CR_NLV shades again, in the shaft) */
 #define CR_ID_BELL (FM_VOICE_ID + 48)           /* the bell's strikes (two ids, in turn: a tail under the next) */
 #define CR_ID_SPARK (FM_VOICE_ID + 52)
+#define CR_ID_DRUM (FM_VOICE_ID + 56)           /* the procession's footfall */
 
 enum { CK_MOOD, CK_ACT, CK_TONE, CK_SPACE, CK_NOTES, CK_CHOIR, CK_AIR, CK_BELL, CK_VOICES, CK_DRIPS, CK_ECHO, CK_DEPTH,
        CK_TOLLS, CK_TAPE, CK_CLOUD, CK_ARC };
@@ -63,27 +70,33 @@ typedef struct {
     uint8_t burn, gain, red;                    /* %: how far burnt down; the light; the flames' redness */
     uint8_t buzz, breath;                       /* the choir's tone and breath (VOICE's knobs, 0..127) */
     uint32_t tint;                              /* lit stone */
+    uint8_t lo, n;                              /* its notes: white keys lo .. lo + n - 1 (key 5: 220 Hz at the default) */
+    uint16_t pace;                              /* ms a step: a procession (0: none, the flames' own time) */
+    uint8_t beam;                               /* %: the shaft of light from above; with it the drops are the notes */
 } cr_mood_t;
 static const cr_mood_t CR_MOOD[CR_NMOOD] = {
-    {"Long Night", -1, 0, 0x1F, 0, 100, 0, 40, 30, 0xB89060u},
-    {"Vigil", SC_IN, 0, 0x1F, 20, 90, 0, 36, 28, 0xB08858u},
-    {"Procession", SC_DORIAN, 0, 0x1F, 0, 115, 0, 60, 16, 0xD0A868u},
-    {"Sealed", SC_HUNGARIAN, -500, 0x04, 85, 95, 10, 20, 70, 0x70809Cu},
-    {"Embers", SC_HARMONIC, 0, 0x15, 70, 85, 75, 30, 45, 0xA84828u},
+    {"Long Night", -1, 0, 0x1F, 0, 100, 0, 30, 0, 0xB89060u, 5, 9, 0, 0},
+    {"Vigil", SC_IN, 0, 0x1F, 12, 95, 0, 14, 0, 0xB08858u, 3, 6, 0, 0},
+    {"Procession", SC_DORIAN, 0, 0x1F, 0, 120, 0, 44, 0, 0xD8B070u, 5, 6, 1100, 0},
+    {"Sealed", SC_HUNGARIAN, -500, 0x04, 85, 95, 10, 20, 0, 0x70809Cu, 9, 7, 0, 100},
+    {"Embers", SC_HARMONIC, 0, 0x15, 70, 85, 75, 30, 45, 0xA84828u, 5, 9, 0, 0},
 };
-static const uint8_t CR_LN[4] = {2, 1, 4, 3};   /* Long Night's round: Procession, Vigil, Embers, Sealed */
-#define CR_NSET 12
+static const uint8_t CR_LN[4] = {1, 2, 4, 3};   /* Long Night's round: Vigil, Procession, Embers, Sealed */
+#define CR_NSET 13
 static const sc_set_t CR_MOODS[CR_NMOOD][CR_NSET] = {
-    {{CK_ACT, 25}, {CK_NOTES, 50}, {CK_CHOIR, 45}, {CK_AIR, 15}, {CK_BELL, 60}, {CK_VOICES, 2}, {CK_DRIPS, 30},
-     {CK_ECHO, 40}, {CK_DEPTH, 20}, {CK_TOLLS, 50}, {CK_TAPE, 35}, {CK_CLOUD, 0}},
-    {{CK_ACT, 25}, {CK_NOTES, 50}, {CK_CHOIR, 50}, {CK_AIR, 12}, {CK_BELL, 55}, {CK_VOICES, 2}, {CK_DRIPS, 25},
-     {CK_ECHO, 40}, {CK_DEPTH, 20}, {CK_TOLLS, 40}, {CK_TAPE, 35}, {CK_CLOUD, 0}},
-    {{CK_ACT, 55}, {CK_NOTES, 55}, {CK_CHOIR, 55}, {CK_AIR, 10}, {CK_BELL, 70}, {CK_VOICES, 4}, {CK_DRIPS, 10},
-     {CK_ECHO, 30}, {CK_DEPTH, 5}, {CK_TOLLS, 90}, {CK_TAPE, 25}, {CK_CLOUD, 0}},
-    {{CK_ACT, 10}, {CK_NOTES, 40}, {CK_CHOIR, 35}, {CK_AIR, 30}, {CK_BELL, 40}, {CK_VOICES, 1}, {CK_DRIPS, 70},
-     {CK_ECHO, 65}, {CK_DEPTH, 50}, {CK_TOLLS, 10}, {CK_TAPE, 70}, {CK_CLOUD, 45}},
+    {{CK_ACT, 25}, {CK_NOTES, 55}, {CK_CHOIR, 40}, {CK_AIR, 6}, {CK_BELL, 60}, {CK_VOICES, 3}, {CK_DRIPS, 30},
+     {CK_ECHO, 40}, {CK_DEPTH, 20}, {CK_TOLLS, 50}, {CK_TAPE, 20}, {CK_CLOUD, 0}, {CK_TONE, 0}},
+    {{CK_ACT, 12}, {CK_NOTES, 50}, {CK_CHOIR, 55}, {CK_AIR, 0}, {CK_BELL, 45}, {CK_VOICES, 2}, {CK_DRIPS, 0},
+     {CK_ECHO, 25}, {CK_DEPTH, 40}, {CK_TOLLS, 12}, {CK_TAPE, 10}, {CK_CLOUD, 0}, {CK_TONE, 2}},   /* (still: monks,
+                                                       * the bowl, no water, the bell seldom) */
+    {{CK_ACT, 30}, {CK_NOTES, 65}, {CK_CHOIR, 40}, {CK_AIR, 0}, {CK_BELL, 70}, {CK_VOICES, 4}, {CK_DRIPS, 0},
+     {CK_ECHO, 15}, {CK_DEPTH, 8}, {CK_TOLLS, 0}, {CK_TAPE, 15}, {CK_CLOUD, 0}, {CK_TONE, 1}},   /* (the pace tolls
+                                                       * the bell itself; mallets; dry, so the steps stay clear) */
+    {{CK_ACT, 40}, {CK_NOTES, 60}, {CK_CHOIR, 30}, {CK_AIR, 8}, {CK_BELL, 40}, {CK_VOICES, 0}, {CK_DRIPS, 85},
+     {CK_ECHO, 80}, {CK_DEPTH, 25}, {CK_TOLLS, 0}, {CK_TAPE, 25}, {CK_CLOUD, 20}, {CK_TONE, 3}},   /* (no voice: a
+                                                       * deep pad; the drops, high bells in a long echo) */
     {{CK_ACT, 18}, {CK_NOTES, 45}, {CK_CHOIR, 45}, {CK_AIR, 20}, {CK_BELL, 50}, {CK_VOICES, 3}, {CK_DRIPS, 35},
-     {CK_ECHO, 55}, {CK_DEPTH, 35}, {CK_TOLLS, 30}, {CK_TAPE, 50}, {CK_CLOUD, 15}},
+     {CK_ECHO, 55}, {CK_DEPTH, 35}, {CK_TOLLS, 30}, {CK_TAPE, 50}, {CK_CLOUD, 15}, {CK_TONE, 0}},
 };
 static const uint8_t CR_TONE_SLOT[CR_NTONE] = {ZN_DROP, ZN_MALLET, ZN_RIN, ZN_BELL};
 static const char *const CR_TONE_NAME[CR_NTONE] = {"Drop", "Mallet", "Rin", "Bell"};
@@ -123,7 +136,19 @@ static struct {
     int lit_want, lit_auto;                     /* the candles that should burn; Long Night's own last choice */
     int pal_lv, air_sent, vowel_sent, bell_n, spark_n, set;
     uint32_t pal_ms;
-    uint32_t gutters, waxdrops, sparks, tolls, drips, draughts, nights;   /* (the host's tests count them) */
+    struct {                                    /* this vault (the picture's seed): */
+        float aw, atop, pil;                    /* the niche's half width and top; the pillars' inner edge (0: none) */
+        uint8_t round, bh, sign, loc;           /* its arch round, not pointed; a course's height; the tomb's sign (0 a
+                                                 * cross, 1 a ring, 2 none); burial niches in the wall, a bit each */
+    } lay;
+    const cr_mood_t *ch;                        /* the mood whose range, pace and shaft hold now (Long Night: its round's) */
+    float beam;                                 /* the shaft of light, 0..1 (eased) */
+    uint32_t pace_acc, pstep;                   /* the procession: ms into the step, the step */
+    uint8_t cell[3];                            /* its figure: three of the motif's notes */
+    float walk_x, walk_to;                      /* its figures: where the first is, where it steps to */
+    uint8_t walk_on, walk_wrap, walk_alive;     /* shown; coming round again; those not yet gone (leaving), a bit each */
+    int8_t walk_n[CR_NW];                       /* (leaving: the round each was on) */
+    uint32_t gutters, waxdrops, sparks, tolls, drips, draughts, nights, paces;   /* (the host's tests count them) */
     int key_note;
 } cr;
 
@@ -165,7 +190,7 @@ static void cr_toll(int k, int n)
     while (c < -1900.0f)
         c += 1200.0f;
     for (i = 0; i < n; i++)
-        cr_q_add((uint32_t)(i * 2600), CR_ID_BELL + (cr.bell_n++ & 1), 6, c, 104 - 10 * i + (int)(sc_rnd() % 8u),
+        cr_q_add((uint32_t)(i * 2600), CR_ID_BELL + (cr.ch && cr.ch->pace ? 0 : cr.bell_n++ & 1), 6, c, 104 - 10 * i + (int)(sc_rnd() % 8u),
                  58 + (int)(sc_rnd() % 12u), 3000);
     cr.bell_sw = 1.0f;
     cr.bell_ph = 0.0f;
@@ -207,9 +232,68 @@ static void cr_mix_levels(void)
 {
     fm_part_level(1, cr.kv[CK_NOTES]);
     fm_part_level(3, cr.kv[CK_NOTES]);
+    fm_part_level(5, cr.kv[CK_NOTES]);
     cd_drone_level(cr.kv[CK_CHOIR]);
     fm_part_level(6, cr.kv[CK_BELL]);
     fm_bed(FM_BED_WIND, cr.kv[CK_AIR]);
+}
+
+/* a figure's place across (the first at walk_x, the others behind; coming round once the last is in) */
+static float cr_walk_x(int i)
+{
+    float x = cr.walk_x + (float)i * CR_WGAP;
+    return cr.walk_wrap ? x - (float)CR_NW * CR_WGAP * fm_floorf((x + 40.0f) * (1.0f / ((float)CR_NW * CR_WGAP))) : x;
+}
+static int cr_walk_round(int i)
+{
+    return (int)fm_floorf((cr.walk_x + (float)i * CR_WGAP + 40.0f) * (1.0f / ((float)CR_NW * CR_WGAP)));
+}
+
+/* the mood whose range, pace and shaft hold from now (a mood chosen; Long Night passing into the next) */
+static void cr_char(const cr_mood_t *m)
+{
+    int i;
+    if (m == cr.ch)
+        return;
+    if (m->pace && !(cr.ch && cr.ch->pace)) {         /* a procession begins: its figures come in from the left */
+        cr.walk_x = cr.walk_to = -40.0f - (float)(CR_NW - 1) * CR_WGAP - 4.0f;
+        cr.walk_on = 1;
+        cr.walk_wrap = 0;
+        cr.walk_alive = (1u << CR_NW) - 1u;
+        cr.pace_acc = 0;
+        cr.pstep = 0;
+        for (i = 0; i < 3; i++)
+            cr.cell[i] = (uint8_t)(sc_rnd() % 7u);
+    } else if (!m->pace && cr.ch && cr.ch->pace) {    /* it ends: they walk on out, none comes round again */
+        for (i = 0; i < CR_NW; i++)
+            cr.walk_n[i] = (int8_t)cr_walk_round(i);
+        if (!cr.walk_wrap)
+            cr.walk_on = 0;
+    }
+    cr.ch = m;
+    cd_range(m->lo, m->n);
+}
+
+/* the procession's step: a footfall (the heavier every other), the figures a pace on; on the bar's first three
+ * half-beats a note of its figure, the candles flaring in turn; the bell on every other bar */
+static void cr_pace_step(void)
+{
+    uint32_t s = cr.pstep++ & 15u;
+    float c = cd_cents(CD_CHORDS[cd.chord][0]);
+    while (c > -900.0f)
+        c -= 1200.0f;
+    while (c < -2100.0f)
+        c += 1200.0f;
+    fm_voice(CR_ID_DRUM, 5, c, s & 1u ? 46 : 74, 64, 260);
+    cr.walk_to += 9.0f;
+    cr.paces++;
+    if (!(s & 1u) && (s & 7u) != 6u && cd.nmotif > 0) {
+        int j = (int)((s & 7u) >> 1), cn = (int)(cr.pstep >> 1) % CR_NC;
+        cr_c[cn].flare = 0.8f;
+        cd_note_key(cd.motif[cr.cell[j] % cd.nmotif], cr_c[cn].x * (1.0f / 240.0f), j ? 0.42f : 0.6f, 900, 1, 0u);
+    }
+    if (s == 0u && cr.kv[CK_BELL] > 0)
+        cr_toll(-1, 1);
 }
 
 /* --------------------------------------------------------------- picture --- */
@@ -220,8 +304,11 @@ static void cr_palette(void)
              fl = r8_mix(0xFFC860u, 0xE05828u, cr.red);
     float l = cr.light;
     int i;
-    for (i = 0; i < CR_NLV; i++)
-        r8_pal_set(CR_WALL + i, r8_mix(shadow, tint, (float)i * (1.0f / (float)(CR_NLV - 1)) * l));
+    for (i = 0; i < CR_NLV; i++) {
+        float u = (float)i * (1.0f / (float)(CR_NLV - 1));
+        r8_pal_set(CR_WALL + i, r8_mix(shadow, tint, u * l));
+        r8_pal_set(CR_BEAM + i, r8_mix(r8_mix(shadow, tint, u * l), 0xB4CCF4u, fm_minf(1.0f, (0.18f + 0.6f * u) * cr.beam)));
+    }
     for (i = 0; i < 4; i++) {
         r8_pal_set(CR_VOID + i, r8_mix(0x020203u, tint, 0.035f * (float)i * l));
         r8_pal_set(CR_WAX + i, r8_mix(shadow, r8_mix(0xE8DCC0u, tint, 0.3f), (0.95f - 0.22f * (float)i) * fm_minf(1.0f, l + 0.1f)));
@@ -238,6 +325,8 @@ static void cr_palette(void)
     r8_pal_set(CR_DROP + 1, r8_mix(shadow, 0xF4EAD0u, fm_minf(1.0f, 0.3f + l)));
     r8_pal_set(CR_WET, r8_mix(shadow, 0x8098B0u, 0.5f * l));
     r8_pal_set(CR_WET + 1, r8_mix(shadow, 0x8098B0u, 0.25f * l));
+    r8_pal_set(CR_ROBE, 0x030203u);                   /* a figure: its robe against the light, its lit edge */
+    r8_pal_set(CR_ROBE + 1, r8_mix(shadow, fl, 0.42f));
     r8_pal_commit(0xFFFFFFu, 0, 0);
 }
 
@@ -246,7 +335,7 @@ static void cr_palette(void)
 SC_SMALL static void cr_background(void)
 {
     surf_t *s = &r8_bg;
-    float k = cr_scale(), ik = 1.0f / k;
+    float k = cr_scale(), ik = 1.0f / k, pa = cr.lay.pil > 0.0f ? cr.lay.pil : 1000.0f;
     int32_t x, y;
     for (y = 0; y < s->h; y++) {
         float wy = ((float)y + 0.5f) * ik;
@@ -266,35 +355,50 @@ SC_SMALL static void cr_background(void)
                     tone *= 0.55f + 0.045f * (wy - 188.0f);   /* (the tomb's shadow at its foot) */
             } else if (ax < 60.0f && wy >= CR_ALTAR_Y - 3.0f && wy < CR_ALTAR_Y + 1.0f) {
                 tone = 1.5f;                              /* the tomb's lid, its edge to the light */
-            } else if (ax < 58.0f && wy >= CR_ALTAR_Y + 1.0f) {   /* its front, turned from the light: a panel, a cross */
-                int cross = (ax < 2.5f && wy > 158.0f && wy < 181.0f) || (ax < 9.0f && wy > 163.5f && wy < 167.5f);
+            } else if (ax < 58.0f && wy >= CR_ALTAR_Y + 1.0f) {   /* its front, turned from the light: a panel, its sign */
+                float rr = ax * ax + (wy - 169.0f) * (wy - 169.0f);
+                int cross = cr.lay.sign == 0 ? (ax < 2.5f && wy > 158.0f && wy < 181.0f) || (ax < 9.0f && wy > 163.5f && wy < 167.5f)
+                                             : cr.lay.sign == 1 && rr > 36.0f && rr < 81.0f;
                 tone = cross ? 0.8f : ax < 50.0f && wy > 155.0f && wy < 184.0f ? 0.36f : 0.5f;
                 dy = 0.0f;
-            } else if (ax > 76.0f && ax < 104.0f) {       /* a pillar: round (its side to the tomb lit), a capital
+            } else if (ax > pa && ax < pa + 28.0f) {      /* a pillar: round (its side to the tomb lit), a capital
                                                        * and a base, fluted */
-                float u = (ax - 76.0f) * (1.0f / 28.0f);
+                float u = (ax - pa) * (1.0f / 28.0f);
                 tone = 1.25f * (1.0f - 0.6f * u);
                 if ((ix + (wx < 120.0f ? 2 : 0)) % 7 == 0)
                     tone *= 0.82f;
                 if ((wy > 22.0f && wy < 32.0f) || wy > 168.0f)
                     tone = 1.2f - 0.4f * u;
-            } else if (ax > 72.0f && ax < 108.0f && ((wy > 22.0f && wy < 32.0f) || (wy > 168.0f && wy < CR_FLOOR_Y))) {
+            } else if (ax > pa - 4.0f && ax < pa + 32.0f && ((wy > 22.0f && wy < 32.0f) || (wy > 168.0f && wy < CR_FLOOR_Y))) {
                 tone = 1.1f;                              /* (the capital and the base stand out) */
             } else {
-                float aw = 34.0f, au = ax * (1.0f / 34.0f), top = 40.0f + 52.0f * au * fm_sqrtf(au);   /* the niche: a
-                                                       * pointed arch, dark, the light from below just reaching in */
+                float aw = cr.lay.aw, au = ax / aw, ao = fm_maxf(0.0f, (ax - 7.0f) / aw),
+                      top = cr.lay.atop + 52.0f * (cr.lay.round ? au * au * au : au * fm_sqrtf(au)),
+                      otop = cr.lay.atop + 52.0f * (cr.lay.round ? ao * ao * ao : ao * fm_sqrtf(ao)) - 7.0f;   /* the
+                                                       * niche: an arch, pointed or round, dark, the light from below
+                                                       * just reaching in; its ring of stones outside it */
+                int32_t lr = iy >= 62 && iy < 78 ? 0 : iy >= 98 && iy < 114 ? 1 : -1, lb = lr < 0 ? 0 : (wx < 120.0f ? 1 : 2) << (lr * 2);
                 if (ax < aw && wy > top && wy < CR_ALTAR_Y) {
                     f = (int32_t)(fm_clampf((wy - 70.0f) * (1.0f / 80.0f), 0.0f, 1.0f) * 3.0f * 16.0f);
                     row[x] = (uint8_t)(CR_VOID + (f >> 4) + r8_dith(x, y, f & 15));
                     continue;
                 }
-                if (ax < aw + 7.0f && wy > 40.0f + 52.0f * fm_maxf(0.0f, (ax - 7.0f) * (1.0f / 34.0f)) *
-                                                       fm_sqrtf(fm_maxf(0.0f, (ax - 7.0f) * (1.0f / 34.0f))) - 7.0f &&
-                    wy < CR_ALTAR_Y) {                    /* its arch's stones */
+                if (ax < aw + 7.0f && wy > otop && wy < CR_ALTAR_Y) {   /* its arch's stones */
                     tone = iy % 11 == 0 ? 0.75f : 1.22f;
+                } else if ((cr.lay.loc & lb) && ax > aw + 12.0f && ax < aw + 32.0f && ax < pa - 6.0f) {   /* a burial
+                                                       * niche: dark, a sill, a skull in some */
+                    float sx = ax - aw - 22.0f, sy = wy - (lr ? 108.0f : 72.0f);
+                    if (iy == 77 || iy == 113) {
+                        tone = 1.3f;
+                    } else if ((cr_h(lb, 9) & 1u) && sx * sx + sy * sy < 12.0f) {
+                        tone = sx * sx + (sy - 0.5f) * (sy - 0.5f) < 1.6f ? 0.5f : 1.15f;
+                    } else {
+                        row[x] = (uint8_t)(CR_VOID + 1 + r8_dith(x, y, 6));
+                        continue;
+                    }
                 } else {                                  /* the wall: courses of blocks, each its own gray */
-                    int32_t rw = iy / 16, off = (rw & 1) * 16, cl = (ix + off) / 32;
-                    tone = iy % 16 == 0 || (ix + off) % 32 == 0 ? 0.6f : 0.82f + 0.3f * (float)cr_h(rw, cl) * (1.0f / 255.0f);
+                    int32_t bh = cr.lay.bh, rw = iy / bh, off = (rw & 1) * bh, cl = (ix + off) / (2 * bh);
+                    tone = iy % bh == 0 || (ix + off) % (2 * bh) == 0 ? 0.6f : 0.82f + 0.3f * (float)cr_h(rw, cl) * (1.0f / 255.0f);
                     if (cr_h(rw + 99, cl) < 14u)
                         tone *= 0.7f;                     /* (a darker stone here and there) */
                     if (cr_h(ix * 7 + 3, iy) < 26u)
@@ -338,9 +442,28 @@ static void cr_draw(void)
     float k = cr_scale();
     int i;
     r8_copy(s, &r8_bg);
+    if (cr.beam > 0.02f) {                            /* the shaft of light: the stone it crosses, lifted (its own
+                                                       * shades, so the blocks show in it), down onto the tomb */
+        int32_t x, y, y1 = (int32_t)(204.0f * k);
+        for (y = 0; y < y1 && y < s->h; y++) {
+            float wy = ((float)y + 0.5f) / k, c = (40.0f + 0.42f * wy) * k, hw = (8.0f + 0.035f * wy) * k, ihw = 1.0f / hw;
+            int32_t x0 = (int32_t)(c - hw), x1 = (int32_t)(c + hw);
+            uint8_t *row = s->px + y * s->w;
+            for (x = x0 < 0 ? 0 : x0; x <= x1 && x < s->w; x++) {
+                float d = ((float)x + 0.5f - c) * ihw;
+                int f, lv;
+                if (row[x] >= CR_NLV || d <= -1.0f || d >= 1.0f)
+                    continue;
+                f = (int)((1.0f - d * d) * 22.0f);        /* (its edges soft: dithered into the stone beside it) */
+                lv = row[x] + 3;
+                if (r8_dith(x, y, f > 16 ? 16 : f))
+                    row[x] = (uint8_t)(CR_BEAM + (lv > CR_NLV - 1 ? CR_NLV - 1 : lv));
+            }
+        }
+    }
     {   /* the bell in the niche: its rope, its body swinging from the arch's point, the clapper a little behind */
         float a = 0.085f * cr.bell_sw * fm_sin_turns(cr.bell_ph), ux = fm_sin_turns(a), uy = fm_sin_turns(a + 0.25f),
-              px = uy, py = -ux, ox = 120.0f, oy = 50.0f, tx = ox + 16.0f * ux, ty = oy + 16.0f * uy,
+              px = uy, py = -ux, ox = 120.0f, oy = cr.lay.atop + 10.0f, tx = ox + 16.0f * ux, ty = oy + 16.0f * uy,
               mx = ox + 34.0f * ux, my = oy + 34.0f * uy;
         r8_limb(s, ox * k, oy * k, 1.2f * k, tx * k, ty * k, 1.2f * k, CR_BELL + 3);
         r8_tri(s, (tx - 3.5f * px) * k, (ty - 3.5f * py) * k, (tx + 3.5f * px) * k, (ty + 3.5f * py) * k,
@@ -397,12 +520,31 @@ static void cr_draw(void)
             r8_disc(s, bx * k, (by + 0.3f) * k, 1.15f * k, CR_FLAME);
         }
     }
+    for (i = 0; cr.walk_on && i < CR_NW; i++) {       /* the procession: hooded figures crossing before the tomb,
+                                                       * each behind its candle, a step a beat */
+        float x = cr_walk_x(i), up = fm_clampf((cr.walk_to - cr.walk_x) * (1.0f / 4.0f), 0.0f, 1.0f), fy = 214.0f - 1.6f * up,
+              cx = x + 13.0f, cy = fy - 29.0f;
+        if (!(cr.walk_alive >> i & 1) || x < -30.0f || x > 262.0f)
+            continue;
+        cr_glow(s, cx * k, cy * k, 13.0f * k);
+        r8_tri(s, x * k, (fy - 41.0f) * k, (x - 9.0f) * k, fy * k, (x + 10.0f) * k, fy * k, CR_ROBE);
+        r8_disc(s, (x + 1.0f) * k, (fy - 39.0f) * k, 5.2f * k, CR_ROBE);
+        r8_limb(s, (x + 5.0f) * k, (fy - 37.0f) * k, 1.2f * k, (x + 10.0f) * k, (fy - 1.0f) * k, 1.4f * k, CR_ROBE + 1);
+        r8_limb(s, (x + 4.0f) * k, (fy - 27.0f) * k, 2.0f * k, cx * k, (cy + 4.0f) * k, 1.6f * k, CR_ROBE);   /* (its arm) */
+        r8_rect(s, (int32_t)((cx - 0.8f) * k), (int32_t)((cy + 1.0f) * k), (int32_t)(2.0f * k + 0.5f), (int32_t)(4.0f * k), CR_WAX + 1);
+        r8_disc(s, cx * k, (cy - 1.2f) * k, 1.6f * k, CR_FLAME + 1);
+        r8_pset(s, (int32_t)(cx * k), (int32_t)((cy - 3.2f) * k), CR_FLAME + 2);
+        r8_pset(s, (int32_t)(cx * k), (int32_t)((cy - 0.8f) * k), CR_FLAME);
+    }
     for (i = 0; i < CR_NMOTE; i++) {                  /* the dust: seen where the light reaches it */
         float dx = cr_m[i].x - CR_LX, dy = cr_m[i].y - CR_LY;
         int lv = 3 - (int)(fm_sqrtf(dx * dx + dy * dy) * (1.0f / 34.0f));
+        if (cr.beam > 0.3f && fm_fabsf(cr_m[i].x - (40.0f + 0.42f * cr_m[i].y)) < 9.0f)
+            lv = 3;                                   /* (bright in the shaft) */
         if (lv >= 0) {
             int32_t mx = (int32_t)(cr_m[i].x * k), my = (int32_t)(cr_m[i].y * k);
-            if ((uint32_t)mx < (uint32_t)s->w && (uint32_t)my < (uint32_t)s->h && s->px[my * s->w + mx] < CR_WAX)
+            if ((uint32_t)mx < (uint32_t)s->w && (uint32_t)my < (uint32_t)s->h &&
+                (s->px[my * s->w + mx] < CR_WAX || s->px[my * s->w + mx] >= CR_BEAM))
                 s->px[my * s->w + mx] = (uint8_t)(CR_MOTE + lv);
         }
     }
@@ -413,6 +555,13 @@ static void cr_draw(void)
 SC_SMALL static void cr_layout(void)
 {
     int i;
+    cr.lay.aw = 27.0f + (float)(cr_h(20, 1) % 13u);
+    cr.lay.atop = 32.0f + (float)(cr_h(20, 2) % 15u);
+    cr.lay.round = (uint8_t)(cr_h(20, 3) % 3u == 0u);
+    cr.lay.pil = cr_h(20, 4) % 5u == 0u ? 0.0f : 74.0f + (float)(cr_h(20, 5) % 12u);
+    cr.lay.bh = (uint8_t)(12u + 4u * (cr_h(20, 6) % 3u));
+    cr.lay.sign = (uint8_t)(cr_h(20, 7) % 3u);
+    cr.lay.loc = (uint8_t)(cr_h(20, 8) & cr_h(21, 8) & 15u) | (uint8_t)(1u << (cr_h(20, 9) & 3u));   /* (one at least) */
     for (i = 0; i < CR_NC; i++) {
         cr_c[i].x = 76.0f + 22.0f * (float)i + (float)(cr_h(i, 1) % 7u) - 3.0f;
         cr_c[i].h = 24.0f + (float)(cr_h(i, 2) % 18u);
@@ -439,7 +588,7 @@ static void cr_mote_new(int i, int anywhere)
 static void cr_look(float dt, int at_once)
 {
     const cr_mood_t *a = &CR_MOOD[cr_mood_now()], *b = a;
-    float u = 0.0f, e = at_once ? 1.0f : fm_minf(1.0f, dt * 0.25f), g, bn, rd;
+    float u = 0.0f, e = at_once ? 1.0f : fm_minf(1.0f, dt * 0.25f), g, bn, rd, bm;
     uint32_t tint;
     if (a->scale < 0) {
         float f = cr.phase * 4.0f;
@@ -454,6 +603,9 @@ static void cr_look(float dt, int at_once)
             cr.lit_auto = cr.lit_want = want;
         cd_light(a->scale);                           /* (taken when the notes rest, within a minute) */
     }
+    cr_char(u < 0.5f ? a : b);
+    bm = ((float)a->beam + ((float)b->beam - (float)a->beam) * u) * 0.01f;
+    cr.beam += (bm - cr.beam) * e;
     g = ((float)a->gain + ((float)b->gain - (float)a->gain) * u) * 0.01f;
     bn = ((float)a->burn + ((float)b->burn - (float)a->burn) * u) * 0.01f;
     rd = ((float)a->red + ((float)b->red - (float)a->red) * u) * 0.01f;
@@ -526,8 +678,10 @@ SC_SMALL static void cr_enter(uint32_t seed, int16_t *kv)
         cr_c[i].on = cr_c[i].inten = (float)cr_c[i].lit;
         cr_c[i].next = 3.0f + 14.0f * sc_frand();
     }
-    cd_range(CR_KLO, CR_KN);
     fm_part_patch(1, CR_TONE_SLOT[kv[CK_TONE] % CR_NTONE]);
+    fm_part_patch(5, FM_ENG_PHYS + 2);                /* the footfall: MEMBRANE, damped, a short fall of pitch, dull */
+    fm_part_knobs(5, 30, 36, 34, 22);
+    fm_part_release(5, 500);
     fm_part_release(1, 2600);
     cr_choir();
     fm_part_patch(3, ZN_RIN);                         /* wax, sparks */
@@ -577,6 +731,23 @@ static void cr_step(uint32_t dt_ms)
         }
     }
     cr_look(dt, 0);
+    if (cr.ch->pace) {                                /* the procession: its steps, in time */
+        cr.pace_acc += dt_ms;
+        while (cr.pace_acc >= cr.ch->pace) {
+            cr.pace_acc -= cr.ch->pace;
+            cr_pace_step();
+        }
+    } else if (cr.walk_on) {                          /* (over: the figures walk on out) */
+        cr.walk_to += 26.0f * dt;
+        for (i = 0; i < CR_NW; i++)
+            if (cr_walk_round(i) != cr.walk_n[i])
+                cr.walk_alive &= (uint8_t)~(1u << i);
+        if (!cr.walk_alive)
+            cr.walk_on = 0;
+    }
+    cr.walk_x += (cr.walk_to - cr.walk_x) * fm_minf(1.0f, dt * 5.0f);
+    if (cr.walk_on && !cr.walk_wrap && cr.walk_x >= -40.0f)
+        cr.walk_wrap = 1;
     /* a draught (the top black key): it rises over ~2.5 s and dies away over ~8 s */
     if (cr.dr_to > 0.0f) {
         cr.dr = fm_minf(1.0f, cr.dr + dt * 0.4f);
@@ -618,7 +789,8 @@ static void cr_step(uint32_t dt_ms)
                 cr_c[i].next = 10.0f + 20.0f * sc_frand();
                 cr_c[i].gut = 1.0f;
                 cr.gutters++;
-                cd_pluck(cr_c[i].x * (1.0f / 240.0f), 0.3f + 0.3f * sc_frand(), 1400);
+                if (!cr.ch->pace)                     /* (a procession keeps its own time) */
+                    cd_pluck(cr_c[i].x * (1.0f / 240.0f), 0.3f + 0.3f * sc_frand(), 1400);
             }
         }
         n += cr_c[i].on * cr_c[i].inten;
@@ -651,7 +823,7 @@ static void cr_step(uint32_t dt_ms)
     }
     /* water from the vault: a drop falls, lands (heard there), a ring spreads */
     if (cr.kv[CK_DRIPS] > 0 && (cr.drip_next -= dt) <= 0.0f) {
-        cr.drip_next = (5.0f + 10.0f * sc_frand()) * 40.0f / (float)(cr.kv[CK_DRIPS] + 10);
+        cr.drip_next = (5.0f + 10.0f * sc_frand()) * 40.0f / (float)(cr.kv[CK_DRIPS] + 10) / (cr.ch->beam ? 0.6f + a : 1.0f);
         i = (int)(sc_rnd() % CR_NDRIP);
         if (!cr_d[i].on) {
             cr_d[i].on = 1;
@@ -671,6 +843,8 @@ static void cr_step(uint32_t dt_ms)
             cr_d[i].ring = 1.2f;
             cr.drips++;
             fm_drop(50 + (int)(sc_rnd() % 40u), cd_pan(cr_d[i].x * (1.0f / 240.0f)), 0);
+            if (cr.ch->beam)                          /* (no flame: the drops are the notes) */
+                cd_pluck(cr_d[i].x * (1.0f / 240.0f), 0.35f + 0.3f * sc_frand(), 1800);
         }
     }
     /* the dust: adrift, rising in the warm air over the flames, carried by a draught; one that meets a flame is a
@@ -682,6 +856,13 @@ static void cr_step(uint32_t dt_ms)
         if (cr_m[i].fall > 0.0f) {
             cr_m[i].fall -= dt;
             vy += 9.0f;
+        }
+        if (cr.beam > 0.5f && cr.spark_wait <= 0.0f && fm_fabsf(cr_m[i].x - (40.0f + 0.42f * cr_m[i].y)) < 2.0f) {
+            cr.spark_wait = 7.0f + 10.0f * sc_frand();   /* (in the shaft: a glint, a faint high note) */
+            cr.sparks++;
+            if (!cd_quiet())
+                cr_q_add(0u, CR_ID_SPARK + (cr.spark_n++ & 3), 3, cd_cents(cd.lo + cd.n - 1 - (int)(sc_rnd() % 3u)) + 1200.0f,
+                         18 + (int)(sc_rnd() % 8u), cd_pan(cr_m[i].x * (1.0f / 240.0f)), 1500);
         }
         for (j = 0; j < CR_NC; j++) {
             float dx = cr_c[j].x - cr_m[i].x, top = CR_ALTAR_Y - 3.0f - cr_candle_h(j), dy = top - 7.0f - cr_m[i].y;
@@ -696,7 +877,7 @@ static void cr_step(uint32_t dt_ms)
                 cr_c[j].flare = 0.6f;
                 cr.sparks++;
                 if (!cd_quiet())
-                    cr_q_add(0u, CR_ID_SPARK + (cr.spark_n++ & 3), 3, cd_cents(CR_KLO + CR_KN - 1 - (int)(sc_rnd() % 4u)) + 1200.0f,
+                    cr_q_add(0u, CR_ID_SPARK + (cr.spark_n++ & 3), 3, cd_cents(cd.lo + cd.n - 1 - (int)(sc_rnd() % 4u)) + 1200.0f,
                              20 + (int)(sc_rnd() % 9u), cd_pan(cr_c[j].x * (1.0f / 240.0f)), 1500);
                 cr_mote_new(i, 0);
             }
@@ -723,7 +904,7 @@ static void cr_step(uint32_t dt_ms)
     cd_depth_send(cr.kv[CK_DEPTH]);
     {   /* the palette, when the light has moved: a step of 1/32 at most four times a second (every color changes,
          * so the whole screen is sent), or at once when a flame gutters or the look is on its way */
-        int lv = (int)(cr.light * 32.0f + 0.5f) + ((int)cr.tint[0] / 6) * 64 + ((int)(cr.red * 16.0f)) * 4096, d = lv - cr.pal_lv;
+        int lv = (int)(cr.light * 32.0f + 0.5f) + ((int)cr.tint[0] / 6) * 64 + ((int)(cr.red * 16.0f) + (int)(cr.beam * 24.0f) * 32) * 4096, d = lv - cr.pal_lv;
         if (cr.pal_lv < 0 || !dt_ms || (lv != cr.pal_lv && (cr.ms - cr.pal_ms >= 250u || d > 2 || d < -2))) {
             cr.pal_lv = lv;
             cr.pal_ms = cr.ms;
