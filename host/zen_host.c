@@ -412,6 +412,7 @@ static void wav_close(void)
 
 /* --------------------------------------------------------- the device --- */
 static double audio_due_ms, render_ns_total, render_budget_ns_total;
+static float wav_gain = 1.0f;                     /* (wavgain DB: the WAV file's own gain; the checks see the output as it is) */
 static uint32_t ui_due;
 static double now_ns(void)
 {
@@ -464,6 +465,12 @@ static void run_ms(uint32_t ms)
                     peak_out = fabsf(r);
                 s[0] = (int16_t)(l * 32767.0f);
                 s[1] = (int16_t)(r * 32767.0f);
+                if (wav_gain != 1.0f) {               /* (Crawl: wavgain, a render at a level to listen to: a scene is
+                                                       * ~-55 dBFS here, where 16 bits' own noise is heard under it) */
+                    float gl = l * wav_gain * 32767.0f, gr = r * wav_gain * 32767.0f;
+                    s[0] = (int16_t)lrintf(gl < -32767.0f ? -32767.0f : gl > 32767.0f ? 32767.0f : gl);
+                    s[1] = (int16_t)lrintf(gr < -32767.0f ? -32767.0f : gr > 32767.0f ? 32767.0f : gr);
+                }
                 if (wav) {
                     fwrite(s, 2, 2, wav);
                     wav_frames++;
@@ -610,6 +617,14 @@ static int expect(const char *what, const char *val)
         got = (int)cr.drips;
     else if (!strcmp(what, "draughts"))
         got = (int)cr.draughts;
+    else if (!strcmp(what, "paces"))              /* Crypt: the procession's steps; its figures in sight */
+        got = (int)cr.paces;
+    else if (!strcmp(what, "walkers")) {
+        int i;
+        for (got = 0, i = 0; cr.walk_on && i < CR_NW; i++)
+            got += (cr.walk_alive >> i & 1) && cr_walk_x(i) > 0.0f && cr_walk_x(i) < 240.0f;
+    } else if (!strcmp(what, "beam"))               /* Crypt: the shaft of light, % */
+        got = (int)(cr.beam * 100.0f + 0.5f);
     else if (!strcmp(what, "candles")) {          /* Crypt: candles burning now */
         int i;
         for (got = 0, i = 0; i < CR_NC; i++)
@@ -945,6 +960,8 @@ int main(int argc, char **argv)
             accel_off = 0;
         } else if (!strcmp(cmd, "master"))
             master = (uint32_t)atoi(a);
+        else if (!strcmp(cmd, "wavgain"))          /* wavgain DB: the WAV written that much louder (0: as it is) */
+            wav_gain = powf(10.0f, (float)atof(a) / 20.0f);
         else if (!strcmp(cmd, "midi")) {
             uint32_t s = (uint32_t)strtoul(a, 0, 16), d1 = (uint32_t)strtoul(b, 0, 16), d2 = (uint32_t)strtoul(c, 0, 16);
             uint32_t cin = s >= 0xF0 ? 0x0F : s >> 4;
