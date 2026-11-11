@@ -214,3 +214,32 @@ keep to M1's plan until a flash gives CPU figures.
 
 **Whether DELAY replaces ZEN-1's echo is not decided here.** The brief allows it. ZEN-1's code is untouched on
 this point; it is settled when the Crawl scenes are written.
+
+## 2026-11-10 M3: plan
+
+Steven left the open design calls of M3 to be made from the project's context.
+
+**Koi comes out of the FM-1 image first, the way Sakura did.** Crypt needs flash (a ZEN-1 scene is 32 to 47 KB;
+21 KB is free). Koi is the largest scene left and nothing of Crawl reuses it. Hotaru stays until Night Sky, which
+takes over its moon and stars. `ui.c` `CRAWL_KOI` is 0 for the FM-1 image and 1 for the simulator and the browser
+build, for the reason given under "Sakura out of the FM-1 image": the scenario scripts are written around the
+ZEN-1 scenes and are rewritten once, when the last of them goes.
+
+**The new scenes go after ZEN-1's in the simulator's list**, so the scripts' scene numbers hold. Two scripts that
+went round the end of the list were changed by one step each. In the FM-1 image Crypt is first.
+
+**Crypt takes project slot 1**, free since ZEN-1 dropped its Bench scene. The project format is unchanged until
+the ZEN-1 scenes go; then the four Crawl scenes own slots 0 to 3 and the magic changes.
+
+**The scales stay five notes an octave.** The brief names seven-note modes. ZEN-1's keys (sixteen white keys,
+five an octave), its conductor (chords of three of five degrees, the motif, the loops) and the drone are all built
+on five. A seven-note scale would change every one of them and the key map. So each dark mode is a five-note set
+that keeps the mode's colour notes: Aeolian 1 2 b3 5 b6, Dorian 1 b3 4 5 6, harmonic minor 1 b3 5 b6 7, Hungarian
+minor 1 2 b3 #4 5. ZEN-1's In is already Phrygian's 1 b2 4 5 b6 and Min'yo the minor pentatonic; they stay, under
+their old names until the instrument's Japanese naming goes (step 6). The sets are rows of `TN_SCALE`; a mood
+names its scale in the scene's mood table. The instrument's own scale knob keeps to ZEN-1's three (`SC_NINST`).
+
+**A scene's first mood is its own long form for now.** The brief has four moods a scene and one cross-scene
+Long Night. ZEN-1's glue has five mood places, the first "Natural". Crypt's first mood, "Long Night", burns the
+candles down through the looks of its four moods in half an hour and starts again. The cross-scene mode is
+step 5; when it exists this place becomes its door.

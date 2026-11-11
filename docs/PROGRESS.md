@@ -184,3 +184,32 @@ Renders, all in `build/host/`: `tape.wav`, `echo.wav`, `voice.wav`, `phys.wav`, 
 - All three memory regions are near full again. M3 makes room by replacing ZEN-1's scenes and recordings.
 - The plucked string's 12 cents (above), and `scenario-ambient`.
 - Sakura is out of the FM-1 image but in the simulator and the emulator until M3.
+
+## M3 Scenes (started 2026-11-10)
+
+**Plan.** Reasons are in `docs/DECISIONS.md` ("M3: plan").
+
+Order of work:
+
+1. Scales as data: dark five-note sets beside ZEN-1's three, picked by each mood's table.
+2. Crypt: its world, picture, sounds and four moods, a scenario script, a render.
+3. The effects in a scene: DELAY as the scenes' echo, TAPE and GRAIN on knobs, the reverb retuned darker.
+   Settled while Crypt is tuned, then the same for the others.
+4. Forest Ruins, Frozen Lake, Night Sky, in that order, each with its CC0 textures (`assets/SAMPLES.md`).
+5. Long Night across scenes (ZEN-1's Natural, renamed). Until then each scene's first mood is its own long
+   form.
+6. ZEN-1's scenes, recordings, scales on the Key page and scenario scripts out of the tree; a new project
+   magic; the splash tagline; the painted/pixel button.
+7. Tuning: a 10-minute render for each mood, listened to for loops, clipping and dead air.
+
+What comes out of the FM-1 image, and when (free at the start: flash 21 KB, RAM 15 KB, pool at its floor):
+
+| When | Out | Frees (BUDGET.md, M1 figures) |
+| --- | --- | --- |
+| Now, for Crypt | Koi, and its knock recordings | flash about 47 KB + 5 KB, RAM 5.9 KB |
+| With Forest Ruins | the recorded brook, as its CC0 textures come in | flash 68 KB |
+| With Night Sky | Hotaru (its moon and stars code is shared and stays), its frogs and owls | flash about 32 KB + 56 KB, RAM 5.1 KB |
+| Step 6 | the breeze and insects recordings, the kanji bitmaps, Sakura and Koi sources | flash 96 KB + 14 KB |
+
+Koi stays in the simulator and the emulator until step 6, as Sakura does. No scene needs pool: the pool stays
+at its floor, and the effects keep what M2 gave them.
