@@ -213,3 +213,38 @@ What comes out of the FM-1 image, and when (free at the start: flash 21 KB, RAM 
 
 Koi stays in the simulator and the emulator until step 6, as Sakura does. No scene needs pool: the pool stays
 at its floor, and the effects keep what M2 gave them.
+
+**Scales: done (2026-11-10).** `tuning.c` `TN_SCALE` has four dark sets beside ZEN-1's three: Aeolian, Dorian,
+harmonic minor, Hungarian minor, five notes each. A scene asks for one by number; the instrument's scale knob
+still has its three. `tuning_test.c` checks them.
+
+**Crypt: first version on the host (2026-11-10).** `firmware/src/app/scene_crypt.c`. Not flashed, not listened
+to: I can measure a render, not hear it.
+
+- The world: five candles on a tomb, a bell in a niche, dust, water from the vault. A flame's gutter is a note,
+  wax reaching a candle's foot a soft note, dust in a flame a spark and a high note, the bell struck metal on the
+  chord's root, a water drop heard where it lands. Under them a choir breathes the chord.
+- Sources: notes FM (ZEN-1's Drop, Mallet, Rin, Bell), the choir VOICE (three voices), the bell PHYS MODAL
+  (two notes at most). Effects: TAPE, DELAY as the echo, GRAIN as "Cloud", each on a knob.
+- Moods, as data (`CR_MOOD`, `CR_MOODS`): Long Night (the round), Vigil (In, Phrygian's five), Procession (Dorian),
+  Sealed (Hungarian minor, a fourth down, one candle, cold), Embers (harmonic minor, three candles, red).
+- Keys: white keys a note each; black keys 1 to 5 snuff or light a candle, 6 to 10 ring the bell, the top one
+  sends a draught.
+- In the FM-1 image Crypt is the first scene and Koi is out. Build: image 521352 B (60212 B of flash free), RAM
+  77240 B of 98304 (21064 B free), pool 335596 B of 344064, unchanged. Crypt itself is about 13 KB of flash, by
+  difference.
+- Scenario `tests/scenarios/crypt.zen`: 45 checks pass (events counted, keys, each mood's scale, key, candles and
+  light, pixel art, a new picture, leaving). Two ZEN-1 scripts changed by a click or two because the scene list is
+  one longer (`ambient.zen`, `scenes.zen`).
+- Renders to listen to: `build/scenarios/crypt/crypt.wav` (60 s, Long Night), and from
+  `tools/crypt_moods.zen` two and a half minutes of each mood, `build/host/crypt-vigil.wav`,
+  `crypt-procession.wav`, `crypt-sealed.wav`, `crypt-embers.wav`, with a picture of each beside them.
+- Measured on those renders: no clipping (peaks -34 to -40 dBFS at the simulator's volume, where Sakura and Hotaru
+  peak at -31 and -32), no 10 s stretch under -75 dB, 109 notes and 6 tolls in ten minutes.
+- Tests: 55 pass (the new scenario), `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean. Emulator
+  builds.
+- Open: the levels and every sound choice wait for ears; Crypt is 2 to 8 dB under ZEN-1's scenes at peak. The
+  palette changes up to four times a second and each change sends the whole screen: its cost on the FM-1 is not
+  measured. Sealed and Embers are very dark in the simulator's pictures with the dark curve at 80; the panel
+  shows darks lighter, so it is left for a flash. The reverb is not retuned. No CC0 texture recordings yet: the
+  drips and the draught are synthesized. The Key page's Scale still lists ZEN-1's three.

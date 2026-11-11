@@ -243,3 +243,31 @@ names its scale in the scene's mood table. The instrument's own scale knob keeps
 Long Night. ZEN-1's glue has five mood places, the first "Natural". Crypt's first mood, "Long Night", burns the
 candles down through the looks of its four moods in half an hour and starts again. The cross-scene mode is
 step 5; when it exists this place becomes its door.
+
+## 2026-11-10 M3: Crypt
+
+**The vault's light is the palette.** The stone is drawn once, each pixel a shade by how much candlelight reaches
+it; the 48 stone shades follow the flames, so a gutter dims the room with nothing redrawn. The cost: a palette
+change sends the whole screen (ZEN-1's own note: about 20 ms). So the light moves in steps of 1/32, at most four
+times a second, sooner only for a gutter or a mood on its way. To be measured on hardware.
+
+**Which source plays what.** The choir is the conductor's drone on VOICE: three voices, inside M1's four. The
+bell is PHYS MODAL on two note ids, inside M1's two. The scene's notes stay FM, on ZEN-1's Drop, Mallet, Rin and
+Bell patches: PHYS notes would pass M1's plan before hardware is measured. SAMPLE is not used: there are no CC0
+crypt recordings yet, so the drips (`fm_drop`) and the draught (the synthesized breeze) are synthesized and
+Crypt holds no recording.
+
+**DELAY is the echo of Crawl's scenes (M2 left this open).** ZEN-1's echo replays a note seconds later and costs
+a voice each time (about 3 % of a block, estimated); DELAY costs about 2 % in all and is the tape echo the brief
+asks for. Crypt turns the conductor's echo off and puts DELAY on the Echo knob. ZEN-1's scenes keep theirs until
+they go.
+
+**Each mood's scale, key and look are one table row** (`CR_MOOD`): Vigil In, Procession Dorian, Sealed Hungarian
+minor a fourth down, Embers harmonic minor. Long Night takes the scale of where it is in its round, when the
+notes rest.
+
+**ZEN-1's knob pages are kept** (Scene, Volume, Nature, Music, Key), with Tape, Cloud and Echo on knobs. The
+Key page's Scale still offers ZEN-1's three and holds one of them over the mood's; it gets Crawl's list in step
+6, with the Key page's own script.
+
+**Black keys:** five candles, five bell notes, a draught. The brief leaves a scene's functions to the scene.
