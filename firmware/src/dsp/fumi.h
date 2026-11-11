@@ -66,6 +66,15 @@ void fm_part_patch(int part, int slot);          /* a built-in patch on part 1..
  * (a formant voice), 1 GREGORIAN, 2 NUNS, 3 CATHEDRAL (choirs of recorded singers). Its four knobs: VOWEL 0..127,
  * SHIFT 0..24 (12: none), BUZZ 0..127, BREATH 0..127. Its attack: ms to full level (FM patches have their own) */
 #define FM_ENG_VOICE 1000
+/* A patch slot of FM_ENG_PHYS + MODEL makes the part GR!MM's PHYS (physfx.c), physical models: MODEL 0 MODAL (bells,
+ * bars, metal), 1 STRING, 2 MEMBRANE (a drum head), 3 SYMPATH (a string and three sympathetic strings). Its knobs,
+ * 0..127: STRUCTURE (MODAL harmonic .. inharmonic, about 35: harmonic; STRING buzzy .. stiff; MEMBRANE ideal ..
+ * loaded; SYMPATH its chord), DAMP (the decay; at the top it rings on), BOW (MODAL, STRING: 0 struck, above bowed at
+ * that level; MEMBRANE: the pitch's fall; SYMPATH: buzz), BRIGHT. A note's velocity is its accent. At most
+ * FM_NPHYS PHYS notes sound at once: one more goes over the oldest.
+ * A part given another source has that source's default knobs: set the knobs after the patch. */
+#define FM_ENG_PHYS 1100
+#define FM_NPHYS 4
 void fm_part_knobs(int part, int k0, int k1, int k2, int k3);
 void fm_part_attack(int part, int ms);
 void fm_part_release(int part, int ms);          /* after a note's end: the time to -60 dB, 20 .. 8000 ms */

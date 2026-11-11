@@ -120,6 +120,18 @@ int main(void)
             row(VN[i]);
         }
     }
+    {
+        static const char *const PN[6] = {"PHYS MODAL x1", "PHYS STRING x1", "PHYS MEMBRANE x1", "PHYS SYMPATH x1",
+                                          "PHYS MODAL bowed x1", "PHYS SYMPATH x4"};
+        static const int PM_[6] = {0, 1, 2, 3, 0, 3}, PC[6] = {1, 1, 1, 1, 1, 4}, PB_[6] = {0, 0, 0, 0, 90, 0};
+        for (i = 0; i < 6; i++) {
+            bq();
+            fm_part_patch(1, FM_ENG_PHYS + PM_[i]);
+            fm_part_knobs(1, 60, 127, PB_[i], 80);     /* (DAMP at the top: it rings on while measured) */
+            hold(PC[i], 1, FM_ENG_PHYS + PM_[i]);
+            row(PN[i]);
+        }
+    }
     bq();
     fm_fx_send(100);
     fm_delay(88, 64, 50, 127);

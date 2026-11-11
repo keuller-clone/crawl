@@ -28,6 +28,7 @@
 #include "tapefx.c"                                /* Crawl: GR!MM's TAPE on the mix (needs FM_POOL) */
 #include "echofx.c"                                /* Crawl: GR!MM's DELAY and GRAIN (needs tapefx.c) */
 #include "voicefx.c"                               /* Crawl: GR!MM's VOICE, a part's source (needs echofx.c) */
+#include "physfx.c"                                /* Crawl: GR!MM's PHYS, a part's source (needs voicefx.c) */
 
 /* ------------------------------------------------------------- params --- */
 static const fm_param_t PARAMS[P_NPARAMS] = {
@@ -104,7 +105,7 @@ typedef struct {
     uint8_t part, vel, pan, what;                 /* C_VOICE: part, velocity, pan; C_PART: what (PART_*) */
 } cmd_t;
 enum { PART_PATCH, PART_RELEASE, PART_LEVEL, PART_KEEP, PART_ATTACK, PART_KNOB };   /* (PART_KNOB + 0..3) */
-enum { ENG_FM, ENG_VOICE };                       /* a part's source (Crawl) */
+enum { ENG_FM, ENG_VOICE, ENG_PHYS };                       /* a part's source (Crawl) */
 #define QN 128u
 static cmd_t q[QN];
 static volatile uint32_t q_w, q_r;
@@ -278,8 +279,9 @@ typedef struct {
     float yo_mult;                                /* the release multiplier per sample (part 0: yo_mult) */
     float level;
     uint8_t keep;                                 /* its held notes are never stolen (a drone) */
-    uint8_t eng, vty;                             /* Crawl: its source (ENG_*); VOICE's TYPE */
-    volatile int32_t kn[4];                       /* ... the source's four knobs (VOICE: VOWEL, SHIFT, BUZZ, BREATH) */
+    uint8_t eng, vty;                             /* Crawl: its source (ENG_*); VOICE's TYPE, PHYS's MODEL */
+    volatile int32_t kn[4];                       /* ... the source's four knobs (VOICE: VOWEL, SHIFT, BUZZ, BREATH;
+                                                   * PHYS: STRUCTURE, DAMP, BOW, BRIGHT) */
     float att;                                    /* ... the attack: a block's step towards full level (1: at once) */
 } part_t;
 static part_t parts[FM_NPART];
@@ -300,6 +302,7 @@ typedef struct {
     float pl, pr;                                 /* pan gains (1, 1 = center, as the instrument always is) */
     float amp;                                    /* a scene note's own loudness from its velocity (instrument: 1) */
     float at;                                     /* Crawl: the attack, 0 .. 1 (a source without its own envelope) */
+    uint8_t ps;                                   /* Crawl: its PHYS slot + 1 (physfx.c ph_slot), 0: none */
     int32_t dur;                                  /* samples to an automatic release; < 0: none */
     uint32_t order;
 } voice_t;
@@ -437,6 +440,46 @@ static int alloc_voice(void)
     return best;
 }
 
+/* Crawl: PHYS's state is a slot of PH_NSLOT (physfx.c), held by a live voice (its ps). A slot no live voice but
+ * `self` holds, or -1 */
+static int phys_slot_free(int self)
+{
+    int s, j;
+    for (s = 0; s < PH_NSLOT; s++) {
+        for (j = 0; j < FM_NVOICE; j++)
+            if (j != self && vc[j].live && vc[j].ps == s + 1)
+                break;
+        if (j == FM_NVOICE)
+            return s;
+    }
+    return -1;
+}
+/* the voice whose slot a new PHYS note takes when none is free: a released one first, else the oldest; -1: none */
+static int phys_oldest(int self)
+{
+    int i, best = -1;
+    uint32_t oldest = 0xFFFFFFFFu;
+    for (i = 0; i < FM_NVOICE; i++) {
+        uint32_t o = vc[i].order + (vc[i].down ? 0x80000000u : 0u);
+        if (i == self || !vc[i].live || !vc[i].ps)
+            continue;
+        if (o < oldest) {
+            oldest = o;
+            best = i;
+        }
+    }
+    return best;
+}
+/* the voice for a new note of `part`: as alloc_voice, but a PHYS note with every slot taken goes over the oldest
+ * PHYS note, in its voice (its gain ramps on: no click) */
+static int alloc_voice_part(int part)
+{
+    int i;
+    if (parts[part].eng == ENG_PHYS && phys_slot_free(-1) < 0 && (i = phys_oldest(-1)) >= 0)
+        return i;
+    return alloc_voice();
+}
+
 /* (re)start voice i on pitch `cents` (from A4) for key id with part `part`'s patch; fresh = from silence.
  * Part 0 (the instrument) also takes the bend and sends MIDI; it plays centered with no automatic release */
 static void pluck_part(int i, int id, float cents, float next_up, int fresh, int part, int vel)
@@ -451,6 +494,8 @@ static void pluck_part(int i, int id, float cents, float next_up, int fresh, int
         v->dc = 0.0f;
         v->g = 0.0f;
     }
+    if (!v->live || parts[part].eng != ENG_PHYS)   /* (Crawl: a PHYS slot is a sounding PHYS note's) */
+        v->ps = 0;
     smooth_jump(&v->pitch, cents);                 /* a pluck is a new pitch at once (phase-continuous: no click) */
     v->pitch.k = k_fast;
     v->sliding = 0;
@@ -471,6 +516,24 @@ static void pluck_part(int i, int id, float cents, float next_up, int fresh, int
         v->at = 1.0f;
         fm6_note_init(&v->n, pp, mn, vel, fresh);
         fm6_lfo_key(&parts[part].lfo);
+    } else if (parts[part].eng == ENG_PHYS) {      /* (Crawl: GR!MM's PHYS: its slot; from silence struck from rest,
+                                                    * over a sounding note struck again as it rings) */
+        if (fresh)
+            v->at = 0.0f;
+        if (!v->ps) {
+            int s = phys_slot_free(i), o;
+            if (s < 0 && (o = phys_oldest(i)) >= 0) {   /* (none free: the oldest PHYS note ends; voice_on avoids it) */
+                s = vc[o].ps - 1;
+                vc[o].live = 0, vc[o].ps = 0, vc[o].g = 0.0f;
+                voice_level_for_lights(&vc[o], 0.0f);
+            }
+            v->ps = (uint8_t)(s + 1);
+            phys_begin((uint32_t)s, parts[part].vty);
+        } else if (fresh) {
+            phys_begin((uint32_t)v->ps - 1u, parts[part].vty);
+        } else {
+            phys_strike((uint32_t)v->ps - 1u);
+        }
     } else {                                       /* (Crawl: GR!MM's VOICE: from silence, its state anew) */
         if (fresh) {
             v->at = 0.0f;
@@ -631,7 +694,7 @@ static void voice_on(int id, int part, float cents, int vel, int pan, int dur_ms
     float p = pan >= 64 ? 0.5f + (float)(pan - 64) * (0.5f / 63.0f) : (float)pan * (0.5f / 64.0f);   /* 64: the center exactly */
     voice_t *v;
     if (i < 0)
-        i = alloc_voice();
+        i = alloc_voice_part(part);
     pluck_part(i, id, cents, cents + 100.0f, !vc[i].live, part, vel);
     v = &vc[i];
     v->pl = 1.41421356f * fm_sin_turns(0.25f - 0.25f * p);   /* cos */
@@ -699,7 +762,15 @@ static void part_cmd(int part, int what, int v)
     switch (what) {
     case PART_PATCH:                               /* sounding notes of the part take it from their next block */
         if (v >= FM_ENG_VOICE && v < FM_ENG_VOICE + (int)NVT) {   /* (Crawl: GR!MM's VOICE, its TYPE) */
+            if (pt->eng != ENG_VOICE)              /* (another source's knobs mean nothing to it: its own defaults) */
+                pt->kn[0] = 64, pt->kn[1] = 12, pt->kn[2] = 64, pt->kn[3] = 0;
             pt->eng = ENG_VOICE, pt->vty = (uint8_t)(v - FM_ENG_VOICE);
+            break;
+        }
+        if (v >= FM_ENG_PHYS && v < FM_ENG_PHYS + (int)PM_COUNT) {   /* (Crawl: GR!MM's PHYS, its MODEL) */
+            if (pt->eng != ENG_PHYS)               /* (STRUCTURE harmonic, DAMP long, struck, BRIGHT as GR!MM fixes it) */
+                pt->kn[0] = 35, pt->kn[1] = 80, pt->kn[2] = 0, pt->kn[3] = 80;
+            pt->eng = ENG_PHYS, pt->vty = (uint8_t)(v - FM_ENG_PHYS);
             break;
         }
         pt->eng = ENG_FM;
@@ -1018,16 +1089,26 @@ static void render_voices(void)
             cents += vib;                         /* ビブラート is the instrument's */
         else
             cents += tape_wow;                    /* the tape's waver is the scene's */
-        if (pt->eng == ENG_VOICE) {               /* Crawl: GR!MM's VOICE: the block at full level, Q15 -> the bus's
-                                                   * scale (2^24); it sounds till its release has died away */
-            if (!v->down && v->yo_g < 1e-4f) {
+        if (pt->eng != ENG_FM) {                  /* Crawl: GR!MM's VOICE or PHYS: the block at full level, Q15 -> the
+                                                   * bus's scale (2^24); it sounds till its release has died away */
+            uint32_t inc = (uint32_t)(42852281.0f * fm_exp2f(cents * (1.0f / 1200.0f)));
+            if (pt->eng == ENG_PHYS && !v->ps) {  /* (the part became PHYS under this note: a slot if one is free) */
+                int s = phys_slot_free(i);
+                if (s >= 0) {
+                    v->ps = (uint8_t)(s + 1);
+                    phys_begin((uint32_t)s, pt->vty);
+                }
+            }
+            if ((!v->down && v->yo_g < 1e-4f) || (pt->eng == ENG_PHYS && !v->ps)) {
                 v->live = 0;
                 v->g = 0.0f;
                 voice_level_for_lights(v, 0.0f);
                 continue;
             }
-            formant_block((uint32_t)i, pt->kn, (int32_t)((cents + 6900.0f) * 0.16f),
-                          (uint32_t)(42852281.0f * fm_exp2f(cents * (1.0f / 1200.0f))), bus, pt->vty);
+            if (pt->eng == ENG_PHYS)
+                phys_block((uint32_t)v->ps - 1u, pt->vty, pt->kn, inc, v->vel, bus);
+            else
+                formant_block((uint32_t)i, pt->kn, (int32_t)((cents + 6900.0f) * 0.16f), inc, bus, pt->vty);
             for (k = 0; k < BLK; k++)
                 bus[k] *= 512;
             v->at = v->at + pt->att > 1.0f ? 1.0f : v->at + pt->att;
