@@ -62,6 +62,12 @@ void fm_panic(void);
  * follows P_VOICE and 余韻; fm_part_* on part 0 is ignored. */
 void fm_part_patch(int part, int slot);          /* a built-in patch on part 1..4: P_VOICE numbering, or
                                                   * ZN_PATCH_BASE + n for ZEN-1's own (zen_patches.h) */
+/* Crawl: a part's source. A patch slot of FM_ENG_VOICE + TYPE makes the part GR!MM's VOICE (voicefx.c): TYPE 0 SOLO
+ * (a formant voice), 1 GREGORIAN, 2 NUNS, 3 CATHEDRAL (choirs of recorded singers). Its four knobs: VOWEL 0..127,
+ * SHIFT 0..24 (12: none), BUZZ 0..127, BREATH 0..127. Its attack: ms to full level (FM patches have their own) */
+#define FM_ENG_VOICE 1000
+void fm_part_knobs(int part, int k0, int k1, int k2, int k3);
+void fm_part_attack(int part, int ms);
 void fm_part_release(int part, int ms);          /* after a note's end: the time to -60 dB, 20 .. 8000 ms */
 void fm_part_level(int part, int pct);           /* 0 .. 100 */
 extern uint8_t fm_part_patch_set[FM_NPART];      /* the patch each part was last given (for tests) */

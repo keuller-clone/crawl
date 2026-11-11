@@ -27,6 +27,7 @@
 #include "bed.c"                                   /* (needs BLK) */
 #include "tapefx.c"                                /* Crawl: GR!MM's TAPE on the mix (needs FM_POOL) */
 #include "echofx.c"                                /* Crawl: GR!MM's DELAY and GRAIN (needs tapefx.c) */
+#include "voicefx.c"                               /* Crawl: GR!MM's VOICE, a part's source (needs echofx.c) */
 
 /* ------------------------------------------------------------- params --- */
 static const fm_param_t PARAMS[P_NPARAMS] = {
@@ -102,7 +103,8 @@ typedef struct {
     float f;
     uint8_t part, vel, pan, what;                 /* C_VOICE: part, velocity, pan; C_PART: what (PART_*) */
 } cmd_t;
-enum { PART_PATCH, PART_RELEASE, PART_LEVEL, PART_KEEP };
+enum { PART_PATCH, PART_RELEASE, PART_LEVEL, PART_KEEP, PART_ATTACK, PART_KNOB };   /* (PART_KNOB + 0..3) */
+enum { ENG_FM, ENG_VOICE };                       /* a part's source (Crawl) */
 #define QN 128u
 static cmd_t q[QN];
 static volatile uint32_t q_w, q_r;
@@ -153,6 +155,12 @@ void fm_part_patch(int part, int slot)
     post_part(part, PART_PATCH, slot);
 }
 void fm_part_release(int part, int ms) { post_part(part, PART_RELEASE, ms); }
+void fm_part_attack(int part, int ms) { post_part(part, PART_ATTACK, ms); }
+void fm_part_knobs(int part, int k0, int k1, int k2, int k3)
+{
+    post_part(part, PART_KNOB, k0), post_part(part, PART_KNOB + 1, k1);
+    post_part(part, PART_KNOB + 2, k2), post_part(part, PART_KNOB + 3, k3);
+}
 void fm_part_level(int part, int pct) { post_part(part, PART_LEVEL, pct); }
 void fm_part_keep(int part, int on) { post_part(part, PART_KEEP, on); }
 void fm_voice(int id, int part, float cents, int vel, int pan, int dur_ms)
@@ -270,6 +278,9 @@ typedef struct {
     float yo_mult;                                /* the release multiplier per sample (part 0: yo_mult) */
     float level;
     uint8_t keep;                                 /* its held notes are never stolen (a drone) */
+    uint8_t eng, vty;                             /* Crawl: its source (ENG_*); VOICE's TYPE */
+    volatile int32_t kn[4];                       /* ... the source's four knobs (VOICE: VOWEL, SHIFT, BUZZ, BREATH) */
+    float att;                                    /* ... the attack: a block's step towards full level (1: at once) */
 } part_t;
 static part_t parts[FM_NPART];
 #define patch (parts[0].pat)                     /* the instrument's patch (P_VOICE) */
@@ -288,6 +299,7 @@ typedef struct {
     uint8_t part;                                 /* whose patch (part_t) */
     float pl, pr;                                 /* pan gains (1, 1 = center, as the instrument always is) */
     float amp;                                    /* a scene note's own loudness from its velocity (instrument: 1) */
+    float at;                                     /* Crawl: the attack, 0 .. 1 (a source without its own envelope) */
     int32_t dur;                                  /* samples to an automatic release; < 0: none */
     uint32_t order;
 } voice_t;
@@ -455,8 +467,16 @@ static void pluck_part(int i, int id, float cents, float next_up, int fresh, int
     v->amp = 1.0f;
     v->dur = -1;
     v->order = ++order_n;
-    fm6_note_init(&v->n, pp, mn, vel, fresh);
-    fm6_lfo_key(&parts[part].lfo);
+    if (parts[part].eng == ENG_FM) {
+        v->at = 1.0f;
+        fm6_note_init(&v->n, pp, mn, vel, fresh);
+        fm6_lfo_key(&parts[part].lfo);
+    } else {                                       /* (Crawl: GR!MM's VOICE: from silence, its state anew) */
+        if (fresh) {
+            v->at = 0.0f;
+            formant_begin((uint32_t)i);
+        }
+    }
     if (part != 0) {
         if (bend_voice == i)
             bend_voice = -1;
@@ -678,6 +698,11 @@ static void part_cmd(int part, int what, int v)
     part_t *pt = &parts[part];
     switch (what) {
     case PART_PATCH:                               /* sounding notes of the part take it from their next block */
+        if (v >= FM_ENG_VOICE && v < FM_ENG_VOICE + (int)NVT) {   /* (Crawl: GR!MM's VOICE, its TYPE) */
+            pt->eng = ENG_VOICE, pt->vty = (uint8_t)(v - FM_ENG_VOICE);
+            break;
+        }
+        pt->eng = ENG_FM;
         if (v >= ZN_PATCH_BASE && v < ZN_PATCH_BASE + ZN_NPATCH) {
             fm6_unpack(ZN_PATCH[v - ZN_PATCH_BASE], pt->pat);   /* ZEN-1's own (zen_patches.h) */
         } else {
@@ -693,6 +718,12 @@ static void part_cmd(int part, int what, int v)
     }
     case PART_LEVEL: pt->level = (float)(v < 0 ? 0 : v > 100 ? 100 : v) * 0.01f; break;
     case PART_KEEP: pt->keep = (uint8_t)(v != 0); break;
+    case PART_ATTACK:                              /* ms to full level -> a block's step */
+        pt->att = v <= 1 ? 1.0f : BLK_MS / (float)(v > 20000 ? 20000 : v);
+        break;
+    case PART_KNOB: case PART_KNOB + 1: case PART_KNOB + 2: case PART_KNOB + 3:
+        pt->kn[what - PART_KNOB] = v;
+        break;
     default: break;
     }
 }
@@ -798,6 +829,8 @@ void fm_init(void)
     fm_nvoices = 0;
     for (i = 0; i < FM_NPART; i++) {
         parts[i].level = 1.0f;
+        parts[i].eng = ENG_FM, parts[i].vty = 0, parts[i].att = 1.0f;
+        parts[i].kn[0] = 64, parts[i].kn[1] = 12, parts[i].kn[2] = 64, parts[i].kn[3] = 0;
         parts[i].keep = 0;
         part_cmd(i, PART_PATCH, 0);
         part_cmd(i, PART_RELEASE, 2000);
@@ -985,6 +1018,20 @@ static void render_voices(void)
             cents += vib;                         /* ビブラート is the instrument's */
         else
             cents += tape_wow;                    /* the tape's waver is the scene's */
+        if (pt->eng == ENG_VOICE) {               /* Crawl: GR!MM's VOICE: the block at full level, Q15 -> the bus's
+                                                   * scale (2^24); it sounds till its release has died away */
+            if (!v->down && v->yo_g < 1e-4f) {
+                v->live = 0;
+                v->g = 0.0f;
+                voice_level_for_lights(v, 0.0f);
+                continue;
+            }
+            formant_block((uint32_t)i, pt->kn, (int32_t)((cents + 6900.0f) * 0.16f),
+                          (uint32_t)(42852281.0f * fm_exp2f(cents * (1.0f / 1200.0f))), bus, pt->vty);
+            for (k = 0; k < BLK; k++)
+                bus[k] *= 512;
+            v->at = v->at + pt->att > 1.0f ? 1.0f : v->at + pt->att;
+        } else
         if (!fm6_note_compute(&v->n, pp, bus, pt->lfo_v, pt->lfo_d, fm6_logfreq_cents(cents + 6900.0f), pp[FP_ALG] & 31u,
                               pp[FP_FB] & 7u, DT0, 0) || (!v->down && v->yo_g < 1e-4f)) {
             if (fm6_note_done(&v->n, pp, pp[FP_ALG] & 31u) || (!v->down && v->yo_g < 1e-4f)) {
@@ -1013,7 +1060,7 @@ static void render_voices(void)
             v->yo_g *= mb;
             (void)m;
         }
-        g1 = 0.18f * v->yo_g * pt->level * v->amp;                    /* a full carrier = 0.36; eight koto attacks at once reach the soft clip gently */
+        g1 = 0.18f * v->yo_g * pt->level * v->amp * v->at;                    /* a full carrier = 0.36; eight koto attacks at once reach the soft clip gently */
         dg = (g1 - g0) * (1.0f / (float)BLK);
 #ifdef FM_NO_SMOOTH
         g0 = g1;

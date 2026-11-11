@@ -111,6 +111,15 @@ int main(void)
     fm_tape(100);
     hold(1, 1, ZN_SOFT_PAD);
     row("tape 100, its four knobs up (with one voice)");
+    {
+        static const char *const VN[4] = {"VOICE SOLO x1", "VOICE GREGORIAN x1", "VOICE SOLO x4", "VOICE CATHEDRAL x4"};
+        static const int VT_[4] = {0, 1, 0, 3}, VC[4] = {1, 1, 4, 4};
+        for (i = 0; i < 4; i++) {
+            bq();
+            hold(VC[i], 1, FM_ENG_VOICE + VT_[i]);
+            row(VN[i]);
+        }
+    }
     bq();
     fm_fx_send(100);
     fm_delay(88, 64, 50, 127);

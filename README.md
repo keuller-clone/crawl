@@ -10,8 +10,11 @@ named here. Installing custom firmware is at your own risk.
 
 The rest of this page is ZEN-1's README. It still describes what Crawl does today.
 
-Crawl's TAPE, DELAY and GRAIN effects are ported from [GR!MM](https://github.com/GRiMMBIENT/grimm) (GPL-3.0); more of GR!MM's voices and
-effects follow (`docs/PROGRESS.md`).
+Crawl's TAPE, DELAY and GRAIN effects and its VOICE source are ported from [GR!MM](https://github.com/GRiMMBIENT/grimm)
+(GPL-3.0); more of GR!MM's voices follow (`docs/PROGRESS.md`). The choirs' wavetables are made from
+[VocalSet: A Singing Voice Dataset](https://doi.org/10.5281/zenodo.1442513) by Julia Wilkins, Prem Seetharaman, Alison
+Wahl and Bryan Pardo (Northwestern University, 2018), CC BY 4.0, changed: single cycles measured from its singers'
+long tones (`LICENSING.md`).
 
 ## ZEN-1 (禅)
 
