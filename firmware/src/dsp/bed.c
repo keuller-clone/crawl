@@ -175,11 +175,16 @@ static int shot_seg(int set, int seg, const uint8_t **data, int32_t *len)
         return -1;
 #endif
     case FM_SHOT_KNOCK:
+#ifdef FM_HOST                                     /* (Crawl: the knock is Koi's, out of the FM-1 image too: CRAWL_KOI) */
         if (seg < 0 || seg >= ZN_KNOCK_N)
             return -1;
         *data = ZN_KNOCK_TAB[seg].data;
         *len = ZN_KNOCK_TAB[seg].len;
         return 0;
+#else
+        (void)ZN_KNOCK_TAB;
+        return -1;
+#endif
     case FM_SHOT_OWL:                                 /* (two recordings: one and two calls) */
         if (seg == 0) {
             *data = ZN_OWL_TAB[0].data;

@@ -1,0 +1,100 @@
+# Crypt (Crawl's first scene): candles gutter (a note each), wax runs, the bell tolls, water drips, a choir under
+# them; black keys snuff a candle, ring the bell, send a draught; the moods change the scale, the candles, the light
+# (the simulator boots into Sakura; Crypt is the last scene there: PRESETS one back)
+wait 800
+spin PRESET -1
+wait 1500
+expect scene 3
+expect knob0 0
+expect knob1 25
+expect knob8 2
+expect knob12 50
+expect candles 5
+expect textfit 0
+peakreset
+wav crypt.wav
+wait 60000
+wavstop
+expect gutters >3
+expect scnotes >3
+expect tolls >0
+expect crdrips >1
+expect drones >0
+expect nvoices <13
+expect peak_db_max -1
+expect peak_db_min -40
+shot crypt.png
+# black keys: the first five a candle each (snuffed, lit again)
+tapkey b0
+wait 3000
+expect candles 4
+tapkey b0
+wait 3000
+expect candles 5
+# the next five the bell, a note each; the top one a draught
+tapkey b7
+wait 100
+expect crnote 2
+tapkey b10
+wait 100
+expect draughts 1
+# white keys: sixteen notes rising from 3
+tapkey w0
+wait 100
+expect crnote 3
+expect lastkey 3
+tapkey w15
+wait 100
+expect crnote 18
+# Mood (KNOB 1): Vigil, in In (Phrygian's five)
+spin K1 1
+wait 500
+expect knob0 1
+expect scalenow 0
+expect keyoff 0
+# Sealed: one candle, Hungarian minor a fourth down, the cloud and more tape
+spin K1 2
+wait 12000
+expect knob0 3
+expect scalenow 6
+expect keyoff -500
+expect candles 1
+expect knob14 45
+expect crlight <60
+shot crypt-sealed.png
+# Embers: three candles, harmonic minor, home again
+spin K1 1
+wait 12000
+expect scalenow 5
+expect keyoff 0
+expect candles 3
+shot crypt-embers.png
+# Procession: all five, Dorian, the bell often
+spin K1 -2
+wait 12000
+expect knob0 2
+expect scalenow 4
+expect candles 5
+expect knob12 90
+expect crlight >80
+shot crypt-procession.png
+# pixel art, and a new vault
+tap GLO
+wait 1500
+expect style 1
+shot crypt-pixel.png
+tap GLO
+wait 1500
+tap PLAY
+wait 2500
+expect regrows 1
+shot crypt-regrown.png
+# back to the instrument: everything lets go, the instrument's own scale again
+press HOME
+wait 800
+release HOME
+wait 9000
+expect mode 0
+expect nvoices 0
+expect par1 0
+expect stale 0

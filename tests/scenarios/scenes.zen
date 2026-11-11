@@ -62,6 +62,8 @@ reboot
 wait 800
 expect scene 2
 spin PRESET 1
+wait 150
+spin PRESET 1
 wait 1000
 expect scene 0
 # every scene's note keys play its selected Tone (partN: the patch part N was given)
@@ -89,6 +91,8 @@ expect part1 0
 # half a second after the last click it switches to the one shown
 wait 4000
 expect scene 2
+spin PRESET 1
+wait 150
 spin PRESET 1
 wait 150
 spin PRESET 1

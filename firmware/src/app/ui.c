@@ -121,17 +121,39 @@ static void knob_set(int p, int v);
 #define CRAWL_SAKURA 0
 #endif
 #endif
+/* Crawl (M3): Koi leaves the FM-1 image the same way, for Crypt's room; CRAWL_KOI=1 puts it back. */
+#ifndef CRAWL_KOI
+#ifdef OM_HOST
+#define CRAWL_KOI 1
+#else
+#define CRAWL_KOI 0
+#endif
+#endif
 #if CRAWL_SAKURA
 #include "scene_sakura.c"
 #endif
+#if CRAWL_KOI
 #include "scene_koi.c"
+#endif
 #include "scene_hotaru.c"
+#include "scene_crypt.c"
+/* Crawl's scenes come first in the FM-1 image; in the simulator they follow ZEN-1's, whose scripts count on their
+ * places (docs/DECISIONS.md, "M3: plan"). Crypt has project slot 1 (ZEN-1's Bench scene's, free) */
 static const scene_t *const SCENES[] = {
+#if !CRAWL_SAKURA && !CRAWL_KOI
+    &SCENE_CRYPT,
+#endif
 #if CRAWL_SAKURA
     &SCENE_SAKURA,
 #endif
-    &SCENE_KOI, &SCENE_HOTARU};   /* (the Bench load test went:
-                                                                                     * "jarring" between scenes; its slot 1 is free) */
+#if CRAWL_KOI
+    &SCENE_KOI,
+#endif
+    &SCENE_HOTARU,
+#if CRAWL_SAKURA || CRAWL_KOI
+    &SCENE_CRYPT,
+#endif
+};
 #define NSCENES ((int)(sizeof SCENES / sizeof SCENES[0]))
 
 /* ------------------------------------------------------------- values --- */

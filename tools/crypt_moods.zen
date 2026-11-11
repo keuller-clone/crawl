@@ -1,0 +1,41 @@
+# Crypt, each mood for two and a half minutes: a render and a picture of each, to listen to and look at
+# (not a test; the 10-minute tuning renders of M3 come later).
+#   tools\docker_run.ps1 build/host/crawl_host tools/crypt_moods.zen build/host
+wait 800
+spin PRESET -1
+wait 1500
+spin K1 1
+wait 2000
+peakreset
+wav crypt-vigil.wav
+wait 150000
+wavstop
+expect peak_db_max -3
+shot crypt-vigil.png
+spin K1 1
+wait 2000
+peakreset
+wav crypt-procession.wav
+wait 150000
+wavstop
+expect peak_db_max -3
+shot crypt-procession.png
+spin K1 1
+wait 2000
+peakreset
+wav crypt-sealed.wav
+wait 150000
+wavstop
+expect peak_db_max -3
+shot crypt-sealed.png
+spin K1 1
+wait 2000
+peakreset
+wav crypt-embers.wav
+wait 150000
+wavstop
+expect peak_db_max -3
+shot crypt-embers.png
+expect scnotes >40
+expect tolls >4
+expect nvoices <13

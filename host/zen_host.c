@@ -597,9 +597,31 @@ static int expect(const char *what, const char *val)
         got = (int)(ht.r_min * 100.0f + 0.5f);
     else if (!strcmp(what, "fireflies"))
         got = ht_alive();
+    else if (!strcmp(what, "gutters"))            /* Crypt: flames' gutters; wax drops landed; sparks; the bell's tolls;
+                                                  * water drops landed; draughts; Long Night's rounds */
+        got = (int)cr.gutters;
+    else if (!strcmp(what, "waxdrops"))
+        got = (int)cr.waxdrops;
+    else if (!strcmp(what, "sparks"))
+        got = (int)cr.sparks;
+    else if (!strcmp(what, "tolls"))
+        got = (int)cr.tolls;
+    else if (!strcmp(what, "crdrips"))
+        got = (int)cr.drips;
+    else if (!strcmp(what, "draughts"))
+        got = (int)cr.draughts;
+    else if (!strcmp(what, "candles")) {          /* Crypt: candles burning now */
+        int i;
+        for (got = 0, i = 0; i < CR_NC; i++)
+            got += cr_c[i].lit;
+    } else if (!strcmp(what, "crlight"))            /* Crypt: the vault's light now, % */
+        got = (int)(cr.light * 100.0f + 0.5f);
+    else if (!strcmp(what, "crnote"))             /* Crypt: the note the last key played (a bell key: 0..4) */
+        got = cr.key_note;
     else if (!strcmp(what, "textfit")) {          /* every knob's name and every value it can show, in this
                                                   * scene, fit its quarter of the bar (56 px): the ones that don't */
-        const int16_t (*kt)[4] = amb.sc == &SCENE_SAKURA ? SK_KNOB : amb.sc == &SCENE_KOI ? KP_KNOB : HT_KNOB;
+        const int16_t (*kt)[4] = amb.sc == &SCENE_SAKURA ? SK_KNOB : amb.sc == &SCENE_KOI ? KP_KNOB :
+                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : HT_KNOB;
         int i, v;
         got = 0;
         if (!amb.sc) {
