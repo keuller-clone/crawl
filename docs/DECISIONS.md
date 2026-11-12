@@ -653,3 +653,22 @@ repository private. The emulator runs from a local server meanwhile (`docs/PROGR
 it is published from a private repository on a paid plan: the site itself is public whatever the repository is
 (access control for Pages is an Enterprise Cloud feature), and the page then hands out a build of GPL-3.0 code whose
 "Source" link nobody else can open, which the license's source-offer terms do not allow for long.
+
+## 2026-11-12 M5: the repository public, the emulator on Pages, the README
+
+**The repository is public now, by Steven's word** ("Let's just make this project public. I don't care about hiding
+it"), not at release as the brief had it. Pages was still refused for the private repository, and a public one
+settles the source question above. It is not a release: nothing is flashed, there is no installer and no package,
+and the README says so in its Status.
+
+**Pages serves the `gh-pages` branch, the emulator alone** (`tools/publish_pages.sh --emu m3`; the Pages site was
+created once by hand with `gh api -X POST repos/keuller-clone/crawl/pages` on that branch). The root goes to `emu/`.
+
+**The README is Crawl's, and the page says what it says.** The README was ZEN-1's under a Crawl preface. It now
+describes the four scenes, every mood, Long Night, the sources and effects, every control, the keys of each scene
+and the knob pages scene by scene (read from each scene's knob table: Crypt's Nature and Music pages are laid out
+differently from the others'), the koto instrument and the browser's mouse, keyboard and shortcuts. The emulator
+page keeps ZEN-1's layout; its lines were brought to the README's wording where they differed (the sleep timer, the
+Long Night order, Crypt's white keys), and its About and guide links go to the README, since there is no landing
+page or guide yet. `web/site/` (ZEN-1's landing page and guide) is not rewritten and not published; the README is
+the guide until M5 makes one.
