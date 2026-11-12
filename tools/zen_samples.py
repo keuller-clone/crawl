@@ -73,6 +73,14 @@ ONESHOTS = [
      "Rook (Corvus frugilegus), Walking.With.Microphones, https://freesound.org/s/556221/ (CC0 1.0)"),
     ("FLOCK", "assets/sounds/rooks-553111-preview.mp3", SHOT_RATE, 400, [(47.95, 50.20)],
      "Rooks in the trees - winter, HighPeakEmma, https://freesound.org/s/553111/ (CC0 1.0)"),
+    # Crawl, Frozen Lake (M3): lake ice fracturing, close, no background (its floor -53 dB): two short cracks and two
+    # of its deflagrations cut to their first 0.7 s (found as bursts over the floor; the rumble under them taken
+    # away, high-pass 150 Hz); a keep's bell at midnight across a valley (Neuenburg Castle from a Freyburg
+    # vineyard), the last stroke of the hour with its decay, the wind in the trees under it high-passed away
+    ("ICE", "assets/sounds/ice-737896-preview.mp3", SHOT_RATE, 150, [(4.76, 5.30), (28.42, 28.90), (39.96, 40.70), (52.38, 53.10)],
+     "Ice - Lake fractures, Vrymaa, https://freesound.org/s/737896/ (CC0 1.0)"),
+    ("TOLL", "assets/sounds/keepbell-240586-preview.mp3", SHOT_RATE, 150, [(65.44, 67.00)],
+     "140809_FrybgWb_BellTower_Midnight_F.wav, blaukreuz, https://freesound.org/s/240586/ (CC0 1.0)"),
 ]
 
 STEP = [7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 50, 55, 60, 66, 73, 80, 88, 97,
@@ -213,7 +221,7 @@ def main(path):
             c -= c.mean()
             cuts.append(c)
         g = 0.89 / max(np.abs(c).max() for c in cuts)                    # the loudest call at -1 dBFS
-        if key in ("BIRD", "OWL", "OWL2", "CROW", "ROOK"):                                                # (the songs each their own: one gain left
+        if key in ("BIRD", "OWL", "OWL2", "CROW", "ROOK", "ICE"):                                                # (the songs each their own: one gain left
             cuts = [c * (0.89 / np.abs(c).max()) / g for c in cuts]      # the quietest 8 dB under the loudest)
         L.append(f"/* {source}: {len(cuts)} calls, {rate} Hz */")
         tab = []

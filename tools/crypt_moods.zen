@@ -6,6 +6,10 @@
 wait 800
 wavgain 24
 spin PRESET -1
+wait 150
+spin PRESET -1
+wait 150
+spin PRESET -1
 wait 1500
 peakreset
 wav crypt-longnight.wav

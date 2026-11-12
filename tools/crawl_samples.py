@@ -20,9 +20,15 @@ import sampleio as sio  # noqa: E402
 
 RATE = 22050
 SEG = 256
-# (file in assets/samples/, name, root: the MIDI note that plays it as recorded)
+# (file in assets/samples/, name, root: the MIDI note that plays it as recorded, host only). The host-only ones come
+# last and are in the simulator, the browser build and the tests (FM_HOST), not in the FM-1 image: the numbers of the
+# others are the same everywhere.
+# ice-groan.wav: lake ice groaning (aerror, https://freesound.org/s/847807/, CC0 1.0), 391.0 s + 1.6 s of the recording,
+# its fundamental about 60 Hz; cut by ffmpeg (assets/SAMPLES.md): Frozen Lake's. M-SOFT (GR!MM's factory sample, smooth
+# and tonal) proved the source in M2 and is the SAMPLE test's sample still; it left the FM-1 image with Frozen Lake (M3)
 SAMPLES = [
-    ("m-soft.wav", "M-SOFT", 60),
+    ("ice-groan.wav", "GROAN", 60, 0),
+    ("m-soft.wav", "M-SOFT", 60, 1),
 ]
 
 
@@ -42,7 +48,10 @@ def main():
            carray("uint16_t", "SMP_VD", sio._IMA_VD, 16),
            carray("uint8_t", "SMP_NX", sio._IMA_NX, 32)]
     rows = []
-    for k, (wav, name, root) in enumerate(SAMPLES):
+    nhost = sum(h for _, _, _, h in SAMPLES)
+    if any(h for _, _, _, h in SAMPLES[:len(SAMPLES) - nhost]):
+        raise SystemExit("host-only samples come last")
+    for k, (wav, name, root, host) in enumerate(SAMPLES):
         sr, x = sio.read_any_wav(ROOT / "assets" / "samples" / wav)
         s = sio.to_int16(sio.resample(x, sr, RATE))
         if len(s) & 1:
@@ -58,19 +67,25 @@ def main():
         sig = sum(v * v for v in s)
         print(f"sample {k}: {wav} -> {name}, {len(s) / RATE:.2f} s, {len(data)} B + {3 * len(ip)} B index, "
               f"ADPCM SNR {10 * __import__('math').log10(sig / max(1, err)):.1f} dB")
-        out.append(f"/* {k}: {name}, assets/samples/{wav}, {len(s) / RATE:.2f} s, root {root} */")
+        out.append(f"/* {k}: {name}, assets/samples/{wav}, {len(s) / RATE:.2f} s, root {root}{', the host only' if host else ''} */")
+        if host:
+            out.append("#ifdef FM_HOST")
         out.append(carray("uint8_t", f"SMP_D{k}", list(data)))
         out.append(carray("int16_t", f"SMP_P{k}", ip, 16))
         out.append(carray("uint8_t", f"SMP_I{k}", ii))
-        rows.append(f'    {{SMP_D{k}, SMP_P{k}, SMP_I{k}, {len(s)}u, {root * 16}, "{name[:8]}"}},')
-    out.append(f"#define SMP_N {len(SAMPLES)}u")
+        if host:
+            out.append("#endif")
+        rows.append((host, f'    {{SMP_D{k}, SMP_P{k}, SMP_I{k}, {len(s)}u, {root * 16}, "{name[:8]}"}},'))
+    out.append(f"#ifdef FM_HOST\n#define SMP_N {len(SAMPLES)}u\n#else\n#define SMP_N {len(SAMPLES) - nhost}u\n#endif")
     out.append("static const struct {\n    const uint8_t *data;                        /* the ADPCM */\n"
                "    const int16_t *ipred;                       /* the decoder before segment k: its predictor, */\n"
                "    const uint8_t *iidx;                        /* .. its step index */\n"
                "    uint32_t n;                                 /* samples */\n"
                "    int16_t root16;                             /* the root, 1/16 semitone (MIDI x 16) */\n"
                "    char name[9];\n} SMP_TAB[SMP_N] = {")
-    out += rows
+    out += [r for h, r in rows if not h]
+    if nhost:
+        out += ["#ifdef FM_HOST"] + [r for h, r in rows if h] + ["#endif"]
     out.append("};")
     path = ROOT / "firmware" / "src" / "dsp" / "crawl_samples.h"
     with open(path, "w", newline="\n") as f:

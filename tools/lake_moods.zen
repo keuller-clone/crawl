@@ -1,0 +1,51 @@
+# Frozen Lake, each mood for two and a half minutes: a render and a picture of each, to listen to and look at
+# (not a test; the 10-minute tuning renders of M3 come later). The files are 24 dB louder than the simulator's
+# output (wavgain): a scene is about -55 dBFS there, too near 16 bits' own noise to listen to. The peak checks
+# are on the output itself: under -27 dBFS, so nothing clips in the file.
+#   tools\docker_run.ps1 build/host/crawl_host tools/lake_moods.zen build/host
+wait 800
+wavgain 24
+spin PRESET -1
+wait 1500
+peakreset
+wav lake-longnight.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot lake-longnight.png
+spin K1 1
+wait 2000
+peakreset
+wav lake-dawn.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot lake-dawn.png
+spin K1 1
+wait 2000
+peakreset
+wav lake-thaw.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot lake-thaw.png
+spin K1 1
+wait 2000
+peakreset
+wav lake-whiteout.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot lake-whiteout.png
+spin K1 1
+wait 2000
+peakreset
+wav lake-night.wav
+wait 150000
+wavstop
+expect peak_db_max -27
+shot lake-night.png
+expect scnotes >30
+expect lkcracks >10
+expect lkgroans >2
+expect nvoices <13

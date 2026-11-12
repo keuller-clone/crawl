@@ -351,3 +351,66 @@ point between eight redwoods a side in true perspective, ferns, foliage overhead
 mist; the ruin a hollow trunk, a log, a stump and stones (`docs/DECISIONS.md`, "M3: Forest Ruins' picture, the
 fourth one"). Sounds unchanged; `forest.zen` passes (61 checks). Build: image 523296 B (58268 B of flash free),
 RAM 81240 B (17064 B free). Pictures of each mood in `build/host/forest-*.png`.
+
+**Frozen Lake: first version on the host (2026-11-11).** `firmware/src/app/scene_lake.c` ("Lake" on the panel's tab).
+Not flashed, not listened to. Reasons for its calls are in `docs/DECISIONS.md` ("M3: Frozen Lake").
+
+- The world: the lake frozen over, seen from its shore, the ice running to the far shore in perspective under
+  wind-combed snow; a dark line of pines and, on a headland to the right, a keep (a square tower, battlements, a
+  bell gable, one window); at the near shore a snow bank with frozen reeds, two mooring posts and, on three shores
+  in four, a rowboat frozen in. Cracks run across the ice (a dark line with a lit edge) and grow. Snow falls. The
+  ice cracks (its recorded crack where it runs, a note where it runs across; by night a fracture's whistle, a
+  glide falling a fifteenth), groans (the SAMPLE source: a recording of lake ice groaning played as a tape loop
+  pitched to the chord's root, the first scene to use it; the cracks' edges glow while it lasts), the keep's bell
+  tolls (a keep's own bell, recorded; snow shaken from its roof; a swell answers), a gust sings the reeds (PHYS
+  STRING, bowed), meltwater drips from the posts and the boat (a drop heard where it lands, a ring) over a
+  trickle at the shore, a flake on the near ice is a faint touch. Under them a pad or a VOICE choir and the
+  synthesized breeze.
+- Textures, CC0 (`assets/sounds/README.md`, `assets/SAMPLES.md`): the ice cracking (Vrymaa's lake fractures: two
+  short cracks, two deflagrations cut to 0.7 s, 14.4 KB), the keep's bell (Neuenburg Castle's hour bell across a
+  valley at midnight, one stroke, 8.8 KB), the groan (aerror's "rumbling_ice", 1.6 s as Crawl's sample 0, 18 KB,
+  its fundamental about 60 Hz). No wind recording: the air is the synthesized breeze everywhere. M-SOFT left the
+  image (16.5 KB).
+- Moods, as data (`LK_MOOD`, `LK_MOODS`): Long Night (a day: Grey Dawn, Thaw, Whiteout, Black Ice, half an hour,
+  started anywhere), Grey Dawn (Aeolian; still, a pale band on the horizon, smoke from the keep, the bell on its
+  time with its swell, light snow and its touches, a pad), Thaw (Min'yo three semitones up; pools of meltwater
+  holding the sky, drips and the trickle, the cracks thick and fast and each a note on Rin, the monks, no bell, no
+  snow), Whiteout (In a fourth down; everything far gone into the white, the snow driven in streaks, the wind high
+  and gusting, each gust singing the reeds, the bell muffled, the cathedral choir in the cloud), Black Ice
+  (Hungarian minor a fifth down; night, the ice a black mirror with the stars and the keep's lit window in it, the
+  groans and the fractures' whistles, the bell rare, one voice, the long echo). "Grey Morning" is "Grey Dawn" on
+  the panel (12 characters).
+- Keys: white keys a note each and a crack runs where it lands; black keys 1 to 3 a crack near, middle, far; 4 a
+  groan; 5 to 7 the bell, one to three strokes; then a gust, a drip, a flurry; the top one the ice giving (a groan
+  and the main crack running its length).
+- In the FM-1 image the scenes are Crypt, Ruins, Lake, Hotaru; in the simulator Frozen Lake is last. It has
+  project slot 0 (Sakura's, shared in the simulator as Koi and Forest Ruins share 2). Build: image 569432 B
+  (12132 B of flash free, from 58268), RAM 85064 B of 98304 (13240 B free), pool unchanged. The scene is about
+  21 KB of flash by difference; its recordings 41 KB less M-SOFT's 16.5. Night Sky will not fit until Hotaru and
+  its frogs and owl go (the plan's step 4 line for it).
+- Scenario `tests/scenarios/lake.zen`: 68 checks (events counted, every black key, each mood's scale, key, snow,
+  pools, white, night, wind, the reeds sung, pixel art, a new shore, leaving). Four ZEN-1 scripts changed by a
+  click because the scene list is one longer again (`crypt.zen`, `forest.zen`, `ambient.zen`, `scenes.zen`), and
+  the two mood render scripts: `crypt_moods.zen` had not been given its click when Forest Ruins came in and was
+  rendering Forest Ruins under Crypt's names since then. `forest.zen` entered its scene at another moment and so
+  with another seed, and its first minute's counts were tuned to the old day's phase: they are bounds any quarter
+  meets now. `sample_test` measures on M-SOFT still, now a host-only sample (the last of `SMP_TAB` under `FM_HOST`,
+  not in the FM-1 image), with the output's cuts out of the way: its correlation and level checks assume a smooth,
+  tonal sample, and the groan's energy at 30 to 60 Hz fails them under the lowest cut's phase shift.
+- Renders, 2.5 minutes each, from `tools/lake_moods.zen` in `build/host/`: `lake-longnight.wav`, `lake-dawn.wav`,
+  `lake-thaw.wav`, `lake-whiteout.wav`, `lake-night.wav`, with a picture of each. Measured (`build/tmp/wavstats.py`):
+  peaks -32 to -37 dBFS at the output (-9 to -13 in the files at wavgain 24; Forest Ruins' are -29 to -37), no 10 s
+  stretch under -75 dB. Steady noise in 3..10 kHz under the music: Long Night 50 dB, Grey Dawn 56, Thaw 29 (the
+  trickle's drops, a texture), Whiteout 37 (the wind, by design), Black Ice 41 (Forest Ruins: 48, 54, 32, 35, 46).
+- Tests: 56 pass (the new scenario among them), `kanji` skipped, `scenario-ambient` fails as accepted (the race
+  flake). Guard clean. The FM-1 build's own checks pass (no register-like color literals: the
+  check rejects 0x01xxxx, 0x04xxxx and 0x050000-0x051FFF among others).
+- Pictures looked at: the four moods differ at a glance (grey and a pale horizon with light snow; pools and a blue
+  sky; the white with the keep a ghost and streaks; the night with the stars in the ice). Black Ice is dark in the
+  simulator, as the other scenes' nights, and is left for the panel.
+- Open: not heard. Steven asked for one round on the composition before the moods were built out; this session
+  could not wait for it, so the picture (`build/scenarios/lake/lake.png`) goes with the moods built, and a change
+  of view would redo the layout and background only (the moods' elements are drawn over it or in the palette).
+  The groan's loop is a decaying event: with START past 40 % it loops the tail, which is the point of the knobs;
+  whether the tail's hiss reads as hiss on the FM-1 is for ears. The crack recording's deflagrations peak 15 dB
+  over its short cracks; the shot's velocity is by nearness and the cracks' knob, not yet by ear.

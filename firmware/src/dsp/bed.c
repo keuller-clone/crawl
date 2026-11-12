@@ -209,6 +209,18 @@ static int shot_seg(int set, int seg, const uint8_t **data, int32_t *len)
         *data = ZN_FLOCK_TAB[seg].data;
         *len = ZN_FLOCK_TAB[seg].len;
         return 0;
+    case FM_SHOT_ICE:                                 /* (Crawl, Frozen Lake: the ice's cracks; the keep's bell) */
+        if (seg < 0 || seg >= ZN_ICE_N)
+            return -1;
+        *data = ZN_ICE_TAB[seg].data;
+        *len = ZN_ICE_TAB[seg].len;
+        return 0;
+    case FM_SHOT_TOLL:
+        if (seg < 0 || seg >= ZN_TOLL_N)
+            return -1;
+        *data = ZN_TOLL_TAB[seg].data;
+        *len = ZN_TOLL_TAB[seg].len;
+        return 0;
     case FM_SHOT_OWL:                                 /* (two recordings: one and two calls) */
         if (seg == 0) {
             *data = ZN_OWL_TAB[0].data;
@@ -227,7 +239,7 @@ static int shot_seg(int set, int seg, const uint8_t **data, int32_t *len)
 int fm_shot_count(int set)
 {
     return set == FM_SHOT_FROG ? ZN_FROG_N : set == FM_SHOT_BIRD ? ZN_BIRD_N : set == FM_SHOT_KNOCK ? ZN_KNOCK_N
-         : set == FM_SHOT_OWL ? 1 + ZN_OWL2_N : set == FM_SHOT_CROW ? ZN_CROW_N + ZN_ROOK_N : set == FM_SHOT_FLOCK ? ZN_FLOCK_N : 0;
+         : set == FM_SHOT_OWL ? 1 + ZN_OWL2_N : set == FM_SHOT_CROW ? ZN_CROW_N + ZN_ROOK_N : set == FM_SHOT_FLOCK ? ZN_FLOCK_N : set == FM_SHOT_ICE ? ZN_ICE_N : set == FM_SHOT_TOLL ? ZN_TOLL_N : 0;
 }
 int fm_shot_ms(int set, int seg)
 {

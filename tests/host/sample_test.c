@@ -14,9 +14,11 @@ void fm_midi_out(uint32_t st, uint32_t d1, uint32_t d2) { (void)st; (void)d1; (v
 #define SR 44100
 #define N (3 * SR / 256 * 256)
 #define ROOT (-900.0f)                             /* C4, the sample's root, in cents from A4 */
+#define TS ((int)SMP_N - 1)                        /* the sample under test: M-SOFT, smooth and tonal, the last (the host's
+                                                    * own, out of the FM-1 image: crawl_samples.py) */
 static int32_t blk[2 * 256];
 static float a_l[N], b_l[N], e_l[N];
-static float *ref;                                 /* sample 0, decoded */
+static float *ref;                                 /* the sample under test, decoded */
 static int ref_n;
 
 static void render(float *dst, int n)
@@ -90,6 +92,9 @@ static void start(int smp, int st, int len, int rev)
 {
     fm_init();
     fm_set(P_REVERB, 0);
+    fm_set(P_LOWCUT, fm_param_info(P_LOWCUT)->lo);      /* (the output's own cuts out of the way: a sample with its
+                                                     * energy low, as the ice's groan, would lose it to the low cut) */
+    fm_set(P_HIGHCUT, fm_param_info(P_HIGHCUT)->hi);
     fm_part_patch(1, FM_ENG_SAMPLE + smp);
     fm_part_knobs(1, st, len, rev, 0);
     fm_part_release(1, 300);
@@ -100,15 +105,15 @@ int main(void)
     int i;
     double fm_level, v, c, c2;
 
-    {                                              /* sample 0 as the firmware decodes it */
+    {                                              /* the sample as the firmware decodes it */
         int32_t pred = 0, idx = 0;
-        ref_n = (int)SMP_TAB[0].n;
+        ref_n = (int)SMP_TAB[TS].n;
         ref = malloc(sizeof *ref * (size_t)ref_n);
         for (i = 0; i < ref_n; i++)
-            ref[i] = (float)ima_nib((SMP_TAB[0].data[i >> 1] >> (4 * (i & 1))) & 15u, &pred, &idx) / 32768.0f;
-        printf("  sample 0: %s, %d samples (%.2f s), root %d\n", SMP_TAB[0].name, ref_n, ref_n / 22050.0, SMP_TAB[0].root16 / 16);
+            ref[i] = (float)ima_nib((SMP_TAB[TS].data[i >> 1] >> (4 * (i & 1))) & 15u, &pred, &idx) / 32768.0f;
+        printf("  sample %d: %s, %d samples (%.2f s), root %d\n", TS, SMP_TAB[TS].name, ref_n, ref_n / 22050.0, SMP_TAB[TS].root16 / 16);
         for (i = 0; i * 256 < ref_n; i++)          /* the seek index against a decode from the beginning */
-            if (i == 0 && (SMP_TAB[0].ipred[0] != 0 || SMP_TAB[0].iidx[0] != 0))
+            if (i == 0 && (SMP_TAB[TS].ipred[0] != 0 || SMP_TAB[TS].iidx[0] != 0))
                 break;
         CHECK("the seek index starts at predictor 0, step index 0", i * 256 >= ref_n);
     }
@@ -116,13 +121,16 @@ int main(void)
     /* for scale: an FM pad on the same part */
     fm_init();
     fm_set(P_REVERB, 0);
+    fm_set(P_LOWCUT, fm_param_info(P_LOWCUT)->lo);      /* (the output's own cuts out of the way: a sample with its
+                                                     * energy low, as the ice's groan, would lose it to the low cut) */
+    fm_set(P_HIGHCUT, fm_param_info(P_HIGHCUT)->hi);
     fm_part_patch(1, ZN_SOFT_PAD);
     fm_voice(FM_VOICE_ID, 1, -1200.0f, 100, 64, 0);
     render(a_l, N);
     fm_level = rms(a_l, SR, 2 * SR);
 
     /* at the root: as recorded (22050 Hz: half a sample an output sample) */
-    start(0, 0, 127, 0);
+    start(TS, 0, 127, 0);
     fm_voice(FM_VOICE_ID, 1, ROOT, 100, 64, 0);
     render(a_l, N);
     expect(e_l, 0.0, 0.5, SR);
@@ -135,7 +143,7 @@ int main(void)
     CHECK("... the loop goes on: still sounding after its length (1.5 s)", rms(a_l, 2 * SR, N) > rms(a_l, 0, SR) * 0.3);
 
     /* an octave down: half the speed; an octave up: twice */
-    start(0, 0, 127, 0);
+    start(TS, 0, 127, 0);
     fm_voice(FM_VOICE_ID, 1, ROOT - 1200.0f, 100, 64, 0);
     render(b_l, N);
     expect(e_l, 0.0, 0.25, SR);
@@ -144,7 +152,7 @@ int main(void)
     c2 = corr(b_l, e_l, 2048, SR - 4096);
     printf("  an octave down: correlation with the sample at half speed %.3f, at full speed %.3f\n", c, c2);
     CHECK("an octave under the root: at half the speed", c > 0.95 && c2 < 0.5);
-    start(0, 0, 127, 0);
+    start(TS, 0, 127, 0);
     fm_voice(FM_VOICE_ID, 1, ROOT + 1200.0f, 100, 64, 0);
     render(b_l, N);
     expect(e_l, 0.0, 1.0, SR / 2);
@@ -152,7 +160,7 @@ int main(void)
     CHECK("an octave over the root: at twice the speed", c > 0.95);
 
     /* START: the loop begins there; REVERSE: from the loop's end backward */
-    start(0, 64, 127, 0);
+    start(TS, 64, 127, 0);
     fm_voice(FM_VOICE_ID, 1, ROOT, 100, 64, 0);
     render(b_l, N);
     expect(e_l, (double)(ref_n * 64 / 128), 0.5, SR / 2);
@@ -161,7 +169,7 @@ int main(void)
     c2 = corr(b_l, e_l, 2048, SR / 2 - 4096);
     printf("  START 64: correlation with the sample from its middle %.3f, from its beginning %.3f\n", c, c2);
     CHECK("START 64: the loop begins at the sample's middle", c > 0.95 && c2 < 0.5);
-    start(0, 0, 127, 1);
+    start(TS, 0, 127, 1);
     fm_voice(FM_VOICE_ID, 1, ROOT, 100, 64, 0);
     render(b_l, N);
     expect(e_l, (double)(ref_n - 1), -0.5, SR);
@@ -175,7 +183,7 @@ int main(void)
     {
         uint32_t len = 1102u + ((uint32_t)ref_n - 1102u) * (40u * 40u) / 16129u, xf = len / 4u < 2205u ? len / 4u : 2205u;
         int per = (int)((len - xf) * 2u);
-        start(0, 0, 40, 0);
+        start(TS, 0, 40, 0);
         fm_voice(FM_VOICE_ID, 1, ROOT, 100, 64, 0);
         render(a_l, N);
         c = corr(a_l + per, a_l, SR, SR / 2);      /* (a period on: the same again) */
@@ -191,7 +199,7 @@ int main(void)
     }
 
     /* LENGTH turned while it plays: the next pass takes it, nothing steps */
-    start(0, 0, 40, 0);
+    start(TS, 0, 40, 0);
     fm_voice(FM_VOICE_ID, 1, ROOT, 100, 64, 0);
     render(a_l, SR / 256 * 256);
     v = step_max(a_l, SR / 4, SR / 256 * 256);
@@ -208,7 +216,7 @@ int main(void)
     CHECK("a part with no sample (one past the last): silent", rms(a_l, 0, N) < 1e-9);
 
     /* the release: let go, it dies away and the voice is free */
-    start(0, 0, 127, 0);
+    start(TS, 0, 127, 0);
     fm_voice(FM_VOICE_ID, 1, ROOT, 100, 64, 0);
     render(NULL, SR / 256 * 256);
     CHECK("held: one voice", fm_nvoices == 1);
@@ -218,7 +226,7 @@ int main(void)
     CHECK("... not cut off: still there 100 ms on", rms(a_l, 4096, 4096 + 2048) > 1e-5);
 
     /* the slots: FM_NSAMPLE notes at once, more go over the oldest; PHYS's slots are its own; an FM note beside */
-    start(0, 0, 127, 0);
+    start(TS, 0, 127, 0);
     fm_part_patch(2, FM_ENG_PHYS + 0);
     fm_part_knobs(2, 35, 127, 0, 80);
     fm_part_patch(3, ZN_SOFT_PAD);
@@ -262,7 +270,7 @@ int main(void)
             fm_init();
             fm_set(P_REVERB, 50);
             fm_set(P_REV_SIZE, 90);
-            fm_part_patch(1, FM_ENG_SAMPLE + 0);
+            fm_part_patch(1, FM_ENG_SAMPLE + TS);
             fm_part_attack(1, 300);
             fm_part_release(1, 1500);
             for (t = 0; t < periods; t++) {

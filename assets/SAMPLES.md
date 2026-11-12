@@ -8,10 +8,13 @@ The SAMPLE source (`firmware/src/dsp/samplefx.c`) plays the samples of `firmware
 
 | No. | Name | File | Source | Author | License | Changed |
 | --- | --- | --- | --- | --- | --- | --- |
-| 0 | M-SOFT | `assets/samples/m-soft.wav` | GR!MM v2.0.2 factory sample `assets/samples/M-Soft.wav`, https://github.com/GRiMMBIENT/grimm/blob/v2.0.2/assets/samples/M-Soft.wav (commit `b519acb`) | GR!MM, Copyright (C) 2026 GR!MM | CC0 1.0 Universal (`LICENSES/CC0-1.0.txt`; stated in GR!MM's `LICENSING.md`, "The factory samples") | Its first 1.5 s, mixed to mono, 16 bit, at its own 48 kHz. The tool then resamples to 22050 Hz, normalizes and codes it as IMA ADPCM (16537 B) |
+| 0 | GROAN | `assets/samples/ice-groan.wav` | "rumbling_ice", https://freesound.org/s/847807/ (sounds from ice on a lake) | aerror | CC0 1.0 Universal (`LICENSES/CC0-1.0.txt`; the Freesound page, checked 2026-11-11) | 1.6 s from 391.0 s of the recording (a groan, its fundamental about 60 Hz), mono, 22050 Hz, 16 bit, high-passed at 30 Hz and low-passed at 1.2 kHz (the recording's own hiss), a 10 ms fade in and a 150 ms fade out: `ffmpeg -ss 391.0 -t 1.6 -i 847807_2472895-hq.mp3 -ac 1 -ar 22050 -sample_fmt s16 -af highpass=f=30,lowpass=f=1200,afade=t=in:d=0.01,afade=t=out:st=1.45:d=0.15 ice-groan.wav`. The tool normalizes and codes it as IMA ADPCM (17640 B + 414 B of seek index) |
 
-M-SOFT is here to prove the SAMPLE source and its tool in M2. The samples Crawl ships with are chosen in M3, with the
-scenes.
+| 1 | M-SOFT (the host only) | `assets/samples/m-soft.wav` | GR!MM v2.0.2 factory sample `assets/samples/M-Soft.wav`, https://github.com/GRiMMBIENT/grimm/blob/v2.0.2/assets/samples/M-Soft.wav (commit `b519acb`) | GR!MM, Copyright (C) 2026 GR!MM | CC0 1.0 Universal (`LICENSES/CC0-1.0.txt`; stated in GR!MM's `LICENSING.md`, "The factory samples") | Its first 1.5 s, mixed to mono, 16 bit, at its own 48 kHz. The tool then resamples to 22050 Hz, normalizes and codes it as IMA ADPCM (16537 B). In the simulator, the browser build and the tests (`FM_HOST`), not in the FM-1 image |
+
+GROAN is Frozen Lake's ice (M3, 2026-11-11): the scene plays it as a tape loop pitched to the chord's root, the first
+use of the SAMPLE source by a scene. M-SOFT proved the source and its tool in M2 and is still what `sample_test`
+measures the source with (smooth and tonal, as its checks assume); it left the FM-1 image with Frozen Lake.
 
 ## The scenes' recorded textures
 
@@ -24,6 +27,8 @@ logged in `assets/sounds/README.md` with its source, author and license (CC0 onl
 | Forest Ruins | the crows (four calls) | `assets/sounds/crow-741366-preview.mp3` | https://freesound.org/s/741366/ | Mish7913 | CC0 1.0 |
 | Forest Ruins | a second crow, a rook (three calls) | `assets/sounds/rook-556221-preview.mp3` | https://freesound.org/s/556221/ | Walking.With.Microphones | CC0 1.0 |
 | Forest Ruins | the flock taking off (one burst) | `assets/sounds/rooks-553111-preview.mp3` | https://freesound.org/s/553111/ | HighPeakEmma | CC0 1.0 |
+| Frozen Lake | the ice cracking (four cracks) | `assets/sounds/ice-737896-preview.mp3` | https://freesound.org/s/737896/ | Vrymaa | CC0 1.0 |
+| Frozen Lake | the keep's bell (one stroke, far) | `assets/sounds/keepbell-240586-preview.mp3` | https://freesound.org/s/240586/ | blaukreuz | CC0 1.0 |
 
 ## Adding a sample
 

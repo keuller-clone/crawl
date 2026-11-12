@@ -17,7 +17,10 @@ are Freesound's high-quality previews.
 | `crow-741366-preview.mp3` | "Hooded Crow: Cawing", Mish7913, https://freesound.org/s/741366/ | Forest Ruins: the crows. Three caws and a pair, high-pass 300 Hz, 11025 Hz one-shots |
 | `rook-556221-preview.mp3` | "Rook (Corvus frugilegus)", Walking.With.Microphones, https://freesound.org/s/556221/ | Forest Ruins: a second crow. Three calls, high-pass 300 Hz |
 | `rooks-553111-preview.mp3` | "Rooks in the trees - winter", HighPeakEmma, https://freesound.org/s/553111/ | Forest Ruins: the flock taking off (a storm). One burst, 47.95-50.2 s, high-pass 400 Hz |
+| `ice-737896-preview.mp3` | "Ice - Lake fractures", Vrymaa, https://freesound.org/s/737896/ | Frozen Lake: the ice cracking. Two short cracks (4.76-5.30 s, 28.42-28.90 s) and the first 0.7 s of two deflagrations (39.96 s, 52.38 s), high-pass 150 Hz, 11025 Hz one-shots |
+| `keepbell-240586-preview.mp3` | "140809_FrybgWb_BellTower_Midnight_F.wav", blaukreuz, https://freesound.org/s/240586/ | Frozen Lake: the keep's bell (Neuenburg Castle's, tolling midnight across the valley from a Freyburg vineyard). The hour's last stroke with its decay, 65.44-67.00 s, high-pass 150 Hz (the wind in the trees under it) |
 
-The three Forest Ruins recordings are Crawl's (M3, 2026-11-11), each checked CC0 on its Freesound page that day; they
-go through this same tool. A fourth, dry leaves in the wind (Stek59, https://freesound.org/s/457318/, CC0), was Air:
+The three Forest Ruins recordings and the two Frozen Lake ones are Crawl's (M3, 2026-11-11), each checked CC0 on its
+Freesound page that day; they go through this same tool. Frozen Lake's groan is a sample of the SAMPLE source instead
+(`assets/SAMPLES.md`). A fourth, dry leaves in the wind (Stek59, https://freesound.org/s/457318/, CC0), was Air:
 Leaves for a day and went: it read as hiss. The brook is no longer in the FM-1 image (bed.c: the simulator keeps it).

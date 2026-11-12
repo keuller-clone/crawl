@@ -1,0 +1,141 @@
+# Frozen Lake ("Lake" on the panel; Crawl's third scene): the ice cracks (a recording and a note each), groans (the
+# SAMPLE source, a tape loop on the chord's root), the keep's bell tolls far off, snow falls, meltwater drips; black
+# keys run a crack, groan, toll the bell, send a gust, a drip, a flurry, make the ice give; each mood its own sound
+# and picture: Grey Dawn still with the bell and a pale horizon, Thaw pools and drips and cracks thick, Whiteout
+# the storm with the reeds singing, Black Ice the night with the stars in the ice and the groans
+# (the simulator boots into Sakura; Frozen Lake is the last scene there: PRESETS one back)
+wait 800
+spin PRESET -1
+wait 1500
+expect scene 5
+expect knob0 0
+expect knob1 25
+expect knob8 0
+expect knob9 30
+expect textfit 0
+peakreset
+wavgain 24
+wav lake.wav
+wait 60000
+wavstop
+expect lkcracks >1
+expect scnotes >2
+expect drones >0
+expect nvoices <13
+expect peak_db_max -27
+expect peak_db_min -40
+shot lake.png
+# black keys: the first three a crack each (near, middle, far)
+tapkey b0
+wait 100
+expect lkcracks >2
+expect lknote 0
+tapkey b2
+wait 100
+expect lknote 2
+# the fourth: the ice groans (the SAMPLE source, part 7)
+tapkey b3
+wait 300
+expect lkgroans >0
+# the next three: the bell, one, two, three strokes; then a gust, a drip, a flurry, the ice giving
+tapkey b4
+wait 200
+expect lktolls >0
+tapkey b7
+wait 2000
+expect lkwind >40
+tapkey b8
+wait 3000
+expect lkdrips >0
+tapkey b9
+wait 6000
+expect lksnow >60
+expect lkflakes >10
+tapkey b10
+wait 2000
+expect lkgroans >1
+expect lknote 10
+# white keys: sixteen notes rising from 2; a crack runs where each lands
+tapkey w0
+wait 100
+expect lknote 2
+expect lastkey 2
+tapkey w15
+wait 100
+expect lknote 17
+# Mood (KNOB 1): Grey Dawn, Aeolian: still, the pad, the bell on its time, light snow, no pools, no night
+spin K1 1
+wait 500
+expect knob0 1
+expect scalenow 3
+expect keyoff 0
+expect knob2 0
+expect knob8 0
+expect knob9 15
+wait 8000
+expect lksnow >15
+expect lkpool <5
+expect lknight <5
+shot lake-dawn.png
+# Thaw, Min'yo three semitones up: the pools spread, drips, the monks, cracks thick, no snow, no bell
+spin K1 1
+wait 20000
+expect knob0 2
+expect scalenow 2
+expect keyoff 300
+expect knob2 1
+expect knob8 2
+expect knob9 70
+expect lkpool >70
+expect lksnow <5
+expect lkdrips >1
+shot lake-thaw.png
+# Whiteout, In (Phrygian) a fifth down: the white, the snow driven, the wind high, the reeds sung
+spin K1 1
+wait 30000
+expect knob0 3
+expect scalenow 0
+expect keyoff -500
+expect knob8 4
+expect lkwhite >85
+expect lksnow >90
+expect lkwind >25
+expect lkgusts >0
+expect lksings >0
+shot lake-whiteout.png
+# Black Ice, Hungarian minor a fifth down: the night, no snow, the groans and the whistles, one voice
+spin K1 1
+wait 25000
+expect knob0 4
+expect scalenow 6
+expect keyoff -700
+expect knob8 1
+expect lknight >90
+expect lksnow <5
+expect lkwhite <5
+expect lkgroans >2
+shot lake-night.png
+# round to Long Night again
+spin K1 1
+wait 500
+expect knob0 0
+# pixel art, and a new shore (another keep, other cracks)
+tap GLO
+wait 1500
+expect style 1
+shot lake-pixel.png
+tap GLO
+wait 1500
+tap PLAY
+wait 2500
+expect regrows 1
+shot lake-regrown.png
+# back to the instrument: everything lets go, the instrument's own scale again
+press HOME
+wait 800
+release HOME
+wait 9000
+expect mode 0
+expect nvoices 0
+expect par1 0
+expect stale 0

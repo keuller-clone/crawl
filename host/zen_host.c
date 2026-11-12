@@ -675,10 +675,48 @@ static int expect(const char *what, const char *val)
         got = fr.sunamt > 0.5f;
     else if (!strcmp(what, "frnote"))
         got = fr.key_note;
+    else if (!strcmp(what, "lkcracks"))           /* Frozen Lake: cracks run; groans; the bell's tolls; gusts; the reeds
+                                                  * sung; drips landed; the snow's touches; the fractures' whistles */
+        got = (int)lk.cracks;
+    else if (!strcmp(what, "lkgroans"))
+        got = (int)lk.groans;
+    else if (!strcmp(what, "lktolls"))
+        got = (int)lk.tolls;
+    else if (!strcmp(what, "lkgusts"))
+        got = (int)lk.gusts;
+    else if (!strcmp(what, "lksings"))
+        got = (int)lk.sings;
+    else if (!strcmp(what, "lkdrips"))
+        got = (int)lk.drips;
+    else if (!strcmp(what, "lktouches"))
+        got = (int)lk.touches;
+    else if (!strcmp(what, "lkpews"))
+        got = (int)lk.pews;
+    else if (!strcmp(what, "lkflakes")) {         /* Frozen Lake: flakes in the air; streaks; the whiteout, the night, the
+                                                  * pools, the snow and the wind, %; the note the last key played */
+        int i;
+        for (got = 0, i = 0; i < LK_NFLAKE; i++)
+            got += lk_f[i].on != 0;
+    } else if (!strcmp(what, "lkstreaks")) {
+        int i;
+        for (got = 0, i = 0; i < LK_NSQ; i++)
+            got += lk_s[i].on != 0;
+    } else if (!strcmp(what, "lkwhite"))
+        got = (int)(lk.white * 100.0f + 0.5f);
+    else if (!strcmp(what, "lknight"))
+        got = (int)(lk.nightamt * 100.0f + 0.5f);
+    else if (!strcmp(what, "lkpool"))
+        got = (int)(lk.pool * 100.0f + 0.5f);
+    else if (!strcmp(what, "lksnow"))
+        got = (int)(lk.snowf * 100.0f + 0.5f);
+    else if (!strcmp(what, "lkwind"))
+        got = (int)(lk.wind * 100.0f + 0.5f);
+    else if (!strcmp(what, "lknote"))
+        got = lk.key_note;
     else if (!strcmp(what, "textfit")) {          /* every knob's name and every value it can show, in this
                                                   * scene, fit its quarter of the bar (56 px): the ones that don't */
         const int16_t (*kt)[4] = amb.sc == &SCENE_SAKURA ? SK_KNOB : amb.sc == &SCENE_KOI ? KP_KNOB :
-                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : amb.sc == &SCENE_FOREST ? FR_KNOB : HT_KNOB;
+                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : amb.sc == &SCENE_FOREST ? FR_KNOB : amb.sc == &SCENE_LAKE ? LK_KNOB : HT_KNOB;
         int i, v;
         got = 0;
         if (!amb.sc) {

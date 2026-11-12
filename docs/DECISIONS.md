@@ -407,3 +407,59 @@ left, a fallen log, a stump, mossy stones by the path. The three hollows that si
 root), the log and the stump; what falls from above is a cone, with the stone's knock. A leaf on the path is a
 note, in the ferns a touch. The moon crosses low over the path's end and shows through the ghost trunks of the
 two farthest depths, as the dawn sun does; otherwise the sounds and the script are unchanged.
+
+## 2026-11-11 M3: Frozen Lake
+
+Built from the plan's step 4 with the open calls settled here.
+
+**The groan is the SAMPLE source's first use by a scene.** A crack cannot be synthesized and is a one-shot through
+ZEN-1's pipeline, as the crows were; a groan of ice is a pitched texture, and the brief's SAMPLE is a tape loop
+whose key is its speed. So Frozen Lake's part 7 is SAMPLE on Crawl's sample 0, a 1.6 s cut of lake ice groaning
+(its fundamental about 60 Hz, `LK_GROAN_F0`), and a groan is a note on it: the chord's root brought into 73..147 Hz
+is turned into the cents that play the sample at that speed from its root of 60 (the sample's root stays C4, as
+`sample_test` and the tool assume; the scene knows the recording's own pitch). START, LENGTH and REVERSE are rolled
+each time (a groan from the attack or from the tail, forward or backward), so no two are the same. M-SOFT, which
+proved the source in M2, left the image for it: 16.5 KB back.
+
+**The keep's bell is a recording, not PHYS.** Crypt's bell is PHYS MODAL; a bell heard across a frozen lake from a
+keep is what one CC0 recording literally is (Neuenburg Castle's hour bell tolling midnight across the Unstrut valley,
+blaukreuz), so one stroke of it is the toll, played a little slower or faster each time, and PHYS keeps to the reeds
+(one STRING note), well inside M1's two. The cost is 8.8 KB of flash.
+
+**No wind recording.** Steven's rule from Forest Ruins: recordings of wind read as hiss; the synthesized breeze is
+the air in every mood, and Whiteout is its puffs with the Air knob up. The snow is silent but for a flake on the
+near ice.
+
+**Vrymaa's "Ice - Fracture" file is not ice** (its page: pitched-down leather), so it was not used, clean as it is.
+
+**Each mood has its own event source, sources and sight.** Grey Dawn: the bell is the clock and a swell answers it,
+a flake landing on the near ice is a touch, the horizon's pale band and the keep's smoke. Thaw: the cracks come
+thick and each is a note, meltwater drips and trickles, the pools hold the sky; no snow, no bell. Whiteout: the
+gusts are the events, each singing the reeds (PHYS STRING) and driving the snow in streaks; the far shore and the
+keep go into the white in the palette (what is far mixes toward the sky by depth band, nothing redrawn); the bell
+muffled through it; GRAIN on. Black Ice: the groans (SAMPLE) and the fractures' whistles (a Rin note gliding down a
+fifteenth in a third of a second, the "pew" of lake ice); the stars and the keep's window in the ice (the far shore's
+reflection is palette: ice by day, a smear by night); no snow; the bell at midnight only. Long Night is a day in that
+order, started wherever the day is.
+
+**"Grey Morning" is "Grey Dawn" on the panel.** Twelve characters do not fit the knob bar's 11 (as "Hollow Night"
+did not); Grey Dawn is what it shows.
+
+**Frozen Lake takes project slot 0, Sakura's.** The project has four slots; in the FM-1 image Sakura is out, so slot
+0 is free there; in the simulator the two share it as Koi and Forest Ruins share slot 2 (the saved mood and tweaks
+are read by whichever enters; the scripts do not switch between them with saved state). When the ZEN-1 scenes go,
+the four Crawl scenes own slots 0 to 3.
+
+**The ice's haze bands run the other way from the trees'.** Forest Ruins' depth band 0 is the haze and 3 is near; the
+ice follows that, and the first picture had it inverted (the near ice hazy, the far ice clear, the keep's reflection
+a pale block by day): the reflection's entries are now one a depth band, so by day it is the ice there at every
+depth.
+
+**The scene list grew again, and the mood render scripts count too.** `crypt_moods.zen` was not given its extra
+click when Forest Ruins came in, so it had been rendering Forest Ruins under Crypt's names: now every script that
+steps round the list from Sakura is in `docs/PROGRESS.md`'s list, the render tools included.
+
+**The composition was not confirmed first.** Steven asked for one round on the view before the moods were built;
+the session was not interactive, so the picture went ahead with the moods on it, built so that a change of view
+costs the layout and the background alone (the cracks, snow, pools, reflections, whiteout and night are drawn over
+it or live in the palette).
