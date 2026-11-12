@@ -824,7 +824,7 @@ static void lk_look(float dt, int at_once)
         u = fm_clampf((f - (float)si - 0.7f) * (1.0f / 0.3f), 0.0f, 1.0f);
         u = u * u * (3.0f - 2.0f * u);
         a = &LK_MOOD[LK_LN[si]];
-        b = &LK_MOOD[LK_LN[(si + 1) & 3]];
+        b = &LK_MOOD[LK_LN[sc_long_next(si)]];
         cd_light(a->scale);                           /* (taken when the notes rest, within a minute) */
     }
     lk_char(u < 0.5f ? a : b);
@@ -900,7 +900,7 @@ SC_SMALL static void lk_enter(uint32_t seed, int16_t *kv)
     lk.seed = seed | 1u;
     sc_seed(lk.seed * 2654435761u + 13u);
     lk_layout();
-    lk.phase = (float)(seed % 1000u) * 0.001f;        /* (Long Night: wherever the day is) */
+    lk.phase = sc_long_begin((float)(seed % 1000u) * 0.001f);   /* (Long Night: wherever the day is) */
     lk.pal_lv = lk.air_sent = lk.trick_sent = lk.sing_sent = -1;
     lk.vowel_sent = -100;
     lk.gnext = 6.0f + 10.0f * sc_frand();
@@ -965,9 +965,7 @@ static void lk_step(uint32_t dt_ms)
     lk.t += dt;
     lk.ms += dt_ms;
     if (lk_long()) {                                  /* Long Night: the day goes round */
-        lk.phase += dt * (1.0f / 1800.0f);
-        if (lk.phase >= 1.0f) {
-            lk.phase -= 1.0f;
+        if (sc_long_step(&lk.phase, dt)) {
             lk.nights++;
             cd_dawn();
         }

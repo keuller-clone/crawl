@@ -98,7 +98,7 @@ void fm_param_text(int p, int v, char *b)
 
 /* ----------------------------------------------------------- commands --- */
 enum { C_SET, C_KEY, C_NOTE, C_ORN, C_BEND, C_PANIC, C_PATCH, C_VOICE, C_VOICE_OFF, C_PART, C_GLIDE, C_BED, C_BED_MOD, C_BED_STYLE,
-       C_VOICE_ALL_OFF, C_TAPE, C_SCENE_GAIN, C_FROG, C_DEPTH, C_DROP };
+       C_VOICE_ALL_OFF, C_TAPE, C_SCENE_GAIN, C_FROG, C_DEPTH, C_DROP, C_VOICE_PASS };
 typedef struct {
     uint8_t c, a;
     int16_t b;
@@ -186,6 +186,7 @@ void fm_bed(int which, int pct) { post(C_BED, which, pct, 0.0f); }
 void fm_bed_mod(int which, int pct) { post(C_BED_MOD, which, pct, 0.0f); }
 void fm_bed_style(int which, int style) { post(C_BED_STYLE, which, style, 0.0f); }
 void fm_voice_all_off(void) { post(C_VOICE_ALL_OFF, 0, 0, 0.0f); }
+void fm_voice_pass(void) { post(C_VOICE_PASS, 0, 0, 0.0f); }
 void fm_tape(int pct) { post(C_TAPE, 0, pct < 0 ? 0 : pct > 100 ? 100 : pct, 0.0f); }
 void fm_tape_knobs(int wow, int sat, int tone, int hiss)   /* main loop: the tape's four, 0..127 (tapefx.c) */
 {
@@ -287,7 +288,14 @@ typedef struct {
                                                    * REVERSE) */
     float att;                                    /* ... the attack: a block's step towards full level (1: at once) */
 } part_t;
-static part_t parts[FM_NPART];
+/* Crawl: parts FM_NPART + 1 .. are the scene's parts as they were when it was passed from (C_VOICE_PASS): its
+ * notes ring out on them while the next scene gives parts 1 .. its own patches */
+#define FM_NPARTS (2 * FM_NPART)
+#define FM_PASSED_ID 256                          /* a passed note's id: no fm_voice id, so nothing re-plucks it */
+#define FM_PASS_HOLD_S 3.0f                       /* a kept part's held notes (the drone) hold this long after a pass,
+                                                   * then let go: the next scene's first breath has come in under
+                                                   * them (let go at once, the level dipped 15 dB for two seconds) */
+static part_t parts[FM_NPARTS];
 #define patch (parts[0].pat)                     /* the instrument's patch (P_VOICE) */
 static const int32_t DT0[6] = {0, 0, 0, 0, 0, 0};
 
@@ -733,6 +741,14 @@ int fm_voice_held(int id)
     return 0;
 }
 
+int fm_voices_passed(void)
+{
+    int i, n = 0;
+    for (i = 0; i < FM_NVOICE; i++)
+        n += vc[i].live && vc[i].part >= FM_NPART;
+    return n;
+}
+
 static void all_off(void)
 {
     int i;
@@ -925,7 +941,7 @@ void fm_init(void)
         hp_s[i] = lp_s1[i] = lp_s2[i] = warm_s[i] = 0.0f;
     fm_peak = 0.0f;
     fm_nvoices = 0;
-    for (i = 0; i < FM_NPART; i++) {
+    for (i = 0; i < FM_NPARTS; i++) {
         parts[i].level = 1.0f;
         parts[i].eng = ENG_FM, parts[i].vty = 0, parts[i].att = 1.0f;
         parts[i].kn[0] = 64, parts[i].kn[1] = 12, parts[i].kn[2] = 64, parts[i].kn[3] = 0;
@@ -1021,6 +1037,26 @@ static void drain(void)
             bed.drip = 0;                          /* and a shower's drips (the scene is left) */
             break;
         }
+        case C_VOICE_PASS: {                       /* Crawl: the scene is passed from: its notes onto copies of
+                                                    * their parts, let go there (their own patch, level and release
+                                                    * to the end); the recordings play out */
+            int i;
+            for (i = 1; i < FM_NPART; i++) {
+                parts[FM_NPART + i] = parts[i];
+                parts[FM_NPART + i].keep = 0;
+            }
+            for (i = 0; i < FM_NVOICE; i++)
+                if (vc[i].live && vc[i].id >= FM_VOICE_ID && vc[i].part >= 1 && vc[i].part < FM_NPART) {
+                    if (vc[i].down && parts[vc[i].part].keep)
+                        vc[i].dur = (int32_t)(FM_PASS_HOLD_S * FM_SR);
+                    else
+                        release(i);
+                    vc[i].part = (uint8_t)(vc[i].part + FM_NPART);
+                    vc[i].id = FM_PASSED_ID;
+                }
+            bed.drip = 0;
+            break;
+        }
         case C_PATCH:
             if (patch_seen != patch_gen) {
                 patch_seen = patch_gen;
@@ -1078,7 +1114,7 @@ static void controls_block(void)
     } else {
         trill_left = 0.0f;
     }
-    for (i = 0; i < FM_NPART; i++) {
+    for (i = 0; i < FM_NPARTS; i++) {
         parts[i].lfo_v = fm6_lfo_sample(&parts[i].lfo);
         parts[i].lfo_d = fm6_lfo_delay(&parts[i].lfo);
     }

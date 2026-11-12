@@ -1,0 +1,57 @@
+# Long Night across the scenes: one long render to listen to across two handovers, and the other two handovers
+# as short files; a picture on either side of each (not a test). From Crypt's door: night.wav runs from two minutes
+# before Crypt gives way to Night Sky, through Night Sky's whole half-hour round, to two minutes into Forest Ruins
+# (34 minutes; the handovers are at 1:59.8 and 31:59.8). Then four minutes round each of the other two:
+# night-ruins-lake.wav and night-lake-crypt.wav, the handover at 1:59.8 of each. The files are 24 dB louder than the
+# simulator's output (wavgain); the peak check is on the output itself.
+#   tools\docker_run.ps1 build/host/crawl_host tools/night.zen build/host
+wait 800
+wavgain 24
+spin PRESET 1
+wait 150
+spin PRESET 1
+wait 150
+spin PRESET 1
+wait 1500
+expect scene 3
+expect night 1
+nightleft 120000
+peakreset
+wav night.wav
+nightleft 6000
+shot night-crypt-before.png
+wait 16000
+expect passes 1
+shot night-sky-after.png
+nightleft 6000
+shot night-sky-before.png
+wait 16000
+expect passes 2
+shot night-ruins-after.png
+wait 110000
+wavstop
+expect peak_db_max -27
+nightleft 120000
+peakreset
+wav night-ruins-lake.wav
+nightleft 6000
+shot night-ruins-before.png
+wait 16000
+expect passes 3
+shot night-lake-after.png
+wait 110000
+wavstop
+expect peak_db_max -27
+nightleft 120000
+peakreset
+wav night-lake-crypt.wav
+nightleft 6000
+shot night-lake-before.png
+wait 16000
+expect passes 4
+shot night-crypt-after.png
+wait 110000
+wavstop
+expect peak_db_max -27
+expect showing 3
+expect guest 0

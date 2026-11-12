@@ -870,9 +870,50 @@ static struct {
     int8_t pre_to;                      /* PRESETS: the scene chosen, not yet switched to (-1: none) */
     uint32_t pre_at, pre_quiet;         /* its last click; PRESETS ignored until (a scene just loaded) */
     int16_t kv[SC_NKNOB];               /* the scene's knobs (written back to the project after each turn) */
+    uint8_t guest;                      /* the night passed into this scene (amb.at): proj.scene is still its door */
+    uint8_t at;
+    uint8_t pass;                       /* the night's fade to dark is on its way: at dark, the next scene */
+    uint8_t fade_slow;                  /* the fade under way is the night's (AMB_PASS_*), by amb.fade_f */
+    float fade_f;                       /* 0 dark .. 1 */
+    uint32_t passes;                    /* (the host's tests count them) */
 } amb;
 
-static int amb_index(void) { return proj.scene % NSCENES; }
+/* Long Night across the scenes (ZEN-1's Natural, carried over; docs/DECISIONS.md, "M3: Long Night across the
+ * scenes"): one night that passes from scene to scene. A scene's mood 0 is its own long form, a round through its
+ * four moods, and the door: while it plays, the night holds the scene for one round and then passes to the next
+ * row's scene, which starts its round at its first quarter. The order of the scenes and the minutes each holds (its
+ * round's length while the night is in it) are this table.
+ *
+ * A pass: the picture fades to dark over AMB_PASS_OUT_MS, reaching it just before the round ends; in the dark the
+ * old scene is not left but passed from (cd_pass: its notes ring out, the echo and the reverb go on) and the next is
+ * entered; the picture fades back over AMB_PASS_IN_MS. The scene passed into is a guest: proj.scene stays the door
+ * (the next power-on's scene), the guest's own saved mood is left alone, nothing is saved, the sleep timer and the
+ * knobs' page go on. Turning the Mood in a guest makes it the player's scene. The Key page's Drift at Off holds the
+ * night in its scene (its round alone, for good) */
+typedef struct {
+    const scene_t *sc;
+    uint8_t min;                        /* the minutes it holds: one round of its own long form */
+} amb_night_t;
+static const amb_night_t AMB_NIGHT[] = {
+    {&SCENE_CRYPT, 30},                 /* Vigil, Procession, Embers, Sealed */
+    {&SCENE_SKY, 30},                   /* Dusk, Cold Clear, the midnight, Deep Night */
+    {&SCENE_FOREST, 30},                /* Dawn Mist, Overgrown, Storm, Owl Moon */
+    {&SCENE_LAKE, 30},                  /* Grey Dawn, Thaw, Whiteout, Black Ice */
+};
+#define AMB_NNIGHT ((int)(sizeof AMB_NIGHT / sizeof AMB_NIGHT[0]))
+#define AMB_PASS_OUT_MS 4000u
+#define AMB_PASS_IN_MS 4000u
+#define AMB_PASS_EARLY_MS 200u                  /* dark this long before the round's end (the scene's own dawn) */
+static int amb_night_row(const scene_t *sc)     /* its row of the night, or -1 */
+{
+    int i;
+    for (i = 0; i < AMB_NNIGHT; i++)
+        if (AMB_NIGHT[i].sc == sc)
+            return i;
+    return -1;
+}
+
+static int amb_index(void) { return (amb.guest ? amb.at : proj.scene) % NSCENES; }   /* the scene on the screen */
 static int amb_slot(void) { return SCENES[amb_index()]->slot & 3; }   /* the scene's own place in the project */
 
 /* a scene's panel lights (no flash on the keys): the buttons with a use dim (FX, SEL, ENV, SEQ, GLO, PLAY, SAVE, HOME,
@@ -925,7 +966,8 @@ static int amb_tweaked(int m) { return (proj.tweak[amb_slot()] >> m & 1u) != 0; 
 static void amb_kv_store(void)                     /* the scene's mood, and its tweaks if any, into the project */
 {
     int i = amb_slot(), m = amb_mood(), j;
-    proj.mood[i] = (uint8_t)m;
+    if (!amb.guest)                                /* (a guest's own saved mood is left alone) */
+        proj.mood[i] = (uint8_t)m;
     if (amb_tweaked(m))
         for (j = 0; j < 16; j++)
             proj.mk[i][m][j] = (uint8_t)(amb.kv[j] < 0 ? 0 : amb.kv[j] > 255 ? 255 : amb.kv[j]);
@@ -1023,34 +1065,104 @@ static void amb_knob_text(int i, char *n, char *v) /* a knob's name and value, t
 #define AMB_SCENE_GAIN 356                      /* the scenes +11 dB over the instrument (as loud at
                                                 * 75 % MASTER as they were at full: the MASTER knob is squared, 0.75^2
                                                 * = -5 dB; it was +6 dB) */
-static void amb_enter(void)
+/* a scene starts. pass: the night passing into it (amb_pass): it is a guest in its Long Night from the round's
+ * beginning, and the sleep timer, the knobs' page and the last touch are as they were */
+static void amb_start(int pass)
 {
+    int row;
     fm_scene_gain(AMB_SCENE_GAIN);
     r8_dark(0);                                    /* (a scene that wants a dark curve asks in its enter) */
     SC_PT_TAGS("");                                /* (its parts: the scene names them in its draw) */
+    if (!pass)
+        amb.guest = 0;
     amb.sc = SCENES[amb_index()];
     r8_set_style(proj.style);
-    r8_fade = r8_sleep = 256;
+    r8_fade = 256;
     amb.fade_dir = 0;
-    amb.sleep = amb.asleep = 0;
-    amb.sleep_f = 1.0f;
+    amb.pass = amb.fade_slow = 0;
+    if (!pass) {
+        r8_sleep = 256;
+        amb.sleep = amb.asleep = 0;
+        amb.sleep_f = 1.0f;
+        amb.page = 0;
+    }
     amb.seed = amb_new_seed();
-    amb.page = 0;
     amb.pre_to = -1;                               /* (no scene waiting to be switched to) */
+    row = amb_night_row(amb.sc);
+    sc_long_at = pass ? 0.0f : -1.0f;              /* (its long form: from its beginning, or where the scene has it) */
+    sc_long_s = row >= 0 ? (float)AMB_NIGHT[row].min * 60.0f : 1800.0f;
+    sc_long_ends = (uint8_t)(row >= 0 && cd_drift());
     {
         int i = amb_slot();
         amb.reset_m = -1;
-        amb_mood_kv(proj.mood[i] < amb.sc->nmood ? proj.mood[i] : 0, amb.kv);   /* (its mood: the player's, or as made) */
+        amb_mood_kv(!pass && proj.mood[i] < amb.sc->nmood ? proj.mood[i] : 0, amb.kv);   /* (its mood: the player's,
+                                                    * or as made) */
         proj.sound[i] = amb.sc->sound;
         amb_kv_store();
         amb.sc->enter(amb.seed, amb.kv);
     }
     amb.sc->background();
     amb.sc->step(0);                               /* the palette, before the first frame */
-    amb.last_ms = amb.t_sec = amb.act_t = plat_ms();
+    amb.last_ms = amb.t_sec = plat_ms();
     amb.frames = amb.draw_us = amb.blit_us = 0;
-    amb.touched = -1;
-    amb.touch_until = 0;
+    if (!pass) {
+        amb.act_t = plat_ms();
+        amb.touched = -1;
+        amb.touch_until = 0;
+    }
+}
+static void amb_enter(void) { amb_start(0); }
+
+/* the night is passing: the scene on the screen is one of its rows, in its Long Night, and Drift is not Off */
+static int amb_night(void)
+{
+    return amb.sc && amb_night_row(amb.sc) >= 0 && amb_mood() == SC_MOOD_NATURAL && cd_drift() && sc_long_at >= 0.0f;
+}
+
+/* in the dark: from this scene to the next row's (see AMB_NIGHT) */
+static void amb_pass(void)
+{
+    int row = amb_night_row(amb.sc), i, b;
+    const scene_t *to;
+    if (row < 0)
+        return;
+    to = AMB_NIGHT[(row + 1) % AMB_NNIGHT].sc;
+    for (i = 0; i < NSCENES && SCENES[i] != to; i++)
+        ;
+    if (i == NSCENES)
+        return;
+    cd_pass();                                     /* (the dawn; the notes ring out; the echo, tape and reverb go on:
+                                                    * the next scene sets its own and the engine glides there) */
+    fm_grain_freeze(0);
+    for (b = 0; b < FM_NBED; b++)
+        fm_bed(b, 0);                              /* (the next scene's own follow in the same frame: they ease) */
+    amb.at = (uint8_t)i;
+    amb.guest = (uint8_t)(i != proj.scene % NSCENES);   /* (round to its door: no guest there) */
+    amb.passes++;
+    amb_start(1);
+    r8_fade = 0;
+    amb.fade_f = 0.0f;
+    amb.fade_dir = 1;
+    amb.fade_slow = 1;
+}
+
+/* the night's clock: the scene's own round (sc_long_at). Its end near: the fade to dark, then amb_pass */
+static void amb_night_tick(void)
+{
+    sc_long_ends = (uint8_t)amb_night();           /* (the round's last quarter holds: the scene does not turn back) */
+    if (!amb_night()) {
+        if (amb.pass) {                            /* (the Mood or Drift turned in the fade: back up, staying) */
+            amb.pass = 0;
+            amb.fade_dir = 1;
+        }
+        return;
+    }
+    if (!amb.pass && (1.0f - sc_long_at) * sc_long_s * 1000.0f <= (float)(AMB_PASS_OUT_MS + AMB_PASS_EARLY_MS)) {
+        amb.pass = 1;                              /* (a new picture's fade under way becomes this one) */
+        amb.fade_f = (float)r8_fade * (1.0f / 256.0f);
+        amb.fade_dir = -1;
+        amb.fade_slow = 1;
+    }
 }
 
 static void amb_leave(void)
@@ -1071,6 +1183,8 @@ static void amb_leave(void)
     amb.sleep_f = 1.0f;
     r8_fade = r8_sleep = 256;
     amb.fade_dir = 0;
+    amb.pass = amb.fade_slow = 0;
+    amb.guest = 0;
     lcd_sync();
     ui.sig[0] = ui.sig[1] = ui.sig[2] = 0;         /* the instrument's screens redraw from scratch */
     lcd_fill(0, 0, 240, 240, K_BG);
@@ -1238,9 +1352,16 @@ static void amb_fade_tick(uint32_t dt)
 {
     if (!amb.fade_dir)
         return;
-    r8_fade += amb.fade_dir * (int32_t)(dt * 256u / AMB_FADE_MS) + amb.fade_dir;
-    if (r8_fade <= 0) {                            /* dark: the new picture, then back up */
+    if (amb.fade_slow) {                           /* the night's, seconds long: by the clock */
+        amb.fade_f += (float)amb.fade_dir * (float)dt / (float)(amb.fade_dir < 0 ? AMB_PASS_OUT_MS : AMB_PASS_IN_MS);
+        r8_fade = (int32_t)(256.0f * amb.fade_f + 0.5f);
+    } else
+        r8_fade += amb.fade_dir * (int32_t)(dt * 256u / AMB_FADE_MS) + amb.fade_dir;
+    if (r8_fade <= 0 && amb.pass) {                /* dark: the night passes to its next scene, which fades in */
+        amb_pass();
+    } else if (r8_fade <= 0) {                     /* dark: the new picture, then back up */
         r8_fade = 0;
+        amb.fade_slow = 0;
         amb.seed = amb_new_seed();
         amb.regrows++;
         amb.sc->regrow(amb.seed);
@@ -1248,6 +1369,7 @@ static void amb_fade_tick(uint32_t dt)
     } else if (r8_fade >= 256) {
         r8_fade = 256;
         amb.fade_dir = 0;
+        amb.fade_slow = 0;
     }
 }
 
@@ -1282,9 +1404,15 @@ static void amb_turn(int n, int enc, int32_t e)
 {
     if (n >= SC_NUSED)
         amb_key_turn(n - SC_NUSED, e);             /* (the Key page: lists, one a detent, round) */
-    else if (n == 0)
+    else if (n == 0) {
+        if (amb.guest) {                           /* the Mood turned in a scene the night passed into: the scene is
+                                                    * the player's choice now (the next power-on's, saved soon) */
+            proj.scene = amb.at;
+            amb.guest = 0;
+            amb.scene_save = 1;
+        }
         amb_mood_turn(e);                          /* (the Mood: one a detent, round) */
-    else {
+    } else {
         int16_t was[SC_NUSED];
         int j, moved = 0, m = amb_mood();
         for (j = 0; j < SC_NUSED; j++)
@@ -1800,6 +1928,7 @@ static void amb_frame(void)
     amb_save_tick(now, dt);
     amb_batt_tick(now);
     amb_reset_tick(now);
+    amb_night_tick();
     amb_fade_tick(dt);
     amb_sleep_tick(now);
     t0 = plat_us();

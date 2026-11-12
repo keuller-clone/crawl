@@ -197,7 +197,7 @@ Order of work:
    Settled while Crypt is tuned, then the same for the others.
 4. Forest Ruins, Frozen Lake, Night Sky, in that order, each with its CC0 textures (`assets/SAMPLES.md`).
 5. Long Night across scenes (ZEN-1's Natural, renamed). Until then each scene's first mood is its own long
-   form.
+   form. (Done 2026-11-12: each scene's first mood is the night's door and its own round a chapter of it.)
 6. ZEN-1's scenes, recordings, scales on the Key page and scenario scripts out of the tree; a new project
    magic; the splash tagline; the painted/pixel button.
 7. Tuning: a 10-minute render for each mood, listened to for loops, clipping and dead air.
@@ -475,3 +475,61 @@ Not flashed, not listened to. Reasons for its calls are in `docs/DECISIONS.md` (
   only) and is not measured on the FM-1. PHYS notes: the gong and the drum, two at most by design. The moon's stamp
   is remade up to about 25 times during a mood's 10 s phase glide (`sc_moon_stamp`, each about Hotaru's 5.9 ms on the
   FM-1): not measured.
+
+**Long Night across the scenes: on the host (2026-11-12).** Step 5. Not flashed, not listened to. Reasons for its
+calls are in `docs/DECISIONS.md` ("M3: Long Night across the scenes", and "after building and measuring").
+
+- What it is: one night that passes from scene to scene. A scene's mood 0 (its own Long Night) is the door; the
+  night holds the scene for one round of its own long form and passes to the next row of `ui.c` `AMB_NIGHT` (the
+  order and the minutes, data): Crypt, Night Sky, Forest Ruins, Frozen Lake, 30 minutes each, two hours round. The
+  scene passed into starts its round at its first quarter; a round that ends holds its last quarter (it does not
+  turn back to the first), so the joins are Sealed to Dusk, Deep Night to Dawn Mist, Owl Moon to Grey Dawn, Black
+  Ice to Vigil.
+- The handover: the picture to dark over 4 s, the scenes change 0.2 s before the round's end, the next comes up
+  over 4 s. The old scene is not left: the engine's new `fm_voice_pass` moves its sounding notes onto copies of
+  their parts, where they ring out with their own patch and release (the drone held 3 s first), recordings play
+  out, and the echo, tape and reverb go on into the next scene's settings. The key the night is in and the count
+  of dawns go with it (`cd_pass`); a pass is the dawn for the Key page's Drift.
+- What persists: the project format is unchanged. `proj.scene` stays the door (a pass saves nothing); the scene
+  passed into is a guest whose own saved mood is left alone; knobs turned there are its Long Night's tweaks;
+  turning the Mood there makes it the player's scene. The sleep timer, the knobs' page and the lights' auto-off run
+  across a pass. Drift at Off holds the night in its scene: the scene's own round for good, as before step 5.
+- What the code learned: the glue has the night (`amb_start`, `amb_pass`, `amb_night_tick`, the slow fade). The
+  scenes learn one thing, that their long form's clock and end are the glue's (`scene.h` `sc_long_begin`,
+  `sc_long_step`, `sc_long_next`: three lines each, four in Night Sky). The engine learns `fm_voice_pass`; the
+  conductor `cd_pass`. ZEN-1's scenes are not in the table and keep their Natural.
+- Scenario `tests/scenarios/night.zen`: 92 checks over three hours of simulated time. The door and what is
+  not the night (another scene, another mood, Drift Off); a whole round from Crypt back to Crypt with each scene on
+  the screen in turn, the project's scene, the sleep timer, the page and "nothing to save" checked at the passes,
+  `textfit 0` in each guest; one handover watched (the fade down, the pass, notes of the old scene still ringing
+  under the new drone, the output's peak across it over -70 dBFS, the fade up); the Mood turned in a guest kept
+  across a power-off; PRESETS in the night; the Mood turned away during the fade to dark, which stops the pass. The simulator has `nightleft MS` (run to a point in the round) and the
+  expects `showing`, `night`, `guest`, `passes`, `longat`, `passed`. `sky.zen` changed by one bound: a door never
+  starts in a round's last tenth now, so it entered Night Sky at another moment (Dusk's first star after a mood
+  change is waited 40 s for, not 12: from a quarter with every star out one goes back first).
+- Renders, from `tools/night.zen` in `build/host/`: `night.wav`, 34 minutes from two minutes before Crypt gives way
+  to Night Sky, through Night Sky's whole round, to two minutes into Forest Ruins (handovers at 1:59.8 and
+  31:59.8); `night-ruins-lake.wav` and `night-lake-crypt.wav`, four minutes round each of the other two (handover
+  at 1:59.8); a picture 6 s before and 10 s after each (`night-*-before.png`, `night-*-after.png`).
+- Measured on them (`build/tmp/wavstats.py`): peaks -31.3 to -35.1 dBFS at the output (-8.1 to -11.9 in the files at
+  wavgain 24; the scenes' own Long Night renders are -8.9 to -12.7), no 10 s stretch under -75 dB (the quietest
+  second -48.5 dB; the scenes' own -39 to -54), steady noise in 3..10 kHz 49 dB under the music in all three (the
+  scenes' own: 48 to 50).
+- The joins, measured (`build/tmp/joinstats.py`, `joinzoom.py`; file levels, 24 dB over the output). Half-second
+  levels within 3 s of each join against the 30 s before: Crypt to Sky -33.6 (before -33.0), Sky to Ruins -35.8
+  (-31.7), Ruins to Lake -36.1 (-29.8), Lake to Crypt -33.4 (-30.0); the scenes dip further on their own (-40 to
+  -44 in the same stretches). No click: the largest sample-to-sample step within 1.5 s of a join is -34 to -42 dB,
+  at or under the largest of the 27 s before it (-26 to -34); within 50 ms of the join -36 to -45. Over 6 kHz there
+  is one 50 ms burst 0.11 s after three of the four joins, -57 to -73 dB (33 dB under the level at that moment,
+  the size of the music's own bursts, -44 to -61 in the stretches before): the new scene's first sounds, not a cut.
+- Pictures looked at, either side of each handover: Crypt in Sealed (one candle, the cold shaft) then the dusk sky;
+  the deep night with the old moon then the redwoods at dawn; the path at night then the grey lake; the black ice
+  then the five candles. The night pictures are dark in the simulator, as before.
+- Build: image 537548 B (44016 B of flash free, from 45088), RAM 83784 B of 98304 (14520 B free, from 16296: the
+  engine's seven spare parts), pool unchanged. The kanji bitmaps stay. The FM-1 build's own checks pass.
+- Tests: 58 pass (the new scenario among them), `kanji` skipped, `scenario-ambient` fails as accepted. Guard clean.
+- Open: not heard. On the FM-1 nothing of this is measured: the time `enter` takes in the dark (the picture is
+  dark while it runs; the audio goes on, the old notes ringing), the CPU of the overlap (the old scene's notes and
+  the new scene's first ones at once, up to the 12 voices; seven more LFOs a block), whether the 4 s fades look
+  smooth in the panel's palette steps. PRESETS changes are as they were (cut, not passed). The 0.11 s burst is not
+  identified beyond its size. `README.md` still describes ZEN-1's Natural (M6).

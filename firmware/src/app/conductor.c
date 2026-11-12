@@ -337,6 +337,14 @@ static void cd_motif_shift(void)            /* the chord moved: one or two notes
     cd_motif_sort();
 }
 
+/* the night passing to another scene (cd_pass, below): the key and the count of dawns go on in the next scene's
+ * conductor (cd_init takes them; the first cd_tune leaves the key where it is) */
+static struct {
+    uint8_t on;
+    float key;
+    int dawns;
+} cd_keep;
+
 /* the instrument's key and scale again (leaving, or the player turning SELECT / ALGORITHM) */
 static void cd_drift_home(void)
 {
@@ -351,14 +359,15 @@ static void cd_change_mode(int m) { cd.change_mode = m < 0 ? 0 : m > 2 ? 2 : m; 
  * (Natural): from the player's own, drifting slowly as before */
 static void cd_tune(int scale, float key_off)
 {
-    int j;
+    int j, kept = cd_keep.on;
+    cd_keep.on = 0;
     cd.m_scale = scale;
     cd.m_key = key_off;
     if (scale < 0) {                          /* Natural: the key home (it drifts from there), the scale the
                                                 * light's (cd_light) */
         cd_change_mode(1);
         cd.light_now = 1;
-        if (cd.key_off != 0.0f) {
+        if (cd.key_off != 0.0f && !kept) {    /* (the night passed into this scene: its key goes on) */
             cd.key_off = 0.0f;
             cd.drone_wait = 60;
         }
@@ -428,6 +437,10 @@ static void cd_init(uint32_t seed)
     cd.chord_left_ms = 60000 + (int)(seed % 60000u);
     cd.scale_cur = proj.par[P_SCALE];
     cd.light_now = 1;                         /* (Natural: the light's scale from the start) */
+    if (cd_keep.on) {                         /* (the night passed into this scene: cd_pass) */
+        cd.key_off = cd_keep.key;
+        cd.dawns = cd_keep.dawns;
+    }
 }
 
 /* activity 0..1: from one note every five seconds or so, unhurried, up to ~3 a second (on the
@@ -873,8 +886,25 @@ static void cd_retune(void)
     cd.drone_wait = 60;
 }
 
+/* the night passes to another scene (ui.c amb_pass). It is the dawn: the key may move, by Drift. Then the conductor
+ * lets go as cd_stop does, but nothing is cut: its notes ring out on the engine's copies of their parts
+ * (fm_voice_pass) while the next scene's begin */
+static void cd_pass(void)
+{
+    cd_dawn();
+    cd_keep.on = 1;
+    cd_keep.key = cd.key_off;
+    cd_keep.dawns = cd.dawns;
+    fm_set(P_SCALE, proj.par[P_SCALE]);       /* (as cd_init finds it; the next scene's mood sets its own at once) */
+    cd.drone_on = 0;
+    fm_voice_pass();                          /* (before the drone's part is let go of: its held notes hold on a
+                                               * little under the next scene's first breath) */
+    fm_part_keep(2, 0);
+}
+
 static void cd_stop(void)
 {
+    cd_keep.on = 0;
     int i;
     cd.key_off = 0.0f;
     fm_set(P_SCALE, proj.par[P_SCALE]);       /* the instrument's scale, whatever the drift did */

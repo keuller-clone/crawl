@@ -1006,7 +1006,7 @@ static void fr_look(float dt, int at_once)
         u = fm_clampf((f - (float)si - 0.7f) * (1.0f / 0.3f), 0.0f, 1.0f);
         u = u * u * (3.0f - 2.0f * u);
         a = &FR_MOOD[FR_LN[si]];
-        b = &FR_MOOD[FR_LN[(si + 1) & 3]];
+        b = &FR_MOOD[FR_LN[sc_long_next(si)]];
         fr.dawn = si == 0 ? fm_minf(1.0f, (f - (float)si) * 1.6f) : 1.0f;
         fr.night = si == 3 ? f - 3.0f : 0.0f;
         cd_light(a->scale);                           /* (taken when the notes rest, within a minute) */
@@ -1089,7 +1089,7 @@ SC_SMALL static void fr_enter(uint32_t seed, int16_t *kv)
     fr.seed = seed | 1u;
     sc_seed(fr.seed * 2654435761u + 11u);
     fr_layout();
-    fr.phase = (float)(seed % 1000u) * 0.001f;        /* (Long Night: wherever the day is) */
+    fr.phase = sc_long_begin((float)(seed % 1000u) * 0.001f);   /* (Long Night: wherever the day is) */
     fr.night = 0.2f;
     fr.pal_lv = fr.air_sent = fr.rain_sent = fr.stream_sent = -1;
     fr.air_style = fr.air_want = -1;
@@ -1173,9 +1173,7 @@ static void fr_step(uint32_t dt_ms)
     fr.t += dt;
     fr.ms += dt_ms;
     if (fr_long()) {                                  /* Long Night: the day goes round */
-        fr.phase += dt * (1.0f / 1800.0f);
-        if (fr.phase >= 1.0f) {
-            fr.phase -= 1.0f;
+        if (sc_long_step(&fr.phase, dt)) {
             fr.nights++;
             cd_dawn();
         }

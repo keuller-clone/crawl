@@ -1114,7 +1114,7 @@ static void ns_look(float dt, int at_once)
         u = fm_clampf((f - (float)si - 0.7f) * (1.0f / 0.3f), 0.0f, 1.0f);
         u = u * u * (3.0f - 2.0f * u);
         a = &NS_MOOD[NS_LN[si]];
-        b = &NS_MOOD[NS_LN[(si + 1) & 3]];
+        b = &NS_MOOD[NS_LN[sc_long_next(si)]];
         cd_light(a->scale);                           /* (taken when the notes rest, within a minute) */
     }
     ns_char(u < 0.5f ? a : b);
@@ -1185,7 +1185,7 @@ SC_SMALL static void ns_enter(uint32_t seed, int16_t *kv)
     sc_seed(ns.seed * 2654435761u + 13u);
     ns_layout();
     m = ns_mood_now();
-    ns.phase = (float)(seed % 1000u) * 0.001f;        /* (Long Night: wherever the night is) */
+    ns.phase = sc_long_begin((float)(seed % 1000u) * 0.001f);   /* (Long Night: wherever the night is) */
     ns.night = ns_long() ? ns.phase : (float)NS_MOOD[m].night * 0.01f;
     sc_glide_at(&ns.glide, ns.night);
     ns_mood_moon(m, 0);
@@ -1266,9 +1266,7 @@ static void ns_step(uint32_t dt_ms)
     ns.ms += dt_ms;
     if (ns_long()) {                                  /* Long Night: the night goes on; at dawn, dusk again with a
                                                        * new moon of its own */
-        ns.phase += dt * (1.0f / 1800.0f);
-        if (ns.phase >= 1.0f) {
-            ns.phase -= 1.0f;
+        if (sc_long_step(&ns.phase, dt)) {
             ns.nights++;
             cd_dawn();
             sc_moon_repick(&ns.mn, 1.15f, ns.seed ^ (ns.nights * 0x9E3779B1u));
@@ -1300,7 +1298,7 @@ static void ns_step(uint32_t dt_ms)
         } else if (ns_long()) {
             if (ns.phase >= 0.5f && ns.phase < 0.75f && ns.mn.off < -0.99f) {
                 on = 1;
-                et = (ns.phase - 0.625f) * 1800.0f + NS_ECL_S * 0.5f;
+                et = (ns.phase - 0.625f) * sc_long_s + NS_ECL_S * 0.5f;
             }
         } else if (ns.ch && ns.ch->ecl) {
             ns.ecl_t += dt;

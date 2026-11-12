@@ -597,7 +597,7 @@ static void cr_look(float dt, int at_once)
         u = fm_clampf((f - (float)si - 0.7f) * (1.0f / 0.3f), 0.0f, 1.0f);
         u = u * u * (3.0f - 2.0f * u);
         a = &CR_MOOD[CR_LN[si]];
-        b = &CR_MOOD[CR_LN[(si + 1) & 3]];
+        b = &CR_MOOD[CR_LN[sc_long_next(si)]];
         want = u < 0.5f ? a->lit : b->lit;
         if (want != cr.lit_auto)                      /* (the round's own; a candle a key changed stays until then) */
             cr.lit_auto = cr.lit_want = want;
@@ -656,7 +656,7 @@ SC_SMALL static void cr_enter(uint32_t seed, int16_t *kv)
     cr.seed = seed | 1u;
     sc_seed(cr.seed * 2654435761u + 7u);
     cr_layout();
-    cr.phase = 0.2f * (float)(seed % 100u) * 0.01f;   /* (Long Night: early in its round) */
+    cr.phase = sc_long_begin(0.2f * (float)(seed % 100u) * 0.01f);   /* (Long Night: early in its round) */
     cr.lit_auto = -1;
     cr.wax_next = 9.0f;
     cr.drip_next = 4.0f;
@@ -723,9 +723,7 @@ static void cr_step(uint32_t dt_ms)
     cr.t += dt;
     cr.ms += dt_ms;
     if (CR_MOOD[cr_mood_now()].scale < 0) {           /* Long Night: the candles burn down, and are set new */
-        cr.phase += dt * (1.0f / 1800.0f);
-        if (cr.phase >= 1.0f) {
-            cr.phase -= 1.0f;
+        if (sc_long_step(&cr.phase, dt)) {
             cr.nights++;
             cd_dawn();
         }

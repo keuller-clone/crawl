@@ -875,7 +875,7 @@ static int expect(const char *what, const char *val)
     } else if (!strcmp(what, "page"))               /* the knobs' page shown (0 the scene's, Volume, Nature, 3 Music) */
         got = amb.page;
     else if (!strcmp(what, "tweaks"))             /* the scene's tweaked moods, a bit each */
-        got = proj.tweak[SCENES[proj.scene % NSCENES]->slot & 3];
+        got = proj.tweak[SCENES[amb_index()]->slot & 3];   /* (the scene on the screen: the night's guest too) */
     else if (!strcmp(what, "resetm"))             /* the mood the Mood knob is on "Reset" of, or -1 */
         got = amb.reset_m;
     else if (!strcmp(what, "notegap")) {         /* the longest stretch with no scene note since the last look, s */
@@ -934,6 +934,22 @@ static int expect(const char *what, const char *val)
         got = 0;                                   /* (nothing is kept) */
     else if (!strcmp(what, "regrows"))            /* new pictures grown in this scene (PLAY, nights) */
         got = (int)amb.regrows;
+    else if (!strcmp(what, "showing"))            /* Long Night across the scenes: the scene on the screen (SCENES[]);
+                                                   * "scene" is the project's, the night's door; the night's row + 1
+                                                   * while it is passing (0: it is not); the scene is a guest; passes
+                                                   * so far; where the scene's round is, 0..1000; the engine's notes
+                                                   * ringing out from the scene passed from */
+        got = amb_index();
+    else if (!strcmp(what, "night"))
+        got = amb_night() ? amb_night_row(amb.sc) + 1 : 0;
+    else if (!strcmp(what, "guest"))
+        got = amb.guest;
+    else if (!strcmp(what, "passes"))
+        got = (int)amb.passes;
+    else if (!strcmp(what, "longat"))
+        got = (int)(sc_long_at * 1000.0f);
+    else if (!strcmp(what, "passed"))
+        got = fm_voices_passed();
     else if (!strcmp(what, "seed16"))             /* the picture's seed, low 16 bits */
         got = (int)(amb.seed & 0xFFFFu);
     else if (!strcmp(what, "fade"))               /* the palette's brightness, 0..256 */
@@ -1042,6 +1058,12 @@ int main(int argc, char **argv)
             continue;
         if (!strcmp(cmd, "wait"))
             run_ms((uint32_t)atoi(a));
+        else if (!strcmp(cmd, "nightleft")) {    /* nightleft MS: on until the scene's long form has MS of its round
+                                                  * left (the night's clock, scene.h sc_long_at), an hour at most */
+            uint32_t n = 0;
+            while ((1.0f - sc_long_at) * sc_long_s * 1000.0f > (float)atoi(a) && n++ < 360000u)
+                run_ms(10);
+        }
         else if (!strcmp(cmd, "press") || !strcmp(cmd, "release") || !strcmp(cmd, "tap")) {
             int i = find_name(BTN_N, NB, a);
             if (i < 0) {

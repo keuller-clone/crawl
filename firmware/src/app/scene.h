@@ -115,6 +115,33 @@ static float sc_glide(sc_glide_t *g, float day, float hold, float dt)   /* the d
     return day - fm_floorf(day);
 }
 
+/* a scene's long form (its mood 0, "Long Night": a round through its own moods) keeps its clock through these,
+ * so the glue (ui.c: the night that passes from scene to scene) can say where a round starts and how long it is,
+ * and see where it is. sc_long_at: before a scene's enter, where its round is to start (0..1; < 0: the scene's own
+ * choice, it is a door); from then on, where its round is. sc_long_s: a round's length, s */
+static float sc_long_at = -1.0f, sc_long_s = 1800.0f;
+/* sc_long_ends: the round ends at its end (the night passes on to another scene there), so its last quarter does not
+ * turn back toward its first in its last 30 %, as a round that goes round does */
+static uint8_t sc_long_ends;
+static int sc_long_next(int si) { return si == 3 && sc_long_ends ? 3 : (si + 1) & 3; }   /* the quarter after si */
+static float sc_long_begin(float own)
+{
+    if (sc_long_at < 0.0f)
+        sc_long_at = own > 0.9f ? 0.9f : own;      /* (never in its last tenth: a scene just chosen stays a while) */
+    return sc_long_at;
+}
+static int sc_long_step(float *phase, float dt)    /* the round moves on; 1: it has come round */
+{
+    int round = 0;
+    *phase += dt / sc_long_s;
+    if (*phase >= 1.0f) {
+        *phase -= 1.0f;
+        round = 1;
+    }
+    sc_long_at = *phase;
+    return round;
+}
+
 /* rain falling (when rain began "all the drops seem to fall together"): each drop comes in on its
  * own, at a random moment and place; how many fall follows *amt, which eases toward the rain (want, 0..1) over ~7 s
  * and counts squared, so a few come first, then more; when it stops, the drops in the air fall on out */

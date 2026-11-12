@@ -86,7 +86,8 @@ expect keyoff 0
 expect knob2 0
 expect knob8 0
 expect knob9 5
-wait 12000
+# (from a quarter with every star out, one goes back first and comes out again: a bound any quarter meets)
+wait 40000
 expect nsband >60
 expect nsappears >0
 expect nsaurora <5

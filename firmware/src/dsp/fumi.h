@@ -93,6 +93,10 @@ void fm_part_keep(int part, int on);             /* 1: the part's held notes are
 void fm_voice(int id, int part, float cents, int vel, int pan, int dur_ms);
 void fm_voice_off(int id);
 void fm_voice_all_off(void);                     /* every scene note lets go: one command (a scene's leave) */
+int fm_voices_passed(void);                      /* (the host's tests: notes still ringing out after fm_voice_pass) */
+void fm_voice_pass(void);                        /* Crawl: every scene note lets go and rings out as it is, whatever
+                                                  * the parts are given next (the night passing to another scene):
+                                                  * the notes move onto copies of their parts; recordings play out */
 void fm_tape(int pct);                           /* how far the mix goes through the tape, 0..100 % (scenes) */
 void fm_tape_knobs(int wow, int sat, int tone, int hiss);   /* main loop: the tape's WOW, SATURATION, TONE, HISS,
                                                   * 0..127 each (GR!MM's TAPE, tapefx.c); all 0 at fm_init */

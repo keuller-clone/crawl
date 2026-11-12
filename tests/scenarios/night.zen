@@ -1,0 +1,176 @@
+# Long Night across the scenes (ZEN-1's Natural, carried over): one night that passes from scene to scene. A scene's
+# mood 0 is the door; the night holds a scene for one round of its own long form (30 minutes) and passes to the next
+# of its table (ui.c AMB_NIGHT: Crypt, Night Sky, Forest Ruins, Frozen Lake) through dark, the old scene's notes
+# ringing out under the new one's. A whole round is proved here in simulated time: two hours and a little.
+# The simulator's list: 0 Sakura, 1 Koi, 2 Hotaru, 3 Crypt, 4 Forest Ruins, 5 Frozen Lake, 6 Night Sky.
+wait 800
+expect scene 0
+# Sakura is none of the night's: its Natural is its own
+expect night 0
+# the door: Crypt, its mood Long Night (three clicks from Sakura)
+spin PRESET 1
+wait 150
+spin PRESET 1
+wait 150
+spin PRESET 1
+wait 1500
+expect scene 3
+expect showing 3
+expect knob0 0
+expect night 1
+expect guest 0
+expect passes 0
+# a door starts early in Crypt's round, never in a round's last tenth
+expect longat <901
+# the sleep timer set: 4 h, to run across every pass
+tap SEQ
+tap SEQ
+tap SEQ
+tap SEQ
+tap SEQ
+expect sleep 5
+# the knobs' page left on Volume, and a save, so that a pass can be seen to save nothing
+tap FX
+tap FX
+expect page 1
+tap SAVE
+wait 4000
+expect dirty 0
+# another mood is not the night; back to Long Night it is again; Drift at Off (the Key page, KNOB 4) holds the night
+# in its scene, Slow lets it go on
+spin ALGO 1
+expect knob0 1
+expect night 0
+wait 400
+spin ALGO -1
+expect knob0 0
+expect night 1
+wait 3500
+tap FX
+tap FX
+tap FX
+tap FX
+tap FX
+expect page 4
+spin K4 -1
+expect night 0
+spin K4 1
+expect night 1
+wait 3500
+tap FX
+tap FX
+expect page 1
+tap SAVE
+wait 4000
+expect dirty 0
+# the first pass comes when Crypt's round ends: within half an hour. Before it, nothing has moved
+wait 60000
+expect passes 0
+expect fade 256
+wait 1800000
+expect passes 1
+# Night Sky, a guest, at its round's beginning (Dusk): the project's scene is still the door, nothing is to be saved,
+# the sleep timer and the page are as they were, the picture is whole again
+expect showing 6
+expect scene 3
+expect guest 1
+expect night 2
+expect knob0 0
+expect fade 256
+expect sleep 5
+expect asleep 0
+expect page 1
+expect dirty 0
+expect longat <950
+expect nsstars >0
+expect textfit 0
+# its round is half an hour: 25 minutes on it is still here, 6 more and the night is in Forest Ruins
+wait 1500000
+expect passes 1
+wait 360000
+expect passes 2
+expect showing 4
+expect scene 3
+expect guest 1
+expect night 3
+expect textfit 0
+# a knob turned in a guest is its own Long Night's tweak (Forest Ruins' slot), and the scene still a guest
+spin SELECT 3
+expect tweaks 1
+expect guest 1
+expect scene 3
+# on to Frozen Lake
+wait 1800000
+expect passes 3
+expect showing 5
+expect guest 1
+expect night 4
+expect textfit 0
+# and round to the door: Crypt again, no guest there. A whole round of the night: two hours
+wait 1800000
+expect passes 4
+expect showing 3
+expect scene 3
+expect guest 0
+expect night 1
+expect sleep 5
+expect asleep 0
+# the handover itself, watched: Crypt's round's last seconds. The picture goes down over 4 s, the scenes change in the
+# dark, the next comes up over 4 s; notes of the old scene ring on under the new one's first drone breath, and the
+# output is never silent across it (the peak since 3 s before the dark)
+nightleft 15000
+expect passes 4
+expect fade 256
+nightleft 2000
+expect passes 4
+expect fade <250
+peakreset
+wait 2900
+expect passes 5
+expect showing 6
+expect fade <200
+expect passed >0
+expect drones >0
+expect nvoices >1
+expect peak_db_min -70
+wait 5000
+expect fade 256
+expect stale 0
+expect race 0
+# the Mood turned in a guest: the scene is the player's now (the next power-on's), and another mood ends the night
+spin ALGO 1
+expect knob0 1
+expect guest 0
+expect scene 6
+expect night 0
+wait 4000
+expect dirty 0
+reboot
+wait 800
+expect scene 6
+expect knob0 1
+expect night 0
+# back to Long Night: the night goes on from here
+spin ALGO -1
+expect knob0 0
+expect night 2
+# PRESETS during the night is the player's choice as ever: Crypt, three scenes back
+spin PRESET -1
+wait 150
+spin PRESET -1
+wait 150
+spin PRESET -1
+wait 1500
+expect scene 3
+expect showing 3
+expect guest 0
+expect night 1
+# the Mood turned away during the fade to dark stops the pass: the picture comes back and the scene stays
+nightleft 2000
+expect fade <250
+spin ALGO 1
+expect night 0
+wait 5000
+expect fade 256
+expect passes 5
+expect showing 3

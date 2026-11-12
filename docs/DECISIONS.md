@@ -599,3 +599,25 @@ the glue can say where a round starts and how long it is, and can see where it i
 two lines for it (Night Sky a third: its midnight eclipse is timed from the round's length).
 
 **ZEN-1's scenes are not in the table**, so their Natural is as it was until they go (step 6).
+
+## 2026-11-12 M3: Long Night across the scenes, after building and measuring
+
+**The old drone holds three seconds into the next scene before it lets go** (`fumi.c` `FM_PASS_HOLD_S`). With every
+note let go at the pass, the first renders dipped 12 to 16 dB for about two seconds, one to three seconds after each
+join: the old drone falls 13 dB a second and the new scene's first breath takes two seconds to come in. Now a kept
+part's held notes (the drone) hold for 3 s on their copies and then release; the lowest half-second within 3 s of a
+join is within the scenes' own breathing (below).
+
+**A round that ends does not turn back.** A scene's long form blends toward the next mood in the last 30 % of each
+quarter, and in the last quarter that is its first mood again: at the end of its round Crypt was already Vigil and
+Night Sky already Dusk, so the joins were not the ones the order was chosen for. While the night will pass on, the
+last quarter holds (`scene.h` `sc_long_ends`, `sc_long_next`; one more line in each scene, part of the same one thing
+a scene learns: its long form's clock and end are the glue's). With Drift at Off the round goes round as before.
+
+**The kanji bitmaps stay in the FM-1 image.** Step 5 cost 1072 B of flash and 1776 B of RAM (the seven spare parts);
+44 KB of flash and 14.5 KB of RAM are free, so nothing had to leave.
+
+**Not done on purpose.** PRESETS changes still go through `leave` and `enter` as before (released notes take the new
+patches, the echo is cut): the pass could carry those too, but that changes every scene change and every script that
+counts voices after one, so it is left for its own step. No name is shown at a pass: the night is for a dark room;
+HOME's status card says where it is.
