@@ -463,3 +463,77 @@ steps round the list from Sakura is in `docs/PROGRESS.md`'s list, the render too
 the session was not interactive, so the picture went ahead with the moods on it, built so that a change of view
 costs the layout and the background alone (the cracks, snow, pools, reflections, whiteout and night are drawn over
 it or live in the palette).
+
+## 2026-11-12 M3: Hotaru out of the FM-1 image
+
+**Hotaru leaves the image the way Koi and Sakura did**: `ui.c` `CRAWL_HOTARU`, 0 for the FM-1 image, 1 for the host
+simulator and the browser build, its frog recordings with it (`bed.c`, `FM_SHOT_FROG` under `FM_HOST`, as the knock).
+Night Sky did not fit beside it (12 KB free against about 25 KB), and Night Sky takes over what of Hotaru Crawl keeps:
+the moon (`scene.h` `sc_moon_*`, shared code, which stays) and project slot 3. The owl recordings stay: Forest Ruins
+uses them, and Night Sky does now. Measured: 57.7 KB of flash and 5.6 KB of RAM back (the plan's estimate was 32 + 24).
+The simulator's scripts that count on Hotaru (`hotaru.zen`, `ambient.zen`, `scenes.zen`, `gallery.zen`) keep working
+there; the simulator's list is unchanged until step 6.
+
+## 2026-11-12 M3: Night Sky
+
+Built from the plan's step 4 with the open calls settled here.
+
+**The view: a moor under the sky, a ring of stones on the brow of a ridge.** The brief's scene is the sky, so the sky
+takes three quarters of the picture: the horizon at 176 of 240, the ridge rising to a brow on the left where seven or
+eight standing stones stand in a ring (two under a lintel, now and then one fallen), three pines at the right edge, the
+ground below nearly black. The stones give the moon something to rise behind and the eclipse a place (a red moon over
+a stone ring); they cost nothing each frame, being background. Steven asked for one round on the composition before
+the moods were built; the session could not wait, so the picture went ahead with the moods on it, built so that a
+change of view costs `ns_layout` and `ns_background` alone: the moon, stars, Milky Way, aurora, clouds, meteors,
+rooks, frost and eclipse are drawn over the background or live in the palette, and nothing of them depends on the
+ridge but its height at an x (`ns_ridge_y`).
+
+**ZEN-1's lunar phase logic is reused whole.** `sc_moon_pick`, `sc_moon_t_of` and `sc_moon_draw` give each picture a
+moon of its own size and phase and put it on the path its phase sets (a full moon up all night, a waxing crescent low
+in the west at dusk, an old moon rising late). A mood holds a time of night (`night`: Dusk 0.10, Cold Clear 0.35,
+Eclipse 0.50, Deep Night 0.84) reached the shorter way round over 30 s (`sc_glide`), and its own moon (a thin waxing
+crescent, a gibbous, the full, an old crescent) reached over 10 s with the shadow sweeping across its face, through
+the full moon when the side changes, after Hotaru's glide. Long Night runs the night 0 to 1 in half an hour with the
+night's own moon, repicked each dawn.
+
+**The eclipse is the Eclipse mood's event source, and Long Night's midnight only on a full-moon night.** The earth's
+umbra (2.6 moon radii) crosses the moon over four minutes: first contact, totality (copper, the umbra's heart darkest,
+a dithered penumbral fringe), last contact; a gong (PHYS MODAL, low, ringing) at each contact and once at mid-totality,
+a drum far off (PHYS MEMBRANE) through the partial phases, slower at the limb and quicker toward totality, silent in it
+(the drums beaten at an eclipse to drive the dragon off). In the Eclipse mood the cycle repeats; in Long Night it runs
+once across the midnight quarter when the night's moon is full (two nights in five), and on the other nights that
+quarter sends its clouds toward the moon instead, so the brief's "clouds over a moon" has its home there: a cloud
+covering more than half the disc is a swell and darkens the sound (depth), the moon clearing is a note. A black key
+starts an eclipse in any mood; it ends with the mood (a crescent in the umbra is nonsense).
+
+**Each mood has its own event source, sources and sight.** Dusk: the stars come out one by one, a soft note each
+(the brightest first; when all under the mood's cap are out, one of the faintest goes back to come out again), rooks
+cross the afterglow in a skein with a far caw, clouds lit from below, the warm pad, an evening breeze. Cold Clear: the
+stars scintillate (a flaring star is a chime, part 3), the aurora stands in curtains over the ridge and its pulses are
+swells with the nuns opening on them, frost glitters on the ground, a gibbous moon high, no clouds. Eclipse: above.
+Deep Night: the meteor shower from one radiant, each a falling run of chimes, a fireball in five with a train that
+fades and a swell, the Milky Way at its brightest, no moon until an old crescent rises, one hollow voice, the owl.
+Under every mood the stars blink: now and then one wavers and is a note, the scene's heartbeat, so no quarter of Long
+Night is without notes. "Chimes" (part 3) has its own Volume knob, since the meteors and glints are the loudest things
+in the sky.
+
+**No new recording, and no use for the SAMPLE source.** Nothing in a night sky makes a sound that cannot be
+synthesized; the air is the synthesized breeze (Steven's rule from Forest Ruins); the rooks are Forest Ruins' crows,
+far and quiet (velocity 16 to 26, slowed a little), the owl is Hotaru's, far, in Deep Night only, every two to four
+minutes. Both were in the image already. Part 7 is free. `assets/SAMPLES.md` says so.
+
+**VOICE's BREATH is used once**: Deep Night's solo voice at 20. The other choirs have none.
+
+**"Sky" on the panel's tab, "Night Sky" nowhere the bar must fit.** The mood names (Long Night, Dusk, Cold Clear,
+Eclipse, Deep Night) are the brief's, all within 11 characters; `textfit` is checked in `sky.zen`.
+
+**Night Sky takes project slot 3, Hotaru's**, free in the FM-1 image, shared in the simulator as the other three
+Crawl scenes share theirs. Night Sky is last in the simulator's list; every script that steps round the list from
+Sakura took one more click (`crypt.zen`, `forest.zen`, `lake.zen`, `ambient.zen`, `scenes.zen` twice, and the three
+mood render tools).
+
+**The night skies were brightened after the first pictures.** Under the panel's dark curve (80) the first zenith and
+horizon colors went to black in the simulator's pictures; they were raised to about Frozen Lake's Black Ice (horizon
+0x2C4070, 0x302444, 0x182440), and totality darkens the sky by a quarter, not a third. The Milky Way's own dust of
+faint stars has a palette entry of its own, seen only with the band (drawn in the stars' white it was a line of dots
+across the dusk).

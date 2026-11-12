@@ -1,8 +1,11 @@
 # Crypt (Crawl's first scene): candles gutter (a note each), wax runs, the bell tolls, water drips, a choir under
 # them; black keys snuff a candle, ring the bell, send a draught; each mood its own sound and picture: Vigil still,
 # Procession a pace with figures walking, Sealed no flame and a shaft of light, Embers low and red
-# (the simulator boots into Sakura; Crypt is the third from the end there, before Forest Ruins and Frozen Lake: PRESETS three back)
+# (the simulator boots into Sakura; Crypt is the fourth from the end there, before Forest Ruins, Frozen Lake and Night
+# Sky: PRESETS four back)
 wait 800
+spin PRESET -1
+wait 150
 spin PRESET -1
 wait 150
 spin PRESET -1

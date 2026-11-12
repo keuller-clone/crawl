@@ -713,10 +713,72 @@ static int expect(const char *what, const char *val)
         got = (int)(lk.wind * 100.0f + 0.5f);
     else if (!strcmp(what, "lknote"))
         got = lk.key_note;
+    else if (!strcmp(what, "nsblinks"))           /* Night Sky: stars blinked (a note each); come out at dusk; glints;
+                                                  * meteors (of them from the shower; fireballs); the moon veiled; the
+                                                  * aurora's pulses; the drum's beats; the gong; caws; skeins; the owl;
+                                                  * moons turned by key; nights */
+        got = (int)ns.blinks;
+    else if (!strcmp(what, "nsappears"))
+        got = (int)ns.appears;
+    else if (!strcmp(what, "nsglints"))
+        got = (int)ns.glints;
+    else if (!strcmp(what, "nsmeteors"))
+        got = (int)ns.meteors;
+    else if (!strcmp(what, "nsshower"))
+        got = (int)ns.showers;
+    else if (!strcmp(what, "nstrains"))
+        got = (int)ns.trains;
+    else if (!strcmp(what, "nsveils"))
+        got = (int)ns.veils;
+    else if (!strcmp(what, "nspulses"))
+        got = (int)ns.pulses;
+    else if (!strcmp(what, "nsdrums"))
+        got = (int)ns.drums;
+    else if (!strcmp(what, "nsgongs"))
+        got = (int)ns.gongs;
+    else if (!strcmp(what, "nscaws"))
+        got = (int)ns.caws;
+    else if (!strcmp(what, "nsskeins"))
+        got = (int)ns.skeins;
+    else if (!strcmp(what, "nsowls"))
+        got = (int)ns.owls;
+    else if (!strcmp(what, "nsmoons"))
+        got = (int)ns.moons;
+    else if (!strcmp(what, "nsnights"))
+        got = (int)ns.nights;
+    else if (!strcmp(what, "nsstars")) {          /* Night Sky: stars out now; clouds in the sky; the afterglow, the
+                                                  * aurora, the eclipse, the Milky Way, the frost, the veil, the moon
+                                                  * seen, %; the night (0 dusk .. 100 dawn); the note the last key played */
+        int i;
+        for (got = 0, i = 0; i < NS_NSTAR; i++)
+            got += ns_st[i].vis > 0.5f;
+    } else if (!strcmp(what, "nsclouds")) {
+        int i;
+        for (got = 0, i = 0; i < NS_NCLOUD; i++)
+            got += ns_c[i].on != 0;
+    } else if (!strcmp(what, "nsband"))
+        got = (int)(ns.band * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsaurora"))
+        got = (int)(ns.aur * 100.0f + 0.5f);
+    else if (!strcmp(what, "nseclipse"))
+        got = (int)(ns.ecl * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsmw"))
+        got = (int)(ns.mw * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsfrost"))
+        got = (int)(ns.frost * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsveil"))
+        got = (int)(ns.veil * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsmoon"))
+        got = (int)(ns.mn_vis * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsnight"))
+        got = (int)(ns.night * 100.0f + 0.5f);
+    else if (!strcmp(what, "nsnote"))
+        got = ns.key_note;
     else if (!strcmp(what, "textfit")) {          /* every knob's name and every value it can show, in this
                                                   * scene, fit its quarter of the bar (56 px): the ones that don't */
         const int16_t (*kt)[4] = amb.sc == &SCENE_SAKURA ? SK_KNOB : amb.sc == &SCENE_KOI ? KP_KNOB :
-                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : amb.sc == &SCENE_FOREST ? FR_KNOB : amb.sc == &SCENE_LAKE ? LK_KNOB : HT_KNOB;
+                                 amb.sc == &SCENE_CRYPT ? CR_KNOB : amb.sc == &SCENE_FOREST ? FR_KNOB : amb.sc == &SCENE_LAKE ? LK_KNOB :
+                                 amb.sc == &SCENE_SKY ? NS_KNOB : HT_KNOB;
         int i, v;
         got = 0;
         if (!amb.sc) {

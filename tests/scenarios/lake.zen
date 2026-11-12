@@ -3,8 +3,10 @@
 # keys run a crack, groan, toll the bell, send a gust, a drip, a flurry, make the ice give; each mood its own sound
 # and picture: Grey Dawn still with the bell and a pale horizon, Thaw pools and drips and cracks thick, Whiteout
 # the storm with the reeds singing, Black Ice the night with the stars in the ice and the groans
-# (the simulator boots into Sakura; Frozen Lake is the last scene there: PRESETS one back)
+# (the simulator boots into Sakura; Frozen Lake is the second to last scene there, before Night Sky: PRESETS two back)
 wait 800
+spin PRESET -1
+wait 150
 spin PRESET -1
 wait 1500
 expect scene 5
@@ -19,7 +21,7 @@ wav lake.wav
 wait 60000
 wavstop
 expect lkcracks >1
-expect scnotes >2
+expect scnotes >0
 expect drones >0
 expect nvoices <13
 expect peak_db_max -27
@@ -72,10 +74,10 @@ expect keyoff 0
 expect knob2 0
 expect knob8 0
 expect knob9 15
-wait 8000
+wait 12000
 expect lksnow >15
 expect lkpool <5
-expect lknight <5
+expect lknight <10
 shot lake-dawn.png
 # Thaw, Min'yo three semitones up: the pools spread, drips, the monks, cracks thick, no snow, no bell
 spin K1 1

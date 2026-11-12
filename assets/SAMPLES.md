@@ -30,6 +30,12 @@ logged in `assets/sounds/README.md` with its source, author and license (CC0 onl
 | Frozen Lake | the ice cracking (four cracks) | `assets/sounds/ice-737896-preview.mp3` | https://freesound.org/s/737896/ | Vrymaa | CC0 1.0 |
 | Frozen Lake | the keep's bell (one stroke, far) | `assets/sounds/keepbell-240586-preview.mp3` | https://freesound.org/s/240586/ | blaukreuz | CC0 1.0 |
 
+Night Sky (M3, 2026-11-12) adds no recording and no sample: nothing in a night sky makes a sound that cannot be
+synthesized (its stars, meteors, aurora and eclipse are silent; its air is the synthesized breeze), so the SAMPLE
+source has no use there and part 7 is free. The two recorded voices it has are already in the image for other scenes:
+the rooks going home at dusk are Forest Ruins' crow and rook calls, far and quiet, and the owl in the deep of the night
+is Hotaru's (which stays in the image for Forest Ruins and Night Sky now that Hotaru has left it).
+
 ## Adding a sample
 
 1. Check the recording's own page: CC0 only. Put the file in `assets/samples/` (WAV, any rate, mono or stereo).

@@ -14,7 +14,10 @@ release HOME
 wait 50
 expect mode 1
 expect view 0
-# PRESETS: from Sakura (the first scene) back round past Frozen Lake, Forest Ruins and Crypt (Crawl's, the last three) to Hotaru
+# PRESETS: from Sakura (the first scene) back round past Night Sky, Frozen Lake, Forest Ruins and Crypt (Crawl's, the last
+# four) to Hotaru
+spin PRESET -1
+wait 150
 spin PRESET -1
 wait 150
 spin PRESET -1

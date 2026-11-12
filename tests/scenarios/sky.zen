@@ -1,0 +1,156 @@
+# Night Sky ("Sky" on the panel; Crawl's fourth scene): the stars blink (a note each) and come out at dusk, meteors fall
+# (a run of chimes each), the aurora pulses (a swell), clouds veil the moon, the full moon goes into eclipse (a gong at
+# each contact, a drum far off through the partial phases), rooks go home, the owl calls; black keys send a meteor, a
+# fireball, a cloud across the moon, an aurora pulse, the gong, the drum, the eclipse, another moon, the owl, a burst
+# of meteors; each mood its own sound and picture: Dusk the afterglow and the stars coming out, Cold Clear the aurora
+# and the glints, Eclipse the copper moon, Deep Night the shower under the Milky Way
+# (the simulator boots into Sakura; Night Sky is the last scene there: PRESETS one back. Long Night starts wherever the
+# night is, by the seed, so the first minute's counts are bounds any quarter meets)
+wait 800
+spin PRESET -1
+wait 1500
+expect scene 6
+expect knob0 0
+expect knob1 25
+expect knob8 0
+expect knob9 30
+expect textfit 0
+peakreset
+wavgain 24
+wav sky.wav
+wait 60000
+wavstop
+expect scnotes >2
+expect drones >0
+expect nvoices <13
+expect peak_db_max -27
+expect peak_db_min -40
+expect nsstars >3
+shot sky.png
+# black keys: the first two a meteor each (west, east), the third a fireball with its train
+tapkey b0
+wait 100
+expect nsmeteors >0
+expect nsnote 0
+tapkey b2
+wait 100
+expect nstrains >0
+expect nsnote 2
+# a cloud across the moon
+tapkey b3
+wait 100
+expect nsclouds >0
+# the aurora pulses
+tapkey b4
+wait 500
+expect nspulses >0
+expect nsaurora >40
+# the gong; the drum, a roll of three
+tapkey b5
+wait 100
+expect nsgongs >0
+tapkey b6
+wait 1500
+expect nsdrums >2
+# the eclipse begins: first contact, the shadow deepening, the drum beating
+tapkey b7
+wait 25000
+expect nseclipse >15
+expect nsdrums >5
+expect nsgongs >1
+# another moon (the phase turns), the owl, a burst of meteors
+tapkey b8
+wait 100
+expect nsmoons 1
+tapkey b9
+wait 200
+expect nsowls >0
+tapkey b10
+wait 3500
+expect nsmeteors >5
+expect nsnote 10
+# white keys: sixteen notes rising from 2; a star flares where each lands
+tapkey w0
+wait 100
+expect nsnote 2
+expect lastkey 2
+tapkey w15
+wait 100
+expect nsnote 17
+# Mood (KNOB 1): Dusk, Aeolian: the afterglow, the stars coming out one by one, the warm pad, clouds, no aurora
+spin K1 1
+wait 500
+expect knob0 1
+expect scalenow 3
+expect keyoff 0
+expect knob2 0
+expect knob8 0
+expect knob9 5
+wait 12000
+expect nsband >60
+expect nsappears >0
+expect nsaurora <5
+shot sky-dusk.png
+# Cold Clear, Dorian a tone up: every star out, the glints, the aurora, the frost, the nuns, no afterglow
+spin K1 1
+wait 20000
+expect knob0 2
+expect scalenow 4
+expect keyoff 200
+expect knob2 1
+expect knob8 3
+expect nsstars >50
+expect nsglints >1
+expect nsaurora >50
+expect nsfrost >50
+expect nsband <10
+shot sky-cold.png
+# Eclipse, Hungarian minor a fifth down: the full moon seen, the shadow on it, the drum, the monks
+spin K1 1
+wait 30000
+expect knob0 3
+expect scalenow 6
+expect keyoff -500
+expect knob2 3
+expect knob8 2
+expect nsmoon >50
+expect nseclipse >10
+expect nsdrums >8
+expect nsaurora <5
+shot sky-eclipse.png
+# Deep Night, harmonic minor a minor third down: the Milky Way, the shower, one voice
+spin K1 1
+wait 25000
+expect knob0 4
+expect scalenow 5
+expect keyoff -300
+expect knob2 2
+expect knob8 1
+expect nsmw >80
+expect nsshower >0
+expect nsband <5
+shot sky-deep.png
+# round to Long Night again
+spin K1 1
+wait 500
+expect knob0 0
+# pixel art, and a new moor (another ring of stones, other stars)
+tap GLO
+wait 1500
+expect style 1
+shot sky-pixel.png
+tap GLO
+wait 1500
+tap PLAY
+wait 2500
+expect regrows 1
+shot sky-regrown.png
+# back to the instrument: everything lets go, the instrument's own scale again
+press HOME
+wait 800
+release HOME
+wait 9000
+expect mode 0
+expect nvoices 0
+expect par1 0
+expect stale 0

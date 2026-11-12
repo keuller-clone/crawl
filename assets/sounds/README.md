@@ -21,6 +21,8 @@ are Freesound's high-quality previews.
 | `keepbell-240586-preview.mp3` | "140809_FrybgWb_BellTower_Midnight_F.wav", blaukreuz, https://freesound.org/s/240586/ | Frozen Lake: the keep's bell (Neuenburg Castle's, tolling midnight across the valley from a Freyburg vineyard). The hour's last stroke with its decay, 65.44-67.00 s, high-pass 150 Hz (the wind in the trees under it) |
 
 The three Forest Ruins recordings and the two Frozen Lake ones are Crawl's (M3, 2026-11-11), each checked CC0 on its
-Freesound page that day; they go through this same tool. Frozen Lake's groan is a sample of the SAMPLE source instead
+Freesound page that day; they go through this same tool. Night Sky (2026-11-12) brought none: it plays the owl (far, in
+Deep Night) and the crows (far, the rooks going home at dusk) from the sets already here. The frog recordings left the
+FM-1 image with Hotaru (bed.c: the simulator keeps them). Frozen Lake's groan is a sample of the SAMPLE source instead
 (`assets/SAMPLES.md`). A fourth, dry leaves in the wind (Stek59, https://freesound.org/s/457318/, CC0), was Air:
 Leaves for a day and went: it read as hiss. The brook is no longer in the FM-1 image (bed.c: the simulator keeps it).

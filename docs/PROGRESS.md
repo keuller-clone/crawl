@@ -414,3 +414,64 @@ Not flashed, not listened to. Reasons for its calls are in `docs/DECISIONS.md` (
   The groan's loop is a decaying event: with START past 40 % it loops the tail, which is the point of the knobs;
   whether the tail's hiss reads as hiss on the FM-1 is for ears. The crack recording's deflagrations peak 15 dB
   over its short cracks; the shot's velocity is by nearness and the cracks' knob, not yet by ear.
+
+**Hotaru out of the FM-1 image (2026-11-12).** `ui.c` `CRAWL_HOTARU`, as Koi and Sakura went; its frogs with it
+(`bed.c`). Measured: image 569416 B to 511708 B (57708 B freed, 69840 B of flash free), RAM 85064 B to 79416 B
+(5648 B freed). The owl recordings stay (Forest Ruins). The scripts that count on Hotaru keep working in the
+simulator. Reasons in `docs/DECISIONS.md` ("M3: Hotaru out of the FM-1 image").
+
+**Night Sky: first version on the host (2026-11-12).** `firmware/src/app/scene_sky.c` ("Sky" on the panel's tab).
+Not flashed, not listened to. Reasons for its calls are in `docs/DECISIONS.md` ("M3: Night Sky").
+
+- The world: a moor at night, the sky three quarters of the picture; a ridge low across it rising to a brow on the
+  left with a ring of standing stones (two under a lintel), three pines at the right edge. The moon has each picture's
+  own size and phase and crosses on ZEN-1's path by its phase (`scene.h` `sc_moon_*`, Hotaru's, shared); stars (90,
+  and the Milky Way's own dust), the Milky Way slanting across, clouds, meteors. A star that blinks is a note where it
+  stands (every mood's heartbeat); a star coming out at dusk a soft note; a star glinting on a cold night a chime
+  (part 3, Furin); a meteor a falling run of chimes, a fireball slower with a train that fades and a swell (part 4);
+  the aurora's pulses swells, the choir opening on them; a cloud veiling the moon a swell and the sound mellowing, the
+  moon clearing a note; the eclipse's contacts a gong (part 5, PHYS MODAL, low) and a drum far off through the partial
+  phases (part 6, PHYS MEMBRANE); rooks going home at dusk with a far caw (Forest Ruins' crows); the owl in the deep of
+  the night (Hotaru's recording, far). Under them a pad or a VOICE choir and the synthesized breeze.
+- Textures: none new, and no use for the SAMPLE source (`assets/SAMPLES.md`, `assets/sounds/README.md`): nothing in a
+  night sky makes a sound that cannot be synthesized; the owl and the crows were in the image already.
+- Moods, as data (`NS_MOOD`, `NS_MOODS`): Long Night (a night: Dusk, Cold Clear, the midnight, Deep Night, half an
+  hour, started anywhere, the night's own moon each night; an eclipse at midnight when that moon is full, else clouds
+  sent over the moon), Dusk (Aeolian; the afterglow, clouds lit from below, a thin crescent setting over the pines,
+  the stars coming out one by one, rooks, the warm pad, an evening breeze), Cold Clear (Dorian a tone up; every star
+  out and scintillating, the aurora in curtains, frost on the ground, a gibbous moon high, the nuns, still), Eclipse
+  (Hungarian minor a fifth down; the full moon at the zenith into the umbra and out, copper in totality, the sky
+  darkening round it, the gong, the drum, the monks, the long echo and GRAIN), Deep Night (harmonic minor a minor
+  third down; moonless and darkest, the Milky Way bright, the meteor shower from a radiant, an old crescent rising
+  late, one voice with a little breath, the owl).
+- Keys: white keys a note each and the nearest star flares; black keys 1 and 2 a meteor west and east, 3 a fireball,
+  4 a cloud across the moon, 5 an aurora pulse, 6 the gong, 7 the drum (a roll), 8 the eclipse begins, 9 another moon
+  (the phase turns), 10 the owl, the top one a burst of meteors.
+- In the FM-1 image the scenes are Crypt, Ruins, Lake, Sky; in the simulator Night Sky is last. It has project slot 3
+  (Hotaru's). Build: image 536476 B (45088 B of flash free), RAM 82008 B of 98304 (16296 B free), pool unchanged. The
+  scene is about 24.8 KB of flash and 2.6 KB of RAM by difference. The FM-1 build's own checks pass.
+- Scenario `tests/scenarios/sky.zen`: 74 checks (events counted, every black key, each mood's scale, key, instrument,
+  voices, afterglow, stars, glints, aurora, frost, the moon seen, the eclipse, the Milky Way, the shower, pixel art, a
+  new moor, leaving). Its first minute's counts are bounds any quarter of Long Night meets. Five scripts changed by a
+  click because the list is one longer again (`crypt.zen`, `forest.zen`, `lake.zen`, `ambient.zen`, `scenes.zen`), and
+  the three mood render tools. `forest.zen` and `lake.zen` enter their scenes at another moment again and so with
+  another seed: three of their checks still leaned on the old quarter (Dawn Mist's crow count half a second after the
+  change, Grey Dawn's night 8 s after it, the first minute's notes) and are bounds any quarter meets now.
+- Tests: 57 pass (the new scenario among them), `kanji` skipped, `scenario-ambient` fails as accepted (the race
+  flake). Guard clean. Emulator builds.
+- Renders, 2.5 minutes each, from `tools/sky_moods.zen` in `build/host/`: `sky-longnight.wav`, `sky-dusk.wav`,
+  `sky-cold.wav`, `sky-eclipse.wav`, `sky-deep.wav`, with a picture of each. Measured (`build/tmp/wavstats.py`): peaks
+  -31 to -36 dBFS at the output (-11 to -14 in the files at wavgain 24; Frozen Lake's are -32 to -37), no 10 s stretch
+  under -75 dB. Steady noise in 3..10 kHz under the music: Long Night 49 dB, Dusk 46, Cold Clear 53, Eclipse 52, Deep
+  Night 52 (Frozen Lake: 50, 56, 29, 37, 41). Dusk's floor is the rooks' recordings (their room tone) and the breeze
+  at Air 18.
+- Pictures looked at: the five differ at a glance (the orange afterglow with lit clouds and the crescent; the green
+  curtains and the bright moon; the copper moon in a plum sky; the Milky Way and the old moon low on the left). The
+  first pictures' night skies were black under the dark curve and were raised (the decisions); the simulator still
+  shows them dark, as the other scenes' nights, and they are left for the panel.
+- Open: not heard. The composition was not confirmed first (Steven asked for one round on the view): the picture
+  (`build/scenarios/sky/sky.png`) goes with the moods built, and a change of view would redo `ns_layout` and
+  `ns_background` only. The aurora's draw is the costliest part of a frame (240 columns by up to 70 rows, Cold Clear
+  only) and is not measured on the FM-1. PHYS notes: the gong and the drum, two at most by design. The moon's stamp
+  is remade up to about 25 times during a mood's 10 s phase glide (`sc_moon_stamp`, each about Hotaru's 5.9 ms on the
+  FM-1): not measured.

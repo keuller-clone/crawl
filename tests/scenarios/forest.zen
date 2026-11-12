@@ -3,9 +3,12 @@
 # and bats by night; black keys call a crow, sing an arch, send a gust, a fog bank, a stone, lightning; each mood its
 # own sound and picture: Dawn Mist fog and a pale sun, Overgrown ivy and leaves thick, Storm rain and the arches
 # singing, Owl Moon the moon and bats
-# (the simulator boots into Sakura; Forest Ruins is the second to last scene there, before Frozen Lake: PRESETS two back.
-# Long Night starts wherever its day is, by the seed, so the first minute's counts are bounds any quarter meets)
+# (the simulator boots into Sakura; Forest Ruins is the third from the end there, before Frozen Lake and Night Sky:
+# PRESETS three back. Long Night starts wherever its day is, by the seed, so the first minute's counts are bounds any
+# quarter meets)
 wait 800
+spin PRESET -1
+wait 150
 spin PRESET -1
 wait 150
 spin PRESET -1
@@ -68,8 +71,8 @@ expect scalenow 3
 expect keyoff 0
 expect knob2 2
 expect knob8 0
-expect frcrows 1
-wait 8000
+wait 12000
+expect frcrows <3
 expect sunup 1
 expect frfog >80
 shot forest-dawn.png
