@@ -135,7 +135,18 @@ static void knob_set(int p, int v);
 #if CRAWL_KOI
 #include "scene_koi.c"
 #endif
+/* Crawl (M3): Hotaru leaves the FM-1 image the same way, for Night Sky's room (which takes over its moon and stars,
+ * scene.h sc_moon_*, and its project slot 3); its frog recordings go with it (bed.c). CRAWL_HOTARU=1 puts it back. */
+#ifndef CRAWL_HOTARU
+#ifdef OM_HOST
+#define CRAWL_HOTARU 1
+#else
+#define CRAWL_HOTARU 0
+#endif
+#endif
+#if CRAWL_HOTARU
 #include "scene_hotaru.c"
+#endif
 #include "scene_crypt.c"
 #include "scene_forest.c"
 #include "scene_lake.c"
@@ -144,7 +155,7 @@ static void knob_set(int p, int v);
  * slot 2, Koi's, which is out of the FM-1 image (in the simulator the two share it until the ZEN-1 scenes go);
  * Frozen Lake slot 0, Sakura's, out of the FM-1 image too (shared in the simulator the same way) */
 static const scene_t *const SCENES[] = {
-#if !CRAWL_SAKURA && !CRAWL_KOI
+#if !CRAWL_SAKURA && !CRAWL_KOI && !CRAWL_HOTARU
     &SCENE_CRYPT,
     &SCENE_FOREST,
     &SCENE_LAKE,
@@ -155,8 +166,10 @@ static const scene_t *const SCENES[] = {
 #if CRAWL_KOI
     &SCENE_KOI,
 #endif
+#if CRAWL_HOTARU
     &SCENE_HOTARU,
-#if CRAWL_SAKURA || CRAWL_KOI
+#endif
+#if CRAWL_SAKURA || CRAWL_KOI || CRAWL_HOTARU
     &SCENE_CRYPT,
     &SCENE_FOREST,
     &SCENE_LAKE,
