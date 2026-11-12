@@ -671,3 +671,15 @@ page keeps ZEN-1's layout; its lines were brought to the README's wording where 
 Long Night order, Crypt's white keys), and its About and guide links go to the README, since there is no landing
 page or guide yet. `web/site/` (ZEN-1's landing page and guide) is not rewritten and not published; the README is
 the guide until M5 makes one.
+
+## 2026-11-12 M5: the manual
+
+**`MANUAL.md`, after GR!MM's: every control with a screenshot** (Steven's ask). Its 48 screens come from the host
+simulator through one script, `tools/manual.zen`, run by `tools/manual_shots.sh` into `docs/img/manual` (as
+`tools/site_gallery.sh` does for the gallery): pictures only, no render. The simulator writes PNGs unpacked (173 KB
+a screen), so `tools/png_pack.py` deflates them in place: 8.3 MB to 0.39 MB, the pixels untouched. The manual says
+what the screen shows, not what the scenes' header comments say: in Forest Ruins, Frozen Lake and Night Sky the
+Nature page shows Echo, Warmth, Voices and the scene's event rate, and the Music page the scene's own two settings
+with Tape and Tide, where the comments (and Crypt's layout) would have Echo and Warmth under Music. That is left
+as it is (no scene changes in this work) and noted under Open in `docs/PROGRESS.md`. The emulator page links to the
+manual; the README keeps a short form of the controls and links to it.

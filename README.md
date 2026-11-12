@@ -87,6 +87,8 @@ VOICE, PHYS, SAMPLE, TAPE, DELAY and GRAIN are ported from [GR!MM](https://githu
 
 ## Controls
 
+**[The manual](MANUAL.md)** has every button, knob, page and key with a screenshot of each. The short form:
+
 Crawl plays by itself. To start you only need **PRESETS** (the scene), **ALGORITHM** (the mood), **MASTER** (the
 volume) and **PLAY** (a new picture). A welcome card shows these the first time it starts.
 
@@ -128,8 +130,8 @@ The knob pages, KNOB 1 to 4 on each:
 |---|---|---|---|---|
 | Scene | Mood, Activity, Instrument, Space | the same | the same | the same |
 | Volume | Notes, Choir, Air, Bell | Notes, Drone, Air, Harp | Notes, Drone, Air, Bell | Notes, Drone, Air, Chimes |
-| Nature | Tolls, Tape, Voices, Drips | Voices, Crows, Fog, Wind | Voices, Cracks, Snow, Wind | Voices, Meteors, Clouds, Stars |
-| Music | Echo, Warmth, Cloud, Tide | Echo, Warmth, Tape, Tide | Echo, Warmth, Tape, Tide | Echo, Warmth, Tape, Tide |
+| Nature | Tolls, Tape, Voices, Drips | Echo, Warmth, Voices, Crows | Echo, Warmth, Voices, Cracks | Echo, Warmth, Voices, Meteors |
+| Music | Echo, Warmth, Cloud, Tide | Fog, Wind, Tape, Tide | Snow, Wind, Tape, Tide | Clouds, Stars, Tape, Tide |
 | Key | Key, Scale, Chord, Drift | the same | the same | the same |
 
 Space is the reverb, Warmth bright to mellow, Tide how much the music slowly swells and fades, Voices the choir

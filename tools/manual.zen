@@ -1,0 +1,283 @@
+# the manual's screenshots (MANUAL.md): each of Crawl's scenes, mood by mood, its knob pages, what some keys do,
+# the cards, and the koto instrument, from the host simulator. Pictures only, no render.
+#   tools\docker_run.ps1 sh tools/manual_shots.sh      (into docs/img/manual)
+# The simulator's list: 0 Sakura, 1 Koi, 2 Hotaru, 3 Crypt, 4 Forest Ruins, 5 Frozen Lake, 6 Night Sky. A mood is
+# reached in 30 s; the knobs' bar is gone 3 s after a turn; the Mood is turned with ALGORITHM, whatever page shows.
+wait 800
+spin PRESET 1
+wait 150
+spin PRESET 1
+wait 150
+spin PRESET 1
+wait 6000
+expect scene 3
+# Crypt
+spin ALGO 1
+expect knob0 1
+wait 500
+shot card-mood.png
+wait 33000
+shot crypt-vigil.png
+spin ALGO 1
+expect knob0 2
+wait 500
+wait 33000
+shot crypt-procession.png
+spin ALGO 1
+expect knob0 3
+wait 500
+wait 33000
+shot crypt-sealed.png
+spin ALGO 1
+expect knob0 4
+wait 500
+wait 33000
+shot crypt-embers.png
+tap FX
+wait 300
+shot crypt-page-scene.png
+tap FX
+wait 300
+shot crypt-page-volume.png
+tap FX
+wait 300
+shot crypt-page-nature.png
+tap FX
+wait 300
+shot crypt-page-music.png
+tap FX
+wait 300
+shot page-key.png
+tap FX
+wait 300
+expect page 0
+wait 4000
+tap HOME
+wait 400
+shot card-status.png
+wait 3500
+tap SEQ
+wait 300
+shot card-sleep.png
+tap SEQ
+tap SEQ
+tap SEQ
+tap SEQ
+tap SEQ
+tap SEQ
+expect sleep 0
+wait 3500
+tap ENV
+wait 300
+shot card-lights.png
+tap ENV
+tap ENV
+wait 3500
+tap GLO
+wait 1500
+shot crypt-pixel.png
+tap GLO
+wait 1500
+# two candles snuffed (black keys 1 and 2), then the bell (black key 6)
+tapkey b0
+wait 300
+tapkey b1
+wait 1500
+shot crypt-key-snuff.png
+tapkey b0
+tapkey b1
+wait 1000
+tap PLAY
+wait 4000
+shot crypt-new.png
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+expect knob0 0
+# Forest Ruins
+spin PRESET 1
+wait 300
+shot card-scene.png
+wait 6000
+expect scene 4
+spin ALGO 1
+expect knob0 1
+wait 500
+wait 33000
+shot ruins-dawn.png
+spin ALGO 1
+expect knob0 2
+wait 500
+wait 33000
+shot ruins-overgrown.png
+spin ALGO 1
+expect knob0 3
+wait 500
+wait 33000
+shot ruins-storm.png
+spin ALGO 1
+expect knob0 4
+wait 500
+wait 33000
+shot ruins-owlmoon.png
+tap FX
+wait 300
+shot ruins-page-scene.png
+tap FX
+wait 300
+shot ruins-page-volume.png
+tap FX
+wait 300
+shot ruins-page-nature.png
+tap FX
+wait 300
+shot ruins-page-music.png
+tap FX
+wait 300
+tap FX
+wait 300
+expect page 0
+wait 4000
+# lightning (the top black key), in Storm
+spin ALGO -1
+expect knob0 3
+wait 20000
+tapkey b10
+wait 120
+shot ruins-key-lightning.png
+wait 4000
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+expect knob0 0
+# Frozen Lake
+spin PRESET 1
+wait 6000
+expect scene 5
+spin ALGO 1
+expect knob0 1
+wait 500
+wait 33000
+shot lake-greydawn.png
+spin ALGO 1
+expect knob0 2
+wait 500
+wait 33000
+shot lake-thaw.png
+spin ALGO 1
+expect knob0 3
+wait 500
+wait 33000
+shot lake-whiteout.png
+spin ALGO 1
+expect knob0 4
+wait 500
+wait 33000
+shot lake-blackice.png
+tap FX
+wait 300
+shot lake-page-scene.png
+tap FX
+wait 300
+shot lake-page-volume.png
+tap FX
+wait 300
+shot lake-page-nature.png
+tap FX
+wait 300
+shot lake-page-music.png
+tap FX
+wait 300
+tap FX
+wait 300
+expect page 0
+wait 4000
+# the ice giving (the top black key), in Thaw
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+expect knob0 2
+wait 33000
+tapkey b10
+wait 2500
+shot lake-key-ice.png
+wait 4000
+spin ALGO -1
+wait 200
+spin ALGO -1
+wait 200
+expect knob0 0
+# Night Sky
+spin PRESET 1
+wait 6000
+expect scene 6
+spin ALGO 1
+expect knob0 1
+wait 500
+wait 33000
+shot sky-dusk.png
+spin ALGO 1
+expect knob0 2
+wait 500
+wait 33000
+shot sky-coldclear.png
+spin ALGO 1
+expect knob0 3
+wait 500
+wait 33000
+shot sky-eclipse.png
+spin ALGO 1
+expect knob0 4
+wait 500
+wait 33000
+shot sky-deepnight.png
+tap FX
+wait 300
+shot sky-page-scene.png
+tap FX
+wait 300
+shot sky-page-volume.png
+tap FX
+wait 300
+shot sky-page-nature.png
+tap FX
+wait 300
+shot sky-page-music.png
+tap FX
+wait 300
+tap FX
+wait 300
+expect page 0
+wait 4000
+# a fireball (black key 3), in Deep Night
+tapkey b2
+wait 900
+shot sky-key-fireball.png
+wait 4000
+# the koto instrument: HOME held
+press HOME
+wait 800
+release HOME
+wait 1500
+expect mode 0
+shot koto-home.png
+tap FX
+wait 400
+shot koto-sound.png
+tap EDIT
+wait 400
+shot koto-bend.png
+press SEL
+wait 900
+release SEL
+wait 400
+shot koto-tuning.png

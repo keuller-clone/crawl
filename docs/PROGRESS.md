@@ -578,6 +578,10 @@ calls are in `docs/DECISIONS.md` ("M3: Long Night across the scenes", and "after
 - Later the same day: Steven made the repository public, so the emulator is on Pages,
   https://keuller-clone.github.io/crawl/emu/, and the README was rewritten for Crawl with the page brought to its
   wording (`docs/DECISIONS.md`, "the repository public, the emulator on Pages, the README").
+- `MANUAL.md` (2026-11-12): every control, knob page, mood and key with 48 screenshots from the simulator
+  (`tools/manual_shots.sh`). Open from it: in Forest Ruins, Frozen Lake and Night Sky the knob pages do not match
+  the scenes' header comments (Echo and Warmth show on Nature, the scene's own two settings on Music); the manual
+  and README describe the screen. `ui.c` `amb_knob_at` and the scenes' knob order are where to look.
 - Tests: 57 pass, `kanji` skipped, `scenario-ambient` fails as accepted. `scenario-night` was stopped on Steven's
   word (do not wait for the whole script) after its round had come back to Crypt (passes 4); its first 39 lines,
   the door into the night, were run alone and pass (12 checks). Guard clean.
