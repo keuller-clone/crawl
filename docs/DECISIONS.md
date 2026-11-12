@@ -661,8 +661,7 @@ it"), not at release as the brief had it. Pages was still refused for the privat
 settles the source question above. It is not a release: nothing is flashed, there is no installer and no package,
 and the README says so in its Status.
 
-**Pages serves the `gh-pages` branch, the emulator alone** (`tools/publish_pages.sh --emu m3`; the Pages site was
-created once by hand with `gh api -X POST repos/keuller-clone/crawl/pages` on that branch). The root goes to `emu/`.
+**Pages serves the `gh-pages` branch, the emulator alone** (`tools/publish_pages.sh --emu m3`; GitHub enabled Pages on that branch by itself at the first push). The root goes to `emu/`.
 
 **The README is Crawl's, and the page says what it says.** The README was ZEN-1's under a Crawl preface. It now
 describes the four scenes, every mood, Long Night, the sources and effects, every control, the keys of each scene
