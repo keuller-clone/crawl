@@ -498,6 +498,7 @@ static void run_ms(uint32_t ms)
                     gap_at = now_ms;
                 }
             }
+#if CRAWL_HOTARU                                    /* (the browser build has Crawl's four scenes only: web/emu/build.sh) */
             if (proj.mode && amb.sc == &SCENE_HOTARU) {
                 float mx = ht_moon_x(), my = ht_moon_y();
                 if (ht_jump_x >= 0.0f && my < 200.0f && ht_jump_y < 200.0f) {
@@ -508,6 +509,7 @@ static void run_ms(uint32_t ms)
                 ht_jump_x = mx;
                 ht_jump_y = my;
             }
+#endif
         } else {
             ui_input_only();
         }
@@ -515,6 +517,7 @@ static void run_ms(uint32_t ms)
 }
 
 /* ---------------------------------------------------------- script --- */
+#ifndef OM_WEB                                      /* (the browser build runs no scripts; their checks read ZEN-1's scenes) */
 static const char *const BTN_N[NB] = {"FX", "SEL", "ENV", "LFO", "EDIT", "GLO", "HOME", "SAVE", "ARP", "SEQ",
                                       "PLAY", "REC", "OCT-", "OCT+"};
 static const char *const ENC_N[NE] = {"SELECT", "ALGO", "PRESET", "K1", "K2", "K3", "K4"};
@@ -1032,7 +1035,6 @@ static int expect(const char *what, const char *val)
     return 0;
 }
 
-#ifndef OM_WEB
 int main(int argc, char **argv)
 {
     FILE *sc;

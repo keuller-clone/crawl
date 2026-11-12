@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crawl in the browser</title>
-<meta name="description" content="Crawl, ambient custom firmware for the M-VAVE FM-1, in your browser: the same code the FM-1 runs.">
+<meta name="description" content="Crawl, dark ambient custom firmware for the M-VAVE FM-1, in your browser: the same code the FM-1 runs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Semi+Condensed:wght@600;700&display=swap">
@@ -76,7 +76,7 @@ kbd { font: 600 .85em ui-monospace, Menlo, monospace; background: var(--card); b
 <main>
 <header>
   <h1>Crawl</h1>
-  <p>Ambient scenes for the M-VAVE FM-1, in your browser: the same code the FM-1 runs, with sound.</p>
+  <p>Dark ambient scenes for the M-VAVE FM-1, in your browser: the same code the FM-1 runs, with sound.</p>
   <nav><a href="../">About</a><a href="__REPO__">Source</a></nav>
 </header>
 
@@ -112,15 +112,22 @@ kbd { font: 600 .85em ui-monospace, Menlo, monospace; background: var(--card); b
   <section>
     <h2>In a scene (the ambient mode)</h2>
     <ul>
-      <li><b>PRESETS</b>: the scene (Sakura, Koi, Hotaru).</li>
-      <li><b>ALGORITHM</b>: the mood (the time of day and the feel).</li>
-      <li><b>SELECT</b>: Activity, how busy the scene is (petals, koi food or fireflies, and so how many notes).</li>
+      <li><b>PRESETS</b>: the scene (Crypt, Forest Ruins, Frozen Lake, Night Sky).</li>
+      <li><b>ALGORITHM</b>: the mood. The first is always Long Night: one night that passes from scene to scene,
+        half an hour in each.
+        <ul>
+          <li>Crypt: Vigil, Procession, Sealed, Embers.</li>
+          <li>Forest Ruins: Dawn Mist, Overgrown, Storm, Owl Moon.</li>
+          <li>Frozen Lake: Grey Dawn, Thaw, Whiteout, Black Ice.</li>
+          <li>Night Sky: Dusk, Cold Clear, Eclipse, Deep Night.</li>
+        </ul></li>
+      <li><b>SELECT</b>: Activity, how busy the scene is (flames, leaves, cracks or stars, and so how many notes).</li>
       <li><b>KNOB 1–4</b>: the four settings on the page that's showing.</li>
       <li><b>FX</b>: show the knob pages and step through them: Scene, Volume, Nature, Music, Key.
         <b>SEL</b> goes back a page.</li>
       <li><b>GLO</b>: painted look or pixel art.</li>
       <li><b>ENV</b>: the panel's lights: on, auto (out after 30 s untouched) or off.</li>
-      <li><b>PLAY</b>: a new picture (a new tree, pond, or field and moon).</li>
+      <li><b>PLAY</b>: a new picture (a new vault, path, shore, or moor and moon).</li>
       <li><b>HOME</b>
         <ul>
           <li>Tap: the battery, the lights, the scene and the mood.</li>
@@ -136,15 +143,20 @@ kbd { font: 600 .85em ui-monospace, Menlo, monospace; background: var(--card); b
       <li><b>MASTER</b>: the volume.</li>
       <li><b>White keys</b>: notes that always fit, and the scene answers.
         <ul>
-          <li>Sakura: the blossoms shake and petals land with your note.</li>
-          <li>Koi: you drop food, and the koi play your note back as they find it.</li>
-          <li>Hotaru: a firefly rises to your note's height.</li>
+          <li>Crypt: a note on the candles.</li>
+          <li>Forest Ruins: a leaf is let go above your note.</li>
+          <li>Frozen Lake: a crack runs where your note lands.</li>
+          <li>Night Sky: the nearest star flares.</li>
         </ul></li>
-      <li><b>Black keys</b>: each scene's own.
+      <li><b>Black keys</b>: each scene's own, 1 to 11 from the left.
         <ul>
-          <li>Sakura: a harp, ringing out on the river.</li>
-          <li>Koi: pebbles on singing bowls; the top key tips the bamboo.</li>
-          <li>Hotaru: firefly flashes; the top key sends a breeze.</li>
+          <li>Crypt: 1–5 snuff or light a candle, 6–10 ring the bell; the top key sends a draught.</li>
+          <li>Forest Ruins: 1–4 a crow each, 5–7 a hollow sings, then a gust, a fog bank and a falling cone; the top
+            key is lightning.</li>
+          <li>Frozen Lake: 1–3 a crack near, middle or far, 4 a groan, 5–7 the keep's bell (one to three strokes),
+            then a gust, a drip and a flurry; the top key is the ice giving.</li>
+          <li>Night Sky: 1–2 a meteor west or east, 3 a fireball, 4 a cloud across the moon, 5 an aurora pulse, 6 the
+            gong, 7 the drum, 8 an eclipse begins, 9 another moon, 10 the owl; the top key is a burst of meteors.</li>
         </ul></li>
     </ul>
     <p>Everything the scenes do is in <a href="../guide/">the guide</a>.</p>
@@ -204,7 +216,8 @@ kbd { font: 600 .85em ui-monospace, Menlo, monospace; background: var(--card); b
         <tr><th scope="row"><kbd>Q</kbd>–<kbd>I</kbd>, <kbd>A</kbd>–<kbd>K</kbd></th><td>White keys 1–8, 9–16</td>
           <td>Notes that fit the music; the scene answers</td><td>mi fa la ti do ×3 and a top mi</td></tr>
         <tr><th scope="row"><kbd>1</kbd>–<kbd>0</kbd>, <kbd>-</kbd></th><td>Black keys 1–11</td>
-          <td>The scene's own: harp, pebbles or firefly flashes; the top key the bamboo or a breeze</td>
+          <td>The scene's own: candles and the bell, crows, cracks, meteors; the top key a draught, lightning, the ice
+            giving or a burst of meteors</td>
           <td>The upper row (fa♯ sol ti♭ do♯ re), or ornaments with SEQ on</td></tr>
         <tr><th scope="row"><kbd>Z</kbd> / <kbd>X</kbd></th><td>OCT− / OCT+</td>
           <td>The notes an octave down / up</td><td>With a note held: bend down / up. With none: the octave</td></tr>
@@ -227,8 +240,11 @@ kbd { font: 600 .85em ui-monospace, Menlo, monospace; background: var(--card); b
       <li>It's the firmware itself, not a recording: what you hear is Crawl running, at the FM-1's 44.1 kHz.</li>
       <li><b>SAVE</b> keeps your settings in this browser, as the FM-1 keeps them in its memory. <b>Factory reset</b>
         (under the panel) forgets them.</li>
-      <li>The browser emulator comes from <a href="https://github.com/charlesvestal/fm1-fomni">FoMni</a>; the idea from
+      <li>Crawl is built on <a href="https://github.com/aceyprime/zen-1">ZEN-1</a> by aceyprime, with voices and
+        effects ported from <a href="https://github.com/GRiMMBIENT/grimm">GR!MM</a> by GRiMMBIENT. The browser emulator
+        comes from <a href="https://github.com/charlesvestal/fm1-fomni">FoMni</a>; the idea from
         <a href="https://www.groove-os.com/">Groove OS</a>.</li>
+      <li>Crawl is unofficial: it is not affiliated with or endorsed by M-VAVE.</li>
     </ul>
   </section>
 </div>
@@ -353,7 +369,7 @@ for (const [n, k] of Object.entries(knobs))                 // an endless knob: 
   if (k.role !== "master") k.g.setAttribute("aria-description", (TIP[n] ? TIP[n] + ". " : "") + "Arrow keys turn it; Page Up and Page Down turn it faster");
 keys.forEach((k, i) => k.g.setAttribute("aria-description", WHITE_K.includes(i)
   ? "In a scene: a note that fits the music, and the scene answers. In the instrument: a note"
-  : "In a scene: the scene's own (a harp, a pebble, a firefly's flash; the top key the bamboo or a breeze). In the instrument: a note or an ornament"));
+  : "In a scene: the scene's own (a candle or the bell, a crow, a crack, a meteor; the top key a draught, lightning, the ice giving or a burst of meteors). In the instrument: a note or an ornament"));
 for (const k of Object.values(knobs)) hit(k, "knob");
 for (const b of Object.values(buttons)) hit(b);
 keys.forEach((k) => hit(k));
