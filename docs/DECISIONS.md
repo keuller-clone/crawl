@@ -537,3 +537,65 @@ horizon colors went to black in the simulator's pictures; they were raised to ab
 0x2C4070, 0x302444, 0x182440), and totality darkens the sky by a quarter, not a third. The Milky Way's own dust of
 faint stars has a palette entry of its own, seen only with the band (drawn in the stars' white it was a line of dots
 across the dusk).
+
+## 2026-11-12 M3: Long Night across the scenes
+
+Step 5 of the plan, settled from the project's context before building.
+
+**It is one night that passes from scene to scene, and each scene's own long form is a chapter of it.** A scene's
+Long Night was already a half-hour round through its four moods. The cross-scene mode does not replace that with
+something flatter: the night holds a scene for one whole round of its own long form and then passes to the next
+scene, which starts its round at its first quarter. So nothing of a scene's moods is touched, and the night is two
+hours before it comes back to where it was.
+
+**The order and the time are a table in the glue** (`ui.c` `AMB_NIGHT`: a scene and its minutes, a row each): Crypt,
+Night Sky, Forest Ruins, Frozen Lake, 30 minutes each. The order is not the PRESETS list's, because every join then
+reads forward: Sealed gives way to Dusk (out of the tomb at nightfall), Deep Night to Dawn Mist, Owl Moon to Grey
+Dawn, Black Ice to Vigil. In the list's own order Black Ice would run back into Dusk. A row's minutes are the length
+of that scene's round while the night is in it, so the time held and the round cannot disagree.
+
+**The door is each scene's mood 0, as the plan said.** Choosing a scene whose mood is Long Night enters the night at
+that scene, wherever its round is (the seed's, as before, but never in the round's last tenth: a scene just chosen
+does not pass on within three minutes). The first pass comes when that round ends.
+
+**The night is a guest in the scenes it passes into.** `proj.scene` stays the door: a power-on starts where the
+player last chose to be, and a pass writes nothing to flash (no save, so no breath of silence). A guest scene's own
+saved mood is left alone (it may be Storm; the night shows its Long Night and goes on). Knobs turned in a guest are
+that scene's Long Night's tweaks, kept in its own slot as ever. Turning the Mood in a guest makes the scene the
+player's choice (it becomes `proj.scene`, saved soon): another mood ends the night there, Long Night again takes it
+up from there. PRESETS works as ever, counted from the scene on the screen.
+
+**The handover: the picture through dark, the sound across.** The picture fades to dark over 4 s before the round
+ends (the scene and its sound going on), the scenes change in the dark, and the next fades in over 4 s. The glue's
+PRESETS change calls the old scene's `leave` (every note let go, the echo, tape, cloud and beds to nothing) and then
+the new scene's `enter`, which gives the parts new patches at once; the engine applies a part's patch to its
+sounding notes, so released notes change sound mid-release, and the echo's tail is cut. For the night that is not
+good enough. So a pass does not call `leave`:
+
+- The engine learns one thing, `fm_voice_pass`: the parts as they are now are copied to seven spare parts, every
+  scene note moves onto its copy and is let go there. The old drone (4.5 s release), the last notes and swells ring
+  out with their own patches, levels and releases while the next scene's first drone breath comes in at once.
+  Recordings that are sounding (a toll, a caw) play out instead of being cut.
+- The echo line, the tape and the reverb are not reset: the next scene sets its own, and the engine glides the
+  echo's time, the sends and the tape's amount. The beds are set to nothing and to the next scene's in the same
+  frame (they ease over a quarter of a second).
+
+**A pass is the dawn.** The scenes called `cd_dawn` at the end of a round (the key may move a fourth or a fifth,
+by the Key page's Drift). The pass comes just before the round's end and calls it once; the key it leaves and the
+count of dawns are carried into the next scene's conductor (`cd_pass`, `cd_init`), so the night keeps one key from
+scene to scene and Drift's "every third dawn" counts across them. The next scene starts in that key at once, on
+its first quarter's scale, so there is no glide a moment after the join.
+
+**Drift: Off holds the night in its scene.** That is what a scene's own long form becomes when it is wanted alone:
+with the Key page's Drift at Off nothing moves on at the end of a round, not the key and not the scene, and the
+round goes on for good as it did before step 5. No new knob, mood place or project field.
+
+**What persists.** The project is unchanged in format: the four slots, each scene's moods and tweaks, the Key page.
+The sleep timer runs across a pass (its time, its dimming, its fade); the knob page and the panel lights' auto-off
+are not disturbed (a pass is not a touch). Asleep, the night goes on unheard, so waking finds it where it would be.
+
+**A scene learns one thing: its long form's clock is kept through `scene.h`** (`sc_long_begin`, `sc_long_step`), so
+the glue can say where a round starts and how long it is, and can see where it is. Each of the four scenes changes
+two lines for it (Night Sky a third: its midnight eclipse is timed from the round's length).
+
+**ZEN-1's scenes are not in the table**, so their Natural is as it was until they go (step 6).
