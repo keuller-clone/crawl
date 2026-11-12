@@ -503,7 +503,8 @@ calls are in `docs/DECISIONS.md` ("M3: Long Night across the scenes", and "after
   the screen in turn, the project's scene, the sleep timer, the page and "nothing to save" checked at the passes,
   `textfit 0` in each guest; one handover watched (the fade down, the pass, notes of the old scene still ringing
   under the new drone, the output's peak across it over -70 dBFS, the fade up); the Mood turned in a guest kept
-  across a power-off; PRESETS in the night; the Mood turned away during the fade to dark, which stops the pass. The simulator has `nightleft MS` (run to a point in the round) and the
+  across a power-off; PRESETS in the night; the Mood turned away during the fade to dark, which stops the pass. It writes a picture of each guest, one either side of the watched handover and a 23 s
+  render across it into `build/scenarios/night/`. The simulator has `nightleft MS` (run to a point in the round) and the
   expects `showing`, `night`, `guest`, `passes`, `longat`, `passed`. `sky.zen` changed by one bound: a door never
   starts in a round's last tenth now, so it entered Night Sky at another moment (Dusk's first star after a mood
   change is waited 40 s for, not 12: from a quarter with every star out one goes back first).

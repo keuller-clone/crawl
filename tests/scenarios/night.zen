@@ -4,6 +4,7 @@
 # ringing out under the new one's. A whole round is proved here in simulated time: two hours and a little.
 # The simulator's list: 0 Sakura, 1 Koi, 2 Hotaru, 3 Crypt, 4 Forest Ruins, 5 Frozen Lake, 6 Night Sky.
 wait 800
+wavgain 24
 expect scene 0
 # Sakura is none of the night's: its Natural is its own
 expect night 0
@@ -84,6 +85,7 @@ expect dirty 0
 expect longat <950
 expect nsstars >0
 expect textfit 0
+shot night-sky.png
 # its round is half an hour: 25 minutes on it is still here, 6 more and the night is in Forest Ruins
 wait 1500000
 expect passes 1
@@ -94,6 +96,7 @@ expect scene 3
 expect guest 1
 expect night 3
 expect textfit 0
+shot night-ruins.png
 # a knob turned in a guest is its own Long Night's tweak (Forest Ruins' slot), and the scene still a guest
 spin SELECT 3
 expect tweaks 1
@@ -106,6 +109,7 @@ expect showing 5
 expect guest 1
 expect night 4
 expect textfit 0
+shot night-lake.png
 # and round to the door: Crypt again, no guest there. A whole round of the night: two hours
 wait 1800000
 expect passes 4
@@ -121,6 +125,9 @@ expect asleep 0
 nightleft 15000
 expect passes 4
 expect fade 256
+# (a picture either side of it and a render across it, 15 s before to 8 s after: night.wav)
+shot night-before.png
+wav night.wav
 nightleft 2000
 expect passes 4
 expect fade <250
@@ -135,6 +142,8 @@ expect nvoices >1
 expect peak_db_min -70
 wait 5000
 expect fade 256
+wavstop
+shot night-after.png
 expect stale 0
 expect race 0
 # the Mood turned in a guest: the scene is the player's now (the next power-on's), and another mood ends the night
