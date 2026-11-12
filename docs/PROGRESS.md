@@ -534,3 +534,52 @@ calls are in `docs/DECISIONS.md` ("M3: Long Night across the scenes", and "after
   the new scene's first ones at once, up to the 12 voices; seven more LFOs a block), whether the 4 s fades look
   smooth in the panel's palette steps. PRESETS changes are as they were (cut, not passed). The 0.11 s burst is not
   identified beyond its size. `README.md` still describes ZEN-1's Natural (M6).
+
+## M5 Web (started 2026-11-12)
+
+**The browser emulator, for testing by ear: built and checked locally, not published (2026-11-12).** Reasons in
+`docs/DECISIONS.md` ("M5: the browser emulator, for testing by ear").
+
+- What was there: ZEN-1's emulator whole (`web/emu`: the page with its panel, the worklet, `zen_web.c`, `build.sh`
+  and `build.ps1`), building since M0 and already named Crawl in its title and storage key. What still said ZEN-1:
+  the scene names, the key hints for Sakura, Koi and Hotaru (the help, the shortcut table, a tooltip) and the
+  new-picture line; and the build itself, which had ZEN-1's three scenes ahead of Crawl's four.
+- Now: the browser build has Crawl's four scenes only (wasm 761621 B, from 976105); the page names the scenes, each
+  one's moods and what its keys do, and has a credits line and the unofficial line. Layout, panel, input handling and
+  worklet are untouched.
+- To hear it:
+
+  ```
+  .\web\emu\build.ps1
+  ```
+
+  ```
+  python -m http.server 8765 --bind 127.0.0.1 --directory build\emu
+  ```
+
+  then `http://127.0.0.1:8765/` in Chrome or Edge, and Switch on. `tools/serve_site.sh` is ZEN-1's for a Mac (`lsof`,
+  `build/site`) and was not used.
+- Not published. GitHub Pages is not available for this private repository on the account's plan (`gh`: HTTP 422,
+  "Your current plan does not support GitHub Pages for this repository"). No branch was pushed for it and the
+  repository is still private. The path is ready: `tools/publish_pages.sh --emu LABEL` from Git Bash after the build.
+- Checked in Chrome on this PC, from the local server, by driving the page and reading its screen, the audio
+  graph's level and Chrome's own underrun counter (`AudioContext.playbackStats`): it boots into Crypt; PRESETS goes
+  Crypt, Ruins, Lake, Sky and round to Crypt (no ZEN-1 scene); in each scene the five moods each gave a different
+  picture, and the level and spectrum moved with each (half-second levels -47 to -65 dBFS, centroids 400 to
+  1630 Hz, nine seconds a mood); mouse on a key, the Q and 3 shortcuts, a drag on PRESETS and PLAY all reached the
+  firmware. Five minutes untouched (312 s, Crypt): no silent stretch, load at most 9 % of real time, one underrun of
+  9 ms, with the Docker test suite running on the same machine. Screenshots taken through the browser's debugger
+  cause underruns of their own (0.5 s in the first 20 s); those are the tool's.
+- Not checked: nothing was heard (levels and pictures only, so "each mood changes the sound" is a level and a
+  spectrum that moved, not a judgment); Firefox, Safari, Edge, a phone, touch; a mood for longer than nine seconds;
+  the black keys one by one; the koto instrument under HOME; saved settings across a reload; the published site.
+  At switch-on the wasm's boot runs in the audio thread and Chrome counted 0.2 s of underruns in the first three
+  seconds (ZEN-1's design).
+- Tests: 57 pass, `kanji` skipped, `scenario-ambient` fails as accepted. `scenario-night` was stopped on Steven's
+  word (do not wait for the whole script) after its round had come back to Crypt (passes 4); its first 39 lines,
+  the door into the night, were run alone and pass (12 checks). Guard clean.
+- Open: Pages (a plan that allows it, or wait for the public repository; the decisions say what to weigh). The
+  page's About and guide links lead nowhere until the landing page and guide exist. The koto instrument's text is
+  ZEN-1's, as the instrument is. The page's `?dev` load readout showed 0 % for ten seconds at a stretch while audio
+  ran (the worklet's clock), not looked into. From M3 and left alone: the PRESETS scene change still cuts notes and
+  the echo; the 50 ms burst over 6 kHz 0.11 s after a Long Night handover is not identified.

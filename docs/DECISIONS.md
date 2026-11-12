@@ -621,3 +621,35 @@ a scene learns: its long form's clock and end are the glue's). With Drift at Off
 patches, the echo is cut): the pass could carry those too, but that changes every scene change and every script that
 counts voices after one, so it is left for its own step. No name is shown at a pass: the night is for a dark room;
 HOME's status card says where it is.
+
+## 2026-11-12 M5: the browser emulator, for testing by ear
+
+Steven asked for ZEN-1's emulator reused as it is, with Crawl's content, before anything is heard on hardware.
+
+**The browser build has Crawl's four scenes only.** `web/emu/build.sh` passes `CRAWL_SAKURA`, `CRAWL_KOI` and
+`CRAWL_HOTARU` as 0, as the FM-1 image has them, so the page plays what the FM-1 will. The simulator keeps the three
+and its scripts. Two guards in `host/zen_host.c` were needed for that to compile: the script runner (`expect` and
+`main`, which read ZEN-1's scenes' state) is now all under `#ifndef OM_WEB` (only `main` was; the browser build never
+ran scripts), and the moon-jump tracking in `run_ms` is under `CRAWL_HOTARU`. The simulator's build is unchanged by
+both. The wasm went from 976105 B to 761621 B.
+
+**The page is a text swap.** Scene names, the moods of each, what the white and black keys do in each scene, the
+new-picture line, the tooltips for the keys, the tagline, a credits line (ZEN-1, GR!MM, FoMni, Groove OS) and the
+"unofficial" line the brief requires. The layout, panel, input handling, worklet and `zen_web.c` are ZEN-1's,
+untouched. The "koto instrument" section stays: the instrument is still in the firmware under HOME, and its Japanese
+naming goes with step 6 of M3. The page's "About" and "guide" links point at pages M5 has not made yet.
+
+**An emulator-only site.** ZEN-1's `tools/make_pages.py` and `tools/publish_pages.sh` make the whole site and need a
+release package, the installer and the landing page, none of which exist for Crawl yet (`web/site` is still ZEN-1's
+text). So `make_pages.py - LABEL OUT` writes `emu/` and a root page that goes to it, and `publish_pages.sh --emu LABEL`
+pushes that. The script's remote is now `origin` by default (Crawl has one repository; ZEN-1 had a second, public
+one), Python is `$PYTHON`, and without `emcc` on the path (Git Bash on Windows) it publishes `build/emu` as
+`web\emu\build.ps1` built it. The full-site path is as it was.
+
+**Not published: GitHub Pages is not available for this private repository on the account's plan.** Asked through
+`gh` (`POST repos/keuller-clone/crawl/pages` with `build_type=workflow`, which deploys nothing): "Your current plan
+does not support GitHub Pages for this repository" (HTTP 422). Nothing was changed: no `gh-pages` branch, the
+repository private. The emulator runs from a local server meanwhile (`docs/PROGRESS.md`). Two things to weigh before
+it is published from a private repository on a paid plan: the site itself is public whatever the repository is
+(access control for Pages is an Enterprise Cloud feature), and the page then hands out a build of GPL-3.0 code whose
+"Source" link nobody else can open, which the license's source-offer terms do not allow for long.
