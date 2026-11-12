@@ -11,6 +11,7 @@
   firmware/crawl-VERSION.fwsc   the package the installer writes; also the download
 
   tools/make_pages.py build/crawl-1.0.fwsc 1.0 OUT_DIR
+  tools/make_pages.py - LABEL OUT_DIR       the emulator alone (emu/, and a root page that goes to it)
 
 The package must be a release build (./build.sh --release X.Y): its identity, FM-1_6XXYYZZ, is what
 the installer checks the download against and what the FM-1 reports after the install. The wasm,
@@ -42,7 +43,37 @@ def bust(path, version):
     path.write_text(s, encoding="utf-8")
 
 
+def put_emu(out, fill, version):
+    """emu/: the emulator's page, worklet and wasm from build/emu"""
+    emu = SRC / "build" / "emu"                 # (the audition bench is a developer's tool: web/bench/, not on the site)
+    if not (emu / "crawl.wasm").exists():
+        raise SystemExit("no build/emu/crawl.wasm: run web/emu/build.sh (needs Emscripten)")
+    (out / "emu").mkdir()
+    for f in ("index.html", "worklet.js", "crawl.wasm"):
+        shutil.copy(emu / f, out / "emu" / f)
+    (out / "emu" / "index.html").write_text(fill((out / "emu" / "index.html").read_text(encoding="utf-8")), encoding="utf-8")
+    for f in ("emu/index.html",):
+        bust(out / f, version)
+    (out / ".nojekyll").write_text("")
+
+
+def main_emu(version, out):
+    """the emulator alone, for testing by ear before there is a release: emu/ and a root page that goes to it"""
+    out = Path(out)
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    put_emu(out, lambda t: t.replace("__VERSION__", html.escape(version)).replace("__REPO__", REPO), version)
+    (out / "index.html").write_text(
+        '<!doctype html><meta charset="utf-8"><title>Crawl</title>'
+        '<meta http-equiv="refresh" content="0; url=emu/">'
+        '<a href="emu/">Crawl in the browser</a>\n', encoding="utf-8")
+    print(f"site: {out}: emu/ only ({version})")
+
+
 def main(pkg, version, out):
+    if pkg == "-":
+        return main_emu(version, out)
     pkg, out = Path(pkg), Path(out)
     raw = pkg.read_bytes()
     product = product_of(raw)
@@ -98,16 +129,7 @@ def main(pkg, version, out):
         for src in re.findall(r'src="([^"]+\.png)"', page.read_text(encoding="utf-8")):            # there)
             if not (base / src).resolve().exists():
                 raise SystemExit(f"{page}: no {src}: run tools/site_gallery.sh")
-    emu = SRC / "build" / "emu"                 # (the audition bench is a developer's tool: web/bench/, not on the site)
-    if not (emu / "crawl.wasm").exists():
-        raise SystemExit("no build/emu/crawl.wasm: run web/emu/build.sh (needs Emscripten)")
-    (out / "emu").mkdir()
-    for f in ("index.html", "worklet.js", "crawl.wasm"):
-        shutil.copy(emu / f, out / "emu" / f)
-    (out / "emu" / "index.html").write_text(fill((out / "emu" / "index.html").read_text(encoding="utf-8")), encoding="utf-8")
-    for f in ("emu/index.html",):
-        bust(out / f, version)
-    (out / ".nojekyll").write_text("")
+    put_emu(out, fill, version)
     print(f"site: {out}: index.html, install/ ({product}), emu/, firmware/{name} ({len(raw)} B)" +
           (", install/testing/ (FM-1_600)" if tpkg else ""))
 
