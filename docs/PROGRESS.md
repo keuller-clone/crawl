@@ -590,3 +590,7 @@ calls are in `docs/DECISIONS.md` ("M3: Long Night across the scenes", and "after
   ZEN-1's, as the instrument is. The page's `?dev` load readout showed 0 % for ten seconds at a stretch while audio
   ran (the worklet's clock), not looked into. From M3 and left alone: the PRESETS scene change still cuts notes and
   the echo; the 50 ms burst over 6 kHz 0.11 s after a Long Night handover is not identified.
+
+## Budget audit (2026-11-12)
+
+- Fit and run on the FM-1, three budgets, trim list and hardware measurement plan: `docs/BUDGET.md`, "Audit, 2026-11-12". Flash fits with margin, RAM fits tight, audio CPU needs hardware. Nothing changed in the firmware.
